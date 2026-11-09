@@ -124,7 +124,7 @@
 
     /* Master Screen Switcher (Tabs) */
     .screen-switcher-bar {
-      display: flex;
+      display: none !important;
       background: #ECE5D8;
       padding: 4px;
       border-radius: var(--radius-full);
@@ -1041,7 +1041,7 @@
 
   <!-- Top Global Command Header -->
   <header class="master-header">
-    <div class="brand-cluster" onclick="switchScreen('landing')">
+    <div class="brand-cluster" onclick="switchScreen(AuthManager && AuthManager.isAuthenticated() ? 'home' : 'login')">
       <div class="brand-glyph">P</div>
       <div class="brand-text-block">
         <span class="brand-name">Pod-Siksha</span>
@@ -1050,14 +1050,14 @@
     </div>
 
     <!-- Master Screen Switcher (All 9 Requested Screens) -->
-    <nav class="screen-switcher-bar">
-      <button class="screen-tab-btn active" id="tab-landing" onclick="switchScreen('landing')">Sanctuary</button>
-      <button class="screen-tab-btn" id="tab-home" onclick="switchScreen('home')">Atelier Home <span class="locked-badge" id="lock-home">&#128274;</span></button>
-      <button class="screen-tab-btn highlight" id="tab-insights" onclick="switchScreen('insights')">Insights <span class="locked-badge" id="lock-insights">&#128274;</span></button>
-      <button class="screen-tab-btn" id="tab-studio" onclick="switchScreen('studio')">Studio <span class="locked-badge" id="lock-studio">&#128274;</span></button>
-      <button class="screen-tab-btn" id="tab-workspace" onclick="switchScreen('workspace')">Workspace <span class="locked-badge" id="lock-workspace">&#128274;</span></button>
-      <button class="screen-tab-btn" id="tab-concept-dna" onclick="switchScreen('concept-dna')">Concept DNA <span class="locked-badge" id="lock-concept-dna">&#128274;</span></button>
-      <button class="screen-tab-btn" id="tab-teachback" onclick="switchScreen('teachback')">Teach-Back <span class="locked-badge" id="lock-teachback">&#128274;</span></button>
+    <!-- Master Navigation Panel: Hidden on login/unauthenticated, visible only after login -->
+    <nav class="screen-switcher-bar" id="mainScreenSwitcher" style="display:none !important;">
+      <button class="screen-tab-btn active" id="tab-home" onclick="switchScreen('home')">Atelier Home</button>
+      <button class="screen-tab-btn highlight" id="tab-insights" onclick="switchScreen('insights')">Insights</button>
+      <button class="screen-tab-btn" id="tab-studio" onclick="switchScreen('studio')">Studio</button>
+      <button class="screen-tab-btn" id="tab-workspace" onclick="switchScreen('workspace')">Workspace</button>
+      <button class="screen-tab-btn" id="tab-concept-dna" onclick="switchScreen('concept-dna')">Concept DNA</button>
+      <button class="screen-tab-btn" id="tab-teachback" onclick="switchScreen('teachback')">Teach-Back</button>
       <button class="screen-tab-btn" id="tab-privacy" onclick="switchScreen('privacy')">Privacy</button>
       <button class="screen-tab-btn" id="tab-terms" onclick="switchScreen('terms')">Terms</button>
     </nav>
@@ -2117,6 +2117,10 @@
 
         // Unlock tab badges
         document.querySelectorAll(".locked-badge").forEach(el => el.style.display = "none");
+
+        // Display navigation panel after login
+        const switcher = document.getElementById("mainScreenSwitcher") || document.querySelector(".screen-switcher-bar");
+        if (switcher) switcher.style.setProperty("display", "flex", "important");
       },
 
       setUnauthenticatedState() {
@@ -2134,6 +2138,10 @@
 
         // Show lock badges on protected tabs
         document.querySelectorAll(".locked-badge").forEach(el => el.style.display = "inline");
+
+        // Strictly hide navigation panel when unauthenticated/logged out
+        const switcher = document.getElementById("mainScreenSwitcher") || document.querySelector(".screen-switcher-bar");
+        if (switcher) switcher.style.setProperty("display", "none", "important");
       },
 
       handleInitialNavigation(isAuthenticated) {
@@ -2346,6 +2354,17 @@
 
       if (targetFrame) targetFrame.classList.add('active');
       if (targetTab) targetTab.classList.add('active');
+
+      // Manage navigation panel: strictly hide on login/register/auth screens, display after login
+      const switcher = document.getElementById("mainScreenSwitcher") || document.querySelector(".screen-switcher-bar");
+      const authPages = ['login', 'register', 'forgot', 'reset', 'verify-email'];
+      if (switcher) {
+        if (authPages.includes(screenId) || !AuthManager.isAuthenticated()) {
+          switcher.style.setProperty("display", "none", "important");
+        } else {
+          switcher.style.setProperty("display", "flex", "important");
+        }
+      }
 
       window.location.hash = screenId;
       window.scrollTo({ top: 0, behavior: 'smooth' });
