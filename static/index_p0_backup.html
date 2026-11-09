@@ -1,0 +1,1700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pod-Siksha — Interruptible AI Classroom Podcast</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Newsreader:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ivory-paper: #F7F3E9;
+      --forest-ink: #263C35;
+      --muted-sage: #69786E;
+      --terracotta: #E8794F;
+      --saffron-gold: #E8B94F;
+      --botanical-sage: #8BA99A;
+      --rose-clay: #D9B7A6;
+      --clean-white: #FFFFFF;
+      --parchment-border: #E5DED0;
+      --shadow-sm: 0 2px 8px rgba(38, 60, 53, 0.04);
+      --shadow-md: 0 8px 24px rgba(38, 60, 53, 0.08);
+      --shadow-lg: 0 16px 40px rgba(38, 60, 53, 0.12);
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-full: 9999px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--ivory-paper);
+      color: var(--forest-ink);
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: var(--clean-white);
+      border-bottom: 1px solid var(--parchment-border);
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--terracotta), var(--saffron-gold));
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 800;
+      font-size: 20px;
+      box-shadow: 0 4px 12px rgba(232, 121, 79, 0.25);
+    }
+
+    .brand-title {
+      font-weight: 800;
+      font-size: 20px;
+      letter-spacing: -0.5px;
+      color: var(--forest-ink);
+    }
+
+    .brand-badge {
+      font-size: 11px;
+      font-weight: 700;
+      background: #E8F2EC;
+      color: #2D6A4F;
+      padding: 3px 8px;
+      border-radius: var(--radius-full);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .btn-nav {
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      color: var(--muted-sage);
+      padding: 8px 16px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--parchment-border);
+      background: var(--clean-white);
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-nav:hover {
+      color: var(--forest-ink);
+      border-color: var(--terracotta);
+      background: #FDFBF7;
+    }
+
+    main {
+      flex: 1;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 32px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    /* Setup Stage */
+    .setup-panel {
+      background: var(--clean-white);
+      border: 1px solid var(--parchment-border);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .setup-header {
+      margin-bottom: 24px;
+    }
+
+    .setup-title {
+      font-family: 'Newsreader', serif;
+      font-size: 32px;
+      font-weight: 600;
+      color: var(--forest-ink);
+      margin-bottom: 8px;
+    }
+
+    .setup-subtitle {
+      color: var(--muted-sage);
+      font-size: 15px;
+    }
+
+    .setup-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 768px) {
+      .setup-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    label {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--muted-sage);
+    }
+
+    input[type="text"], select, textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid var(--parchment-border);
+      border-radius: var(--radius-md);
+      font-family: inherit;
+      font-size: 14px;
+      color: var(--forest-ink);
+      background: #FAFAFA;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input[type="text"]:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--terracotta);
+      background: var(--clean-white);
+      box-shadow: 0 0 0 3px rgba(232, 121, 79, 0.15);
+    }
+
+    .file-dropzone {
+      border: 2px dashed var(--parchment-border);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      text-align: center;
+      background: #FAF8F4;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .file-dropzone:hover {
+      border-color: var(--terracotta);
+      background: #FDF9F5;
+    }
+
+    .btn-primary {
+      background: var(--terracotta);
+      color: white;
+      font-weight: 700;
+      font-size: 15px;
+      padding: 14px 28px;
+      border: none;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 4px 14px rgba(232, 121, 79, 0.3);
+      transition: all 0.2s;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: #D9693F;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(232, 121, 79, 0.4);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    /* Broadcast Studio Stage */
+    .studio-panel {
+      display: none;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .studio-banner {
+      background: var(--clean-white);
+      border: 1px solid var(--parchment-border);
+      border-radius: var(--radius-lg);
+      padding: 24px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .podcast-info h2 {
+      font-family: 'Newsreader', serif;
+      font-size: 26px;
+      font-weight: 600;
+    }
+
+    .podcast-info p {
+      color: var(--muted-sage);
+      font-size: 14px;
+    }
+
+    .hosts-stage {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .host-card {
+      background: var(--clean-white);
+      border: 1px solid var(--parchment-border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 14px;
+      box-shadow: var(--shadow-sm);
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .host-card.active-speaker {
+      border-color: var(--terracotta);
+      box-shadow: 0 0 0 3px rgba(232, 121, 79, 0.2), var(--shadow-md);
+      transform: scale(1.02);
+    }
+
+    .host-card.host-b.active-speaker {
+      border-color: var(--saffron-gold);
+      box-shadow: 0 0 0 3px rgba(232, 185, 79, 0.2), var(--shadow-md);
+    }
+
+    .host-avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 26px;
+      color: white;
+      box-shadow: var(--shadow-md);
+    }
+
+    .host-a .host-avatar {
+      background: linear-gradient(135deg, var(--terracotta), #D9693F);
+    }
+
+    .host-b .host-avatar {
+      background: linear-gradient(135deg, var(--saffron-gold), #D49F30);
+    }
+
+    .host-name {
+      font-weight: 700;
+      font-size: 17px;
+    }
+
+    .host-role {
+      font-size: 12px;
+      color: var(--muted-sage);
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .speaking-indicator {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      height: 18px;
+    }
+
+    .speaking-bar {
+      width: 4px;
+      height: 6px;
+      background: var(--parchment-border);
+      border-radius: 2px;
+      transition: height 0.15s ease;
+    }
+
+    .active-speaker .speaking-bar {
+      background: var(--terracotta);
+      animation: pulseBar 0.8s infinite alternate ease-in-out;
+    }
+
+    .host-b.active-speaker .speaking-bar {
+      background: var(--saffron-gold);
+    }
+
+    @keyframes pulseBar {
+      0% { height: 4px; }
+      100% { height: 18px; }
+    }
+
+    .speaking-bar:nth-child(2) { animation-delay: 0.2s; }
+    .speaking-bar:nth-child(3) { animation-delay: 0.4s; }
+    .speaking-bar:nth-child(4) { animation-delay: 0.1s; }
+
+    /* Teleprompter / Transcript Section */
+    .transcript-box {
+      background: var(--clean-white);
+      border: 1px solid var(--parchment-border);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .turn-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      color: var(--muted-sage);
+    }
+
+    .concept-tag-badge {
+      background: #F2EBE1;
+      color: var(--forest-ink);
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      font-size: 12px;
+    }
+
+    .teleprompter-text {
+      font-family: 'Newsreader', serif;
+      font-size: 24px;
+      line-height: 1.45;
+      color: var(--forest-ink);
+      min-height: 80px;
+    }
+
+    .spoken-language-hint {
+      font-size: 12px;
+      color: var(--muted-sage);
+      font-style: italic;
+    }
+
+    /* Tactile Interruption Controller */
+    .interruption-section {
+      background: linear-gradient(180deg, #FDFBF7, #F5EDE0);
+      border: 2px solid var(--parchment-border);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      box-shadow: var(--shadow-md);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hold-button {
+      width: 140px;
+      height: 140px;
+      border-radius: var(--radius-full);
+      background: linear-gradient(135deg, var(--terracotta), #C95830);
+      border: 6px solid var(--clean-white);
+      color: white;
+      font-weight: 800;
+      font-size: 15px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: pointer;
+      user-select: none;
+      box-shadow: 0 10px 28px rgba(232, 121, 79, 0.4);
+      transition: all 0.15s ease-in-out;
+      outline: none;
+    }
+
+    .hold-button:active, .hold-button.holding {
+      transform: scale(0.94);
+      background: #B84720;
+      box-shadow: 0 0 0 12px rgba(232, 121, 79, 0.25);
+    }
+
+    .hold-sublabel {
+      font-size: 11px;
+      opacity: 0.9;
+      font-weight: 500;
+    }
+
+    .shortcut-hint {
+      font-size: 13px;
+      color: var(--muted-sage);
+    }
+
+    kbd {
+      background: var(--clean-white);
+      border: 1px solid var(--parchment-border);
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-family: inherit;
+      font-weight: 700;
+      color: var(--forest-ink);
+      box-shadow: 0 2px 0 var(--parchment-border);
+    }
+
+    /* Doubt Answer & Hint Ladder Drawer */
+    .doubt-drawer {
+      display: none;
+      background: #FFFFFF;
+      border: 2px solid var(--botanical-sage);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-md);
+      flex-direction: column;
+      gap: 16px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .doubt-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .hint-ladder {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .hint-step {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      background: #EFEFEF;
+      color: #777;
+    }
+
+    .hint-step.active {
+      background: var(--terracotta);
+      color: white;
+    }
+
+    .student-doubt-quote {
+      background: #F7F5F0;
+      padding: 12px 16px;
+      border-left: 4px solid var(--muted-sage);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      font-size: 14px;
+      color: var(--forest-ink);
+      font-style: italic;
+    }
+
+    .tutor-answer-body {
+      font-family: 'Newsreader', serif;
+      font-size: 18px;
+      line-height: 1.5;
+      color: var(--forest-ink);
+    }
+
+    /* Timeline & Progress */
+    .timeline-bar {
+      display: flex;
+      gap: 4px;
+      height: 8px;
+      background: #EAE5D9;
+      border-radius: var(--radius-full);
+      overflow: hidden;
+      margin-top: 12px;
+    }
+
+    .turn-tick {
+      flex: 1;
+      height: 100%;
+      background: transparent;
+      transition: background 0.2s;
+    }
+
+    .turn-tick.played {
+      background: var(--botanical-sage);
+    }
+
+    .turn-tick.current {
+      background: var(--terracotta);
+    }
+
+    /* P1 Oral Quiz Panel */
+    .quiz-panel {
+      display: none;
+      background: var(--clean-white);
+      border: 1px solid var(--parchment-border);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      box-shadow: var(--shadow-sm);
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .quiz-title {
+      font-family: 'Newsreader', serif;
+      font-size: 26px;
+      font-weight: 600;
+    }
+
+    .quiz-question-card {
+      background: #FDFBF7;
+      border: 1px solid var(--parchment-border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--forest-ink);
+      color: white;
+      padding: 12px 20px;
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      font-weight: 600;
+      box-shadow: var(--shadow-lg);
+      display: none;
+      z-index: 100;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <div class="brand-logo">P</div>
+      <div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span class="brand-title">Pod-Siksha</span>
+          <span class="brand-badge">Gnani AI &bull; Gemini 3.5</span>
+        </div>
+        <p style="font-size:11px; color:var(--muted-sage);">Interruptible AI Classroom Podcast &bull; Saffron Frequency</p>
+      </div>
+    </div>
+    <div class="nav-links">
+      <a href="/teacher" class="btn-nav" target="_blank">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        Teacher Observatory
+      </a>
+    </div>
+  </header>
+
+  <main>
+    <!-- Setup Stage: Upload chapter or paste text -->
+    <section class="setup-panel" id="setupPanel">
+      <div class="setup-header">
+        <h1 class="setup-title">Begin a Classroom Podcast</h1>
+        <p class="setup-subtitle">Upload a chapter PDF or paste textbook notes. Choose your regional language, and Host A &amp; Host B will conduct an interactive, interruptible dialogue.</p>
+      </div>
+
+      <div class="setup-grid">
+        <div class="form-group">
+          <label>Chapter Title</label>
+          <input type="text" id="chapterTitle" value="Photosynthesis and Cellular Energetics" placeholder="e.g. Quadratic Equations">
+
+          <label style="margin-top: 12px;">Regional Language (Spoken Voice)</label>
+          <select id="languageSelect">
+            <option value="te" selected>Telugu (తెలుగు)</option>
+            <option value="hi">Hindi (हिन्दी)</option>
+            <option value="ta">Tamil (தமிழ்)</option>
+            <option value="kn">Kannada (ಕನ್ನಡ)</option>
+            <option value="mr">Marathi (मराठी)</option>
+            <option value="bn">Bengali (বাংলা)</option>
+            <option value="en">English (Indian Accent)</option>
+          </select>
+
+          <label style="margin-top: 12px;">Upload Textbook PDF (Optional)</label>
+          <div class="file-dropzone" onclick="document.getElementById('pdfInput').click()">
+            <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" style="color:var(--terracotta); margin-bottom:8px;"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M12 18v-6M9 15l3-3 3 3"/></svg>
+            <p id="fileLabel" style="font-size:13px; font-weight:600;">Choose PDF or drag &amp; drop here</p>
+            <p style="font-size:11px; color:var(--muted-sage);">Maximum 12 pages &bull; Extracted automatically</p>
+          </div>
+          <input type="file" id="pdfInput" accept=".pdf" style="display:none;" onchange="handleFileSelected(event)">
+        </div>
+
+        <div class="form-group">
+          <label>Or Paste Textbook Text</label>
+          <textarea id="chapterText" rows="10" placeholder="Paste chapter content here...">Photosynthesis is the fundamental biological process through which autotrophic organisms convert solar light energy into stable chemical energy stored in glucose molecules. This essential transformation occurs inside specialized double-membrane organelles called chloroplasts, predominantly located within the mesophyll cells of green leaves.
+
+The overall balanced chemical equation governing oxygenic photosynthesis is represented as:
+6CO2 + 6H2O + Light Energy -> C6H12O6 + 6O2
+
+Chloroplasts contain a fluid-filled interior called the stroma, enclosed by outer and inner phospholipid membranes. Suspended within the stroma is an intricate network of disc-like flattened membrane sacs termed thylakoids, stacked in columns known as grana. Embedded within the thylakoid membranes are light-absorbing pigment molecules, primarily chlorophyll-a and chlorophyll-b.
+
+The light reactions take place exclusively across the thylakoid membranes when solar photons strike photosystems II and I. Photon absorption excites electrons to high-energy states. These electrons travel down an electron transport chain, driving the photolysis of water molecules (2H2O -> 4H+ + 4e- + O2). This replenishes lost electrons and releases vital oxygen gas.
+
+The Calvin cycle occurs in the stroma. RuBisCO catalyzes carbon fixation of CO2 with RuBP to produce glucose.</textarea>
+        </div>
+      </div>
+
+      <div style="margin-top:24px; display:flex; justify-content:flex-end;">
+        <button class="btn-primary" id="startBtn" onclick="createSession()">
+          <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          Generate 14-Turn Podcast Dialogue
+        </button>
+      </div>
+    </section>
+
+    <!-- Broadcast Stage: Two-Host Stage & Realtime Player -->
+    <section class="studio-panel" id="studioPanel">
+      
+      <div class="studio-banner">
+        <div class="podcast-info">
+          <h2 id="studioTitle">Photosynthesis and Cellular Energetics</h2>
+          <p id="studioMeta">Session Active &bull; Host A: Yash (Explainer) &bull; Host B: Priya (Questioner)</p>
+          <div class="timeline-bar" id="timelineBar"></div>
+        </div>
+        <div style="display:flex; gap:12px; align-items:center;">
+          <button class="btn-nav" id="testSoundBtn" onclick="testSpeakerSound()" title="Test Laptop Speakers">
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+            <span>Test Sound</span>
+          </button>
+          <button class="btn-nav" id="pausePlayBtn" onclick="togglePlayback()">
+            <svg id="playIcon" width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+            <span id="playStateText">Pause</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Two Hosts Stage -->
+      <div class="hosts-stage">
+        <!-- Host A -->
+        <div class="host-card host-a active-speaker" id="hostACard">
+          <div class="host-avatar">Y</div>
+          <div>
+            <div class="host-name">Host A &bull; Yash</div>
+            <div class="host-role">Warm Explainer &bull; Gnani Timbre (Shivani)</div>
+          </div>
+          <div class="speaking-indicator">
+            <div class="speaking-bar"></div>
+            <div class="speaking-bar"></div>
+            <div class="speaking-bar"></div>
+            <div class="speaking-bar"></div>
+          </div>
+        </div>
+
+        <!-- Host B -->
+        <div class="host-card host-b" id="hostBCard">
+          <div class="host-avatar">P</div>
+          <div>
+            <div class="host-name">Host B &bull; Priya</div>
+            <div class="host-role">Inquisitive Co-Host &bull; Gnani Timbre (Yashraj)</div>
+          </div>
+          <div class="speaking-indicator">
+            <div class="speaking-bar"></div>
+            <div class="speaking-bar"></div>
+            <div class="speaking-bar"></div>
+            <div class="speaking-bar"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Teleprompter / Transcript -->
+      <div class="transcript-box">
+        <div class="turn-header">
+          <span id="turnCounter">Turn 1 of 14</span>
+          <span class="concept-tag-badge" id="currentConcept">Chloroplast Structure</span>
+        </div>
+        <div class="teleprompter-text" id="teleprompterText">
+          Loading classroom podcast dialogue...
+        </div>
+        <div class="spoken-language-hint" id="spokenLangHint">
+          Spoken audio is generated in Telugu via Gnani Timbre TTS. Visible transcript displayed in English.
+        </div>
+      </div>
+
+      <!-- Tactile Interruption Controller -->
+      <div class="interruption-section">
+        <button class="hold-button" id="holdButton"
+                onmousedown="startHoldInterruption()" 
+                onmouseup="endHoldInterruption()"
+                ontouchstart="startHoldInterruption()"
+                ontouchend="endHoldInterruption()">
+          <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/>
+            <path d="M19 10v2a7 7 0 01-14 0v-2M12 19v4M8 23h8"/>
+          </svg>
+          <span>Hold to Ask</span>
+          <span class="hold-sublabel">Interrupt Podcast</span>
+        </button>
+        <p class="shortcut-hint">
+          Hold <kbd>Space</kbd> or press and hold the button to speak your doubt. 
+          Podcast immediately pauses and records your voice.
+        </p>
+      </div>
+
+      <!-- Doubt Answer & Hint Ladder Drawer -->
+      <div class="doubt-drawer" id="doubtDrawer">
+        <div class="doubt-header">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span style="font-weight:700; font-size:14px; color:var(--terracotta);">Doubt Addressed by Host A</span>
+            <span class="concept-tag-badge" id="doubtConceptTag">Concept</span>
+          </div>
+          <div class="hint-ladder">
+            <span class="hint-step" id="hintStep1">L1: Guiding Question</span>
+            <span class="hint-step" id="hintStep2">L2: Direct Clue</span>
+            <span class="hint-step" id="hintStep3">L3: Full Solution</span>
+          </div>
+        </div>
+
+        <div class="student-doubt-quote" id="studentDoubtQuote">
+          Transcribing student doubt...
+        </div>
+
+        <div class="tutor-answer-body" id="tutorAnswerBody">
+          Synthesizing explanation grounded in chapter...
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:8px;">
+          <button class="btn-primary" style="padding:10px 20px; font-size:13px;" onclick="resumeFromDoubt()">
+            Resume Podcast Playback
+          </button>
+        </div>
+      </div>
+
+      <!-- Oral Quiz Panel (P1) -->
+      <div class="quiz-panel" id="quizPanel">
+        <h3 class="quiz-title">Oral Comprehension Quiz</h3>
+        <p style="font-size:14px; color:var(--muted-sage);">
+          4 spoken questions to reinforce today's key ideas. Answer with your voice or text.
+        </p>
+        <div id="quizContainer" style="display:flex; flex-direction:column; gap:16px;"></div>
+      </div>
+
+    </section>
+  </main>
+
+  <div class="toast" id="toastMessage"></div>
+
+  <!-- Audio playback element -->
+  <audio id="audioPlayer" preload="auto"></audio>
+
+  <script>
+    // Global State
+    let currentSession = null;
+    let turns = [];
+    let currentTurnIndex = 0;
+    let isPlaying = false;
+    let isPausedByDoubt = false;
+    let savedPlaybackMs = 0;
+    let audioCache = {}; // turnIndex -> blob/url
+    let isRecording = false;
+    let mediaRecorder = null;
+    let audioChunks = [];
+    let spaceDown = false;
+    let doubtAudioPlayer = new Audio();
+
+    const audioPlayer = document.getElementById("audioPlayer");
+
+    function showToast(msg, duration = 3000) {
+      const toast = document.getElementById("toastMessage");
+      toast.innerText = msg;
+      toast.style.display = "block";
+      setTimeout(() => { toast.style.display = "none"; }, duration);
+    }
+
+    function handleFileSelected(e) {
+      const file = e.target.files[0];
+      if (file) {
+        document.getElementById("fileLabel").innerText = file.name;
+        document.getElementById("chapterTitle").value = file.name.replace(/\.[^/.]+$/, "");
+      }
+    }
+
+    // Spacebar Hold Listener
+    window.addEventListener("keydown", (e) => {
+      if (e.code === "Space" && !spaceDown && currentSession) {
+        // Prevent default spacebar scrolling
+        const activeTag = document.activeElement ? document.activeElement.tagName.toLowerCase() : "";
+        if (activeTag !== "input" && activeTag !== "textarea") {
+          e.preventDefault();
+          spaceDown = true;
+          document.getElementById("holdButton").classList.add("holding");
+          startHoldInterruption();
+        }
+      }
+    });
+
+    window.addEventListener("keyup", (e) => {
+      if (e.code === "Space" && spaceDown) {
+        e.preventDefault();
+        spaceDown = false;
+        document.getElementById("holdButton").classList.remove("holding");
+        endHoldInterruption();
+      }
+    });
+
+    // Create Podcast Session
+    async function createSession() {
+      const startBtn = document.getElementById("startBtn");
+      startBtn.disabled = true;
+      startBtn.innerHTML = `Generating 14-Turn Podcast Script...`;
+
+      const title = document.getElementById("chapterTitle").value;
+      const language = document.getElementById("languageSelect").value;
+      const chapterText = document.getElementById("chapterText").value;
+      const pdfFile = document.getElementById("pdfInput").files[0];
+
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("language", language);
+      if (pdfFile) {
+        formData.append("file", pdfFile);
+      } else {
+        formData.append("chapter_text", chapterText);
+      }
+
+      try {
+        const res = await fetch("/api/session", {
+          method: "POST",
+          body: formData
+        });
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.detail || "Failed to create session");
+        }
+        const data = await res.json();
+        currentSession = data;
+        turns = data.turns;
+        
+        initializeStudioUI();
+      } catch (err) {
+        alert("Error creating podcast session: " + err.message);
+        startBtn.disabled = false;
+        startBtn.innerHTML = `Generate 14-Turn Podcast Dialogue`;
+      }
+    }
+
+    function initializeStudioUI() {
+      document.getElementById("setupPanel").style.display = "none";
+      document.getElementById("studioPanel").style.display = "flex";
+      document.getElementById("studioTitle").innerText = currentSession.title;
+
+      // Render timeline ticks
+      const timelineBar = document.getElementById("timelineBar");
+      timelineBar.innerHTML = "";
+      turns.forEach((t, i) => {
+        const tick = document.createElement("div");
+        tick.className = "turn-tick" + (i === 0 ? " current" : "");
+        tick.id = "tick_" + i;
+        timelineBar.appendChild(tick);
+      });
+
+      // Start playing Turn 1
+      playTurn(0);
+    }
+
+    async function prefetchTurnAudio(index) {
+      if (index >= turns.length || audioCache[index]) return;
+      const turn = turns[index];
+      try {
+        const res = await fetch("/api/tts", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            text: turn.spoken_text,
+            language: currentSession.language,
+            speaker: turn.speaker
+          })
+        });
+        if (res.ok) {
+          const blob = await res.blob();
+          audioCache[index] = URL.createObjectURL(blob);
+          console.log(`Prefetched Turn #${index + 1} (${turn.speaker})`);
+        }
+      } catch (e) {
+        console.warn("Prefetch error for turn", index, e);
+      }
+    }
+
+    async function playTurn(index) {
+      if (index >= turns.length) {
+        showToast("Classroom podcast completed! Starting comprehension quiz.");
+        loadOralQuiz();
+        return;
+      }
+
+      currentTurnIndex = index;
+      const turn = turns[index];
+
+      // Update UI
+      document.getElementById("turnCounter").innerText = `Turn ${index + 1} of ${turns.length}`;
+      document.getElementById("currentConcept").innerText = turn.concept_tag || "Key Concept";
+      document.getElementById("teleprompterText").innerText = turn.display_text;
+
+      // Update speaker avatars
+      const hostA = document.getElementById("hostACard");
+      const hostB = document.getElementById("hostBCard");
+      if (turn.speaker.toUpperCase() === "A") {
+        hostA.classList.add("active-speaker");
+        hostB.classList.remove("active-speaker");
+      } else {
+        hostB.classList.add("active-speaker");
+        hostA.classList.remove("active-speaker");
+      }
+
+      // Update timeline ticks
+      turns.forEach((_, i) => {
+        const tick = document.getElementById("tick_" + i);
+        if (tick) {
+          tick.className = "turn-tick" + (i < index ? " played" : (i === index ? " current" : ""));
+        }
+      });
+
+      // Prefetch next turn in memory
+      prefetchTurnAudio(index + 1);
+
+      // Fetch or use cached audio
+      let audioUrl = audioCache[index];
+      if (!audioUrl) {
+        const btnText = document.getElementById("playStateText");
+        if (btnText && !isPlaying) btnText.innerText = "Buffering...";
+        try {
+          const res = await fetch("/api/tts", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              text: turn.spoken_text,
+              language: currentSession.language,
+              speaker: turn.speaker
+            })
+          });
+          const blob = await res.blob();
+          audioUrl = URL.createObjectURL(blob);
+          audioCache[index] = audioUrl;
+        } catch (e) {
+          console.error("Failed to fetch audio for turn", index, e);
+          return;
+        }
+      }
+
+      // Load into audioPlayer and enforce unmuted 100% volume
+      audioPlayer.src = audioUrl;
+      audioPlayer.volume = 1.0;
+      audioPlayer.muted = false;
+
+      const playPromise = audioPlayer.play();
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          isPlaying = true;
+          updatePlayStateButton(true);
+        }).catch(err => {
+          console.warn("Autoplay notice:", err);
+          isPlaying = false;
+          updatePlayStateButton(false);
+          showToast("Click 'Resume' or press Space to enable audio in Chrome.", 4000);
+        });
+      }
+
+      audioPlayer.onended = () => {
+        if (!isPausedByDoubt) {
+          playTurn(index + 1);
+        }
+      };
+
+      audioPlayer.onerror = (e) => {
+        console.error("Audio playback error on turn", index, audioPlayer.error);
+        if (!isPausedByDoubt && index + 1 < turns.length) {
+          setTimeout(() => playTurn(index + 1), 500);
+        }
+      };
+    }
+
+    function togglePlayback() {
+      if (isPlaying) {
+        audioPlayer.pause();
+        isPlaying = false;
+        updatePlayStateButton(false);
+      } else {
+        audioPlayer.volume = 1.0;
+        audioPlayer.muted = false;
+        const playPromise = audioPlayer.play();
+        if (playPromise !== undefined) {
+          playPromise.then(() => {
+            isPlaying = true;
+            updatePlayStateButton(true);
+          }).catch(err => {
+            console.warn("Playback error:", err);
+            showToast("Click to play audio: " + (err.message || err));
+          });
+        }
+      }
+    }
+
+    function updatePlayStateButton(playing) {
+      const btnText = document.getElementById("playStateText");
+      const icon = document.getElementById("playIcon");
+      if (btnText && icon) {
+        if (playing) {
+          btnText.innerText = "Pause";
+          icon.innerHTML = `<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>`;
+        } else {
+          btnText.innerText = "Resume";
+          icon.innerHTML = `<path d="M8 5v14l11-7z"/>`;
+        }
+      }
+    }
+
+    function testSpeakerSound() {
+      showToast("Testing laptop speakers...");
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        if (ctx.state === "suspended") ctx.resume();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(523.25, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(659.25, ctx.currentTime + 0.15);
+        osc.frequency.exponentialRampToValueAtTime(783.99, ctx.currentTime + 0.3);
+        gain.gain.setValueAtTime(0.25, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.5);
+        setTimeout(() => showToast("If you heard 3 chime tones, your laptop sound is active and unmuted!"), 600);
+      } catch (err) {
+        showToast("AudioContext test failed: " + err.message);
+      }
+    }
+
+    // -------------------------------------------------------------
+    // Tactile Interruption & Web Audio Recording
+    // -------------------------------------------------------------
+    let audioContext = null;
+    let micStream = null;
+    let scriptProcessor = null;
+    let pcmBuffers = [];
+
+    async function startHoldInterruption() {
+      if (isRecording) return;
+      isRecording = true;
+
+      // 1. Immediately pause podcast audio (Target ~200ms)
+      savedPlaybackMs = Math.floor(audioPlayer.currentTime * 1000);
+      audioPlayer.pause();
+      isPlaying = false;
+      isPausedByDoubt = true;
+      updatePlayStateButton(false);
+
+      showToast("Listening to your doubt... Keep holding!");
+
+      // 2. Initialize Web Audio 16kHz mono recording in memory
+      try {
+        micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        audioContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16000 });
+        const source = audioContext.createMediaStreamSource(micStream);
+        scriptProcessor = audioContext.createScriptProcessor(4096, 1, 1);
+        pcmBuffers = [];
+
+        scriptProcessor.onaudioprocess = (e) => {
+          if (!isRecording) return;
+          const inputData = e.inputBuffer.getChannelData(0);
+          pcmBuffers.push(new Float32Array(inputData));
+        };
+
+        source.connect(scriptProcessor);
+        scriptProcessor.connect(audioContext.destination);
+      } catch (err) {
+        console.warn("Microphone access failed:", err);
+        showToast("Microphone error: " + err.message);
+        isRecording = false;
+      }
+    }
+
+    async function endHoldInterruption() {
+      if (!isRecording) return;
+      isRecording = false;
+      showToast("Transcribing doubt via Gnani Prisma...");
+
+      // Stop mic
+      if (micStream) {
+        micStream.getTracks().forEach(track => track.stop());
+      }
+      if (scriptProcessor) {
+        scriptProcessor.disconnect();
+      }
+
+      // Convert Float32Array PCM buffers to 16kHz 16-bit Mono WAV Blob
+      const wavBlob = encodeWAV(pcmBuffers, 16000);
+      if (wavBlob.size < 100) {
+        showToast("Recording was too short.");
+        return;
+      }
+
+      submitDoubtAudio(wavBlob);
+    }
+
+    // Helper: Encode raw PCM float array to 16-bit linear PCM WAV
+    function encodeWAV(buffers, sampleRate) {
+      let length = 0;
+      for (let b of buffers) length += b.length;
+      let flat = new Float32Array(length);
+      let offset = 0;
+      for (let b of buffers) {
+        flat.set(b, offset);
+        offset += b.length;
+      }
+
+      const buffer = new ArrayBuffer(44 + flat.length * 2);
+      const view = new DataView(buffer);
+
+      function writeString(view, offset, string) {
+        for (let i = 0; i < string.length; i++) {
+          view.setUint8(offset + i, string.charCodeAt(i));
+        }
+      }
+
+      // RIFF identifier
+      writeString(view, 0, 'RIFF');
+      view.setUint32(4, 36 + flat.length * 2, true);
+      writeString(view, 8, 'WAVE');
+      writeString(view, 12, 'fmt ');
+      view.setUint32(16, 16, true);
+      view.setUint16(20, 1, true); // PCM
+      view.setUint16(22, 1, true); // Mono
+      view.setUint32(24, sampleRate, true);
+      view.setUint32(28, sampleRate * 2, true);
+      view.setUint16(32, 2, true);
+      view.setUint16(34, 16, true);
+      writeString(view, 36, 'data');
+      view.setUint32(40, flat.length * 2, true);
+
+      // Write PCM samples
+      let idx = 44;
+      for (let i = 0; i < flat.length; i++, idx += 2) {
+        let s = Math.max(-1, Math.min(1, flat[i]));
+        view.setInt16(idx, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+      }
+
+      return new Blob([view], { type: 'audio/wav' });
+    }
+
+    async function submitDoubtAudio(wavBlob) {
+      const drawer = document.getElementById("doubtDrawer");
+      drawer.style.display = "flex";
+      document.getElementById("studentDoubtQuote").innerText = "Transcribing your question with Gnani Prisma STT...";
+      document.getElementById("tutorAnswerBody").innerText = "Analyzing textbook chapter and formulating Socratic hint...";
+
+      const formData = new FormData();
+      formData.append("session_id", currentSession.session_id);
+      formData.append("turn_index", currentTurnIndex + 1);
+      formData.append("playback_ms", savedPlaybackMs);
+      formData.append("language", currentSession.language);
+      formData.append("file", wavBlob, "doubt.wav");
+
+      try {
+        const res = await fetch("/api/ask", {
+          method: "POST",
+          body: formData
+        });
+        if (!res.ok) throw new Error("Server error handling doubt");
+        const data = await res.json();
+
+        // Display results
+        document.getElementById("studentDoubtQuote").innerText = `"${data.transcript}"`;
+        document.getElementById("doubtConceptTag").innerText = data.concept_tag || "General Concept";
+        document.getElementById("tutorAnswerBody").innerText = data.display_text;
+
+        // Update hint ladder indicators
+        [1, 2, 3].forEach(lvl => {
+          const step = document.getElementById("hintStep" + lvl);
+          if (step) {
+            if (lvl === data.hint_level) {
+              step.className = "hint-step active";
+            } else {
+              step.className = "hint-step";
+            }
+          }
+        });
+
+        // Play synthesized spoken answer via Host A
+        if (data.audio_url) {
+          doubtAudioPlayer.src = data.audio_url;
+          doubtAudioPlayer.volume = 1.0;
+          doubtAudioPlayer.muted = false;
+          doubtAudioPlayer.play().catch(e => console.warn("Doubt audio play error:", e));
+          doubtAudioPlayer.onended = () => {
+            showToast("Doubt explained! Resuming podcast...");
+            resumeFromDoubt();
+          };
+        }
+      } catch (err) {
+        console.error(err);
+        document.getElementById("tutorAnswerBody").innerText = "Could not process doubt: " + err.message;
+      }
+    }
+
+    function resumeFromDoubt() {
+      doubtAudioPlayer.pause();
+      document.getElementById("doubtDrawer").style.display = "none";
+      isPausedByDoubt = false;
+      
+      // Exact millisecond resume
+      audioPlayer.currentTime = savedPlaybackMs / 1000;
+      audioPlayer.play().then(() => {
+        isPlaying = true;
+        updatePlayStateButton(true);
+      });
+    }
+
+    // -------------------------------------------------------------
+    // P1: Interactive Oral Quiz Experience
+    // -------------------------------------------------------------
+    let currentQuiz = null;
+    let currentQuizIndex = 0; // 0 to 3
+    let quizAudioPlayer = new Audio();
+    let isQuizRecording = false;
+    let quizPcmBuffers = [];
+    let quizMicStream = null;
+    let quizScriptProcessor = null;
+    let quizAudioContext = null;
+
+    async function loadOralQuiz() {
+      const quizPanel = document.getElementById("quizPanel");
+      quizPanel.style.display = "flex";
+      const container = document.getElementById("quizContainer");
+      container.innerHTML = `<div style="text-align:center; padding:32px;"><p style="color:var(--muted-sage); font-size:16px;">Generating 4-question oral quiz based on your chapter and doubts...</p></div>`;
+
+      // Check if already completed and stored
+      const savedResults = localStorage.getItem("pod_quiz_results_" + currentSession.session_id);
+      if (savedResults) {
+        try {
+          const resData = JSON.parse(savedResults);
+          renderQuizFinalResults(resData);
+          return;
+        } catch (e) {}
+      }
+
+      try {
+        const formData = new FormData();
+        formData.append("session_id", currentSession.session_id);
+        formData.append("lang", currentSession.language);
+        const res = await fetch("/api/quiz/start", {
+          method: "POST",
+          body: formData
+        });
+        if (!res.ok) throw new Error("Failed to start oral quiz");
+        const data = await res.json();
+        currentQuiz = data;
+        currentQuizIndex = 0;
+        renderActiveQuizQuestion();
+      } catch (e) {
+        container.innerHTML = `<p style="color:#C62828;">Error loading quiz: ${e.message}</p>`;
+      }
+    }
+
+    function renderActiveQuizQuestion() {
+      const container = document.getElementById("quizContainer");
+      container.innerHTML = "";
+
+      if (!currentQuiz || currentQuizIndex >= currentQuiz.questions.length) {
+        fetchQuizFinalResults();
+        return;
+      }
+
+      const q = currentQuiz.questions[currentQuizIndex];
+
+      const card = document.createElement("div");
+      card.className = "quiz-question-card";
+      card.style.padding = "28px";
+      card.style.display = "flex";
+      card.style.flexDirection = "column";
+      card.style.gap = "20px";
+
+      card.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <span style="font-weight:800; font-size:14px; text-transform:uppercase; color:var(--terracotta); letter-spacing:0.5px;">Question ${q.question_number} of 4</span>
+            <span style="font-size:12px; color:var(--muted-sage); margin-left:8px;">&bull; ${q.question_type.toUpperCase()}</span>
+          </div>
+          <span class="concept-tag-badge">${q.concept_tag}</span>
+        </div>
+
+        <p style="font-family:'Newsreader', serif; font-size:22px; font-weight:600; line-height:1.4; color:var(--forest-ink);">
+          ${q.question_text}
+        </p>
+
+        <!-- Oral Question Audio Control -->
+        <div style="display:flex; gap:12px; align-items:center; background:#F8F4EC; padding:12px 18px; border-radius:var(--radius-md);">
+          <button class="btn-nav" onclick="playQuizQuestionAudio('${q.audio_url}')" style="background:var(--clean-white);">
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            <span>Listen Question (Host A)</span>
+          </button>
+          <span style="font-size:12px; color:var(--muted-sage); font-style:italic;">Spoken in your selected regional language.</span>
+        </div>
+
+        <!-- Oral Response Interface -->
+        <div style="display:flex; flex-direction:column; gap:12px; align-items:center; background:#FAF7F0; border:2px dashed var(--parchment-border); border-radius:var(--radius-md); padding:24px; text-align:center;">
+          <button class="hold-button" id="quizMicBtn"
+                  style="width:110px; height:110px; font-size:13px;"
+                  onmousedown="startQuizRecording()" 
+                  onmouseup="endQuizRecording('${q.id}')"
+                  ontouchstart="startQuizRecording()" 
+                  ontouchend="endQuizRecording('${q.id}')">
+            <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/>
+              <path d="M19 10v2a7 7 0 01-14 0v-2M12 19v4M8 23h8"/>
+            </svg>
+            <span>Hold to Answer</span>
+          </button>
+          <p style="font-size:12px; color:var(--muted-sage);">Press and hold to speak your oral answer. Releases to submit via Gnani Prisma STT.</p>
+        </div>
+
+        <!-- Text Fallback -->
+        <div style="display:flex; gap:10px;">
+          <input type="text" id="quizTextInput" placeholder="Or type your response here..." style="flex:1;">
+          <button class="btn-primary" id="quizSubmitTextBtn" style="padding:10px 20px; font-size:13px;" onclick="submitTextAnswer('${q.id}')">
+            Submit Text
+          </button>
+        </div>
+
+        <!-- Live Evaluation Feedback Box -->
+        <div id="quizEvaluationBox" style="display:none; padding:18px; border-radius:var(--radius-md); animation:fadeIn 0.3s ease;"></div>
+      `;
+
+      container.appendChild(card);
+
+      // Automatically play question audio
+      if (q.audio_url) {
+        playQuizQuestionAudio(q.audio_url);
+      }
+    }
+
+    function playQuizQuestionAudio(url) {
+      if (!url) return;
+      quizAudioPlayer.src = url;
+      quizAudioPlayer.volume = 1.0;
+      quizAudioPlayer.muted = false;
+      quizAudioPlayer.play().catch(e => console.warn("Audio autoplay blocked:", e));
+    }
+
+    async function startQuizRecording() {
+      if (isQuizRecording) return;
+      isQuizRecording = true;
+      document.getElementById("quizMicBtn").classList.add("holding");
+      showToast("Recording oral answer... Keep holding!");
+
+      try {
+        quizMicStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        quizAudioContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16000 });
+        const source = quizAudioContext.createMediaStreamSource(quizMicStream);
+        quizScriptProcessor = quizAudioContext.createScriptProcessor(4096, 1, 1);
+        quizPcmBuffers = [];
+
+        quizScriptProcessor.onaudioprocess = (e) => {
+          if (!isQuizRecording) return;
+          const inputData = e.inputBuffer.getChannelData(0);
+          quizPcmBuffers.push(new Float32Array(inputData));
+        };
+
+        source.connect(quizScriptProcessor);
+        quizScriptProcessor.connect(quizAudioContext.destination);
+      } catch (err) {
+        console.warn("Quiz mic failed:", err);
+        showToast("Microphone error: " + err.message);
+        isQuizRecording = false;
+        document.getElementById("quizMicBtn").classList.remove("holding");
+      }
+    }
+
+    async function endQuizRecording(questionId) {
+      if (!isQuizRecording) return;
+      isQuizRecording = false;
+      document.getElementById("quizMicBtn").classList.remove("holding");
+      showToast("Transcribing with Gnani Prisma STT & evaluating...");
+
+      if (quizMicStream) {
+        quizMicStream.getTracks().forEach(t => t.stop());
+      }
+      if (quizScriptProcessor) {
+        quizScriptProcessor.disconnect();
+      }
+
+      const wavBlob = encodeWAV(quizPcmBuffers, 16000);
+      if (wavBlob.size < 100) {
+        showToast("Recording was too short.");
+        return;
+      }
+
+      sendQuizSubmission(questionId, null, wavBlob);
+    }
+
+    function submitTextAnswer(questionId) {
+      const text = document.getElementById("quizTextInput").value.trim();
+      if (!text) {
+        alert("Please provide an answer.");
+        return;
+      }
+      sendQuizSubmission(questionId, text, null);
+    }
+
+    async function sendQuizSubmission(questionId, textAnswer, audioBlob) {
+      const fbBox = document.getElementById("quizEvaluationBox");
+      const submitBtn = document.getElementById("quizSubmitTextBtn");
+      if (submitBtn) submitBtn.disabled = true;
+
+      fbBox.style.display = "block";
+      fbBox.style.background = "#F7F3E9";
+      fbBox.style.color = "var(--forest-ink)";
+      fbBox.innerHTML = `<strong>Analyzing answer with Gemini &amp; Prisma STT...</strong>`;
+
+      const formData = new FormData();
+      formData.append("quiz_id", currentQuiz.quiz_id);
+      formData.append("question_id", questionId);
+      formData.append("language", currentQuiz.language);
+      if (audioBlob) {
+        formData.append("file", audioBlob, "quiz_answer.wav");
+      }
+      if (textAnswer) {
+        formData.append("answer_text", textAnswer);
+      }
+
+      try {
+        const res = await fetch("/api/quiz/answer", {
+          method: "POST",
+          body: formData
+        });
+
+        if (res.status === 422) {
+          const errData = await res.json();
+          fbBox.style.background = "#FFF8E1";
+          fbBox.style.color = "#8D6E63";
+          fbBox.innerHTML = `<strong>${errData.message || "Please speak your answer clearly."}</strong>`;
+          if (submitBtn) submitBtn.disabled = false;
+          return;
+        }
+
+        if (!res.ok) throw new Error("Evaluation failed");
+        const data = await res.json();
+
+        // Render Status
+        let badgeColor = "#2D6A4F";
+        let badgeBg = "#E8F5E9";
+        let statusTitle = "✓ Correct Answer (+100 Points)";
+        if (data.evaluation_status === "partially_correct") {
+          badgeColor = "#B78103";
+          badgeBg = "#FFF9C4";
+          statusTitle = "~ Partially Correct (+50 Points)";
+        } else if (data.evaluation_status === "incorrect") {
+          badgeColor = "#C62828";
+          badgeBg = "#FFEBEE";
+          statusTitle = "✗ Incorrect (0 Points)";
+        }
+
+        fbBox.style.background = badgeBg;
+        fbBox.style.color = badgeColor;
+        fbBox.style.border = `1px solid ${badgeColor}`;
+        fbBox.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <strong style="font-size:16px;">${statusTitle}</strong>
+            <span style="font-size:12px; font-weight:700;">Score: ${Math.round(data.score)} / 100</span>
+          </div>
+          <p style="font-size:13px; color:#555; margin-bottom:6px;"><strong>Your Transcript:</strong> "${data.transcript}"</p>
+          <p style="font-size:14px; font-weight:600; color:var(--forest-ink);">${data.feedback_display}</p>
+          <div style="display:flex; justify-content:flex-end; margin-top:14px;">
+            <button class="btn-primary" style="padding:8px 18px; font-size:13px;" onclick="advanceQuizQuestion()">
+              ${data.quiz_completed ? "View Final Results &rarr;" : "Next Question &rarr;"}
+            </button>
+          </div>
+        `;
+
+        // Play spoken feedback via Gnani Timbre
+        if (data.audio_url) {
+          quizAudioPlayer.src = data.audio_url;
+          quizAudioPlayer.volume = 1.0;
+          quizAudioPlayer.muted = false;
+          quizAudioPlayer.play().catch(e => console.warn("Quiz feedback audio error:", e));
+        }
+
+      } catch (err) {
+        fbBox.innerHTML = `<span style="color:red;">Error: ${err.message}</span>`;
+        if (submitBtn) submitBtn.disabled = false;
+      }
+    }
+
+    function advanceQuizQuestion() {
+      currentQuizIndex++;
+      renderActiveQuizQuestion();
+    }
+
+    async function fetchQuizFinalResults() {
+      const container = document.getElementById("quizContainer");
+      container.innerHTML = `<div style="text-align:center; padding:32px;"><p style="color:var(--muted-sage);">Compiling your personalized learning summary...</p></div>`;
+
+      try {
+        const res = await fetch(`/api/quiz/${currentQuiz.quiz_id}/results`);
+        const data = await res.json();
+        // Persist in localStorage
+        localStorage.setItem("pod_quiz_results_" + currentSession.session_id, JSON.stringify(data));
+        renderQuizFinalResults(data);
+      } catch (e) {
+        container.innerHTML = `<p style="color:red;">Failed to load results: ${e.message}</p>`;
+      }
+    }
+
+    function renderQuizFinalResults(resData) {
+      const container = document.getElementById("quizContainer");
+      container.innerHTML = "";
+
+      const card = document.createElement("div");
+      card.className = "quiz-question-card";
+      card.style.padding = "32px";
+      card.style.display = "flex";
+      card.style.flexDirection = "column";
+      card.style.gap = "24px";
+      card.style.background = "#FFFFFF";
+      card.style.border = "2px solid var(--terracotta)";
+
+      card.innerHTML = `
+        <div style="text-align:center; display:flex; flex-direction:column; gap:8px;">
+          <span style="font-size:12px; font-weight:800; text-transform:uppercase; color:var(--terracotta); letter-spacing:1px;">Oral Comprehension Completed</span>
+          <h2 style="font-family:'Newsreader', serif; font-size:36px; font-weight:600; color:var(--forest-ink);">
+            Final Score: ${Math.round(resData.total_score)} / 400
+          </h2>
+          <p style="font-size:16px; color:var(--muted-sage); font-weight:600;">Overall Mastery: ${resData.percentage}%</p>
+        </div>
+
+        <!-- Breakdown Counters -->
+        <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:16px; text-align:center;">
+          <div style="background:#E8F5E9; padding:16px; border-radius:var(--radius-md); border:1px solid #C8E6C9;">
+            <div style="font-size:24px; font-weight:800; color:#2E7D32;">${resData.breakdown.correct}</div>
+            <div style="font-size:12px; font-weight:700; color:#1B5E20; text-transform:uppercase;">Correct</div>
+          </div>
+          <div style="background:#FFF9C4; padding:16px; border-radius:var(--radius-md); border:1px solid #FFF59D;">
+            <div style="font-size:24px; font-weight:800; color:#F57F17;">${resData.breakdown.partially_correct}</div>
+            <div style="font-size:12px; font-weight:700; color:#E65100; text-transform:uppercase;">Partial</div>
+          </div>
+          <div style="background:#FFEBEE; padding:16px; border-radius:var(--radius-md); border:1px solid #FFCDD2;">
+            <div style="font-size:24px; font-weight:800; color:#C62828;">${resData.breakdown.incorrect}</div>
+            <div style="font-size:12px; font-weight:700; color:#B71C1C; text-transform:uppercase;">Incorrect</div>
+          </div>
+        </div>
+
+        <!-- Concept Intelligence Badges -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+          <div style="background:#FAFAFA; border:1px solid var(--parchment-border); padding:16px; border-radius:var(--radius-md);">
+            <h4 style="font-size:13px; font-weight:700; color:#2E7D32; text-transform:uppercase; margin-bottom:10px;">Concepts Mastered Well</h4>
+            <div style="display:flex; flex-wrap:wrap; gap:6px;">
+              ${resData.strong_concepts.length ? resData.strong_concepts.map(c => `<span class="concept-tag-badge" style="background:#E8F5E9; color:#1B5E20;">✓ ${c}</span>`).join('') : '<span style="font-size:12px; color:var(--muted-sage);">None yet - keep practicing!</span>'}
+            </div>
+          </div>
+
+          <div style="background:#FAFAFA; border:1px solid var(--parchment-border); padding:16px; border-radius:var(--radius-md);">
+            <h4 style="font-size:13px; font-weight:700; color:#C62828; text-transform:uppercase; margin-bottom:10px;">Concepts Needing Revision</h4>
+            <div style="display:flex; flex-wrap:wrap; gap:6px;">
+              ${resData.needs_revision.length ? resData.needs_revision.map(c => `<span class="concept-tag-badge" style="background:#FFEBEE; color:#B71C1C;">! ${c}</span>`).join('') : '<span style="font-size:12px; color:var(--muted-sage);">None! Excellent mastery.</span>'}
+            </div>
+          </div>
+        </div>
+
+        <!-- Learning Summary -->
+        <div style="background:#FDFBF7; border-left:4px solid var(--terracotta); padding:18px; border-radius:4px;">
+          <strong style="font-size:14px; text-transform:uppercase; color:var(--terracotta); letter-spacing:0.5px;">AI Learning Summary</strong>
+          <p style="font-family:'Newsreader', serif; font-size:18px; line-height:1.45; color:var(--forest-ink); margin-top:6px;">
+            ${resData.learning_summary}
+          </p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px; flex-wrap:wrap; gap:12px;">
+          <button class="btn-nav" onclick="location.reload()">
+            &larr; New Podcast Episode
+          </button>
+          <div style="display:flex; gap:12px; flex-wrap:wrap;">
+            <a href="/report?session_id=${currentSession.session_id}" class="btn-nav" style="text-decoration:none; display:inline-flex; align-items:center;">
+              Full Study Report &rarr;
+            </a>
+            <a href="/api/student/${currentSession.session_id}/export/csv" class="btn-nav" style="text-decoration:none; display:inline-flex; align-items:center;">
+              Download Report (CSV)
+            </a>
+            <a href="/teacher" target="_blank" class="btn-primary" style="text-decoration:none;">
+              Teacher Observatory &rarr;
+            </a>
+          </div>
+        </div>
+      `;
+
+      container.appendChild(card);
+    }
+
+    // Auto-load session from query param if provided
+    window.addEventListener("DOMContentLoaded", async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const sid = urlParams.get("session_id");
+      if (sid) {
+        try {
+          showToast("Loading saved session...");
+          const res = await fetch("/api/session/" + encodeURIComponent(sid));
+          if (res.ok) {
+            const data = await res.json();
+            currentSession = data;
+            turns = data.turns;
+            initializeStudioUI();
+          }
+        } catch (e) {
+          console.warn("Could not load session from query param:", e);
+        }
+      }
+    });
+  </script>
+</body>
+</html>

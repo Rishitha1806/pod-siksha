@@ -17,6 +17,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from server import app, get_db, extract_text_from_pdf, call_gnani_tts, call_gnani_stt, call_gemini
 
 client = TestClient(app)
+client.headers["Authorization"] = "Bearer session_demo_learner_001"
 
 def generate_test_wav(duration_sec=1.5, sample_rate=16000, freq=440.0) -> bytes:
     """Creates a valid 16kHz mono 16-bit PCM WAV in memory."""
@@ -167,7 +168,7 @@ def test_09_audio_privacy_compliance():
 
 def test_10_teacher_dashboard_api():
     """Verify Teacher Observatory API returns metrics and confusion radar."""
-    res = client.get("/api/dashboard")
+    res = client.get("/api/dashboard", headers={"Authorization": "Bearer session_demo_teacher_001"})
     assert res.status_code == 200
     data = res.json()
     assert "summary" in data

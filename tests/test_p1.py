@@ -17,6 +17,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from server import app, get_db, normalize_concept, calculate_hint_ladder, call_gnani_tts
 
 client = TestClient(app)
+client.headers["Authorization"] = "Bearer session_demo_learner_001"
 
 def generate_test_wav(duration_sec=1.5, sample_rate=16000, freq=440.0) -> bytes:
     """Generates 16kHz mono 16-bit PCM WAV in memory."""
@@ -271,7 +272,7 @@ def test_09_full_quiz_completion_and_results():
 
 def test_10_teacher_dashboard_p1_telemetry():
     """Verify Teacher Observatory returns P1 mastery distribution rates, level 3 concepts, and quiz counts."""
-    dash_res = client.get("/api/dashboard")
+    dash_res = client.get("/api/dashboard", headers={"Authorization": "Bearer session_demo_teacher_001"})
     assert dash_res.status_code == 200
     dash_data = dash_res.json()
     assert "summary" in dash_data

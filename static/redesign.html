@@ -1,0 +1,1875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pod-Siksha 2.0 — Aura Atelier (Product Redesign &amp; Interactive Master Prototype)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* ==============================================================
+       AURA ATELIER DESIGN SYSTEM — DESIGN TOKENS
+       ============================================================== */
+    :root {
+      /* Palette */
+      --canvas-bg: #FBF9F5;              /* Luminous Museum Parchment */
+      --surface-white: #FFFFFF;          /* Pure Elevation Surface */
+      --surface-tinted: #F6F2E9;         /* Soft Structural Inset */
+      --surface-hover: #F2ECE0;
+      
+      --ink-primary: #13221E;            /* Kalamkari Deep Emerald-Black */
+      --ink-secondary: #5C6E67;          /* Scholarly Muted Slate */
+      --ink-subtle: #8E9E97;             /* Muted Metadata & Hints */
+      
+      --accent-surya: #FF9F1C;           /* Surya Gold / Active Acoustic Resonator */
+      --accent-terracotta: #E05A47;      /* Warm Ochre / Primary CTA / Attention */
+      --accent-celadon: #528271;         /* Nilgiri Celadon / Mastered / Verification */
+      --accent-celadon-light: #EBF3F0;
+      --accent-coral-soft: #FDF3E7;
+      --accent-danger-soft: #FDEEEC;
+      
+      --border-parchment: #E8E1D5;       /* Architectural Grid Lines */
+      --border-focus: #13221E;
+      
+      /* Typography */
+      --font-editorial: 'Newsreader', Georgia, serif;
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      
+      /* Radii */
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 22px;
+      --radius-full: 9999px;
+      
+      /* Shadows */
+      --shadow-ambient: 0 4px 20px rgba(19, 34, 30, 0.04);
+      --shadow-elevated: 0 12px 36px rgba(19, 34, 30, 0.08);
+      --shadow-focus: 0 0 0 4px rgba(224, 90, 71, 0.15);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--canvas-bg);
+      color: var(--ink-primary);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Top Command Header & Prototype Screen Navigator */
+    header.master-header {
+      background: rgba(251, 249, 245, 0.94);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-parchment);
+      padding: 12px 32px;
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-cluster {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+    }
+
+    .brand-glyph {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-sm);
+      background: var(--ink-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--canvas-bg);
+      font-family: var(--font-editorial);
+      font-size: 22px;
+      font-style: italic;
+      font-weight: 500;
+      box-shadow: 0 3px 12px rgba(19, 34, 30, 0.2);
+    }
+
+    .brand-text-block {
+      display: flex;
+      flex-direction: column;
+    }
+    .brand-name {
+      font-family: var(--font-editorial);
+      font-size: 23px;
+      font-weight: 500;
+      color: var(--ink-primary);
+      letter-spacing: -0.3px;
+      line-height: 1.1;
+    }
+    .brand-edition {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--accent-terracotta);
+    }
+
+    /* Master Screen Switcher (Tabs) */
+    .screen-switcher-bar {
+      display: flex;
+      background: #ECE5D8;
+      padding: 4px;
+      border-radius: var(--radius-full);
+      gap: 2px;
+      max-width: 820px;
+      overflow-x: auto;
+    }
+
+    .screen-tab-btn {
+      background: transparent;
+      border: none;
+      outline: none;
+      padding: 7px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ink-secondary);
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .screen-tab-btn:hover {
+      color: var(--ink-primary);
+    }
+    .screen-tab-btn.active {
+      background: var(--surface-white);
+      color: var(--ink-primary);
+      box-shadow: 0 2px 8px rgba(19, 34, 30, 0.08);
+    }
+    .screen-tab-btn.highlight {
+      color: var(--accent-terracotta);
+      font-weight: 700;
+    }
+    .screen-tab-btn.highlight.active {
+      background: var(--accent-terracotta);
+      color: white;
+    }
+
+    .header-ctrls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-chime-test {
+      background: var(--surface-white);
+      border: 1px solid var(--border-parchment);
+      padding: 7px 14px;
+      border-radius: var(--radius-full);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ink-primary);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .btn-chime-test:hover {
+      background: var(--surface-tinted);
+      border-color: var(--ink-secondary);
+    }
+
+    .btn-action-primary {
+      background: var(--ink-primary);
+      color: var(--canvas-bg);
+      border: none;
+      padding: 8px 18px;
+      border-radius: var(--radius-full);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .btn-action-primary:hover {
+      background: #243E37;
+      transform: translateY(-1px);
+    }
+
+    /* Viewport Framework */
+    main.viewport-container {
+      flex: 1;
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 36px 32px 64px 32px;
+    }
+
+    .screen-frame {
+      display: none;
+      animation: enterView 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .screen-frame.active {
+      display: block;
+    }
+
+    @keyframes enterView {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Common Card Styling */
+    .atelier-card {
+      background: var(--surface-white);
+      border: 1px solid var(--border-parchment);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      box-shadow: var(--shadow-ambient);
+    }
+
+    .editorial-label {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      color: var(--accent-terracotta);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .editorial-h1 {
+      font-family: var(--font-editorial);
+      font-size: 42px;
+      font-weight: 400;
+      line-height: 1.15;
+      letter-spacing: -0.8px;
+      color: var(--ink-primary);
+    }
+    .editorial-h2 {
+      font-family: var(--font-editorial);
+      font-size: 28px;
+      font-weight: 500;
+      line-height: 1.25;
+      letter-spacing: -0.5px;
+      color: var(--ink-primary);
+    }
+    .editorial-lead {
+      font-size: 16px;
+      color: var(--ink-secondary);
+      line-height: 1.55;
+      margin-top: 8px;
+      max-width: 680px;
+    }
+
+    /* Notification Toast */
+    #toastMessage {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      background: var(--ink-primary);
+      color: var(--canvas-bg);
+      padding: 13px 24px;
+      border-radius: var(--radius-full);
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: var(--shadow-elevated);
+      display: none;
+      z-index: 1000;
+      animation: enterView 0.2s ease;
+    }
+
+    /* ==============================================================
+       SCREEN 1: LANDING PAGE ("Textbooks have a voice")
+       ============================================================== */
+    .landing-hero-grid {
+      display: grid;
+      grid-template-columns: 1.25fr 1fr;
+      gap: 48px;
+      align-items: center;
+      margin-bottom: 48px;
+    }
+
+    .hero-tagline-box {
+      border-left: 3px solid var(--accent-terracotta);
+      padding-left: 20px;
+      margin: 20px 0 32px 0;
+    }
+    .hero-tagline {
+      font-family: var(--font-editorial);
+      font-size: 24px;
+      font-style: italic;
+      color: var(--ink-primary);
+    }
+    .hero-subtag {
+      font-size: 15px;
+      color: var(--ink-secondary);
+      margin-top: 6px;
+    }
+
+    .hero-cta-cluster {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    /* Acoustic Resonator Stage Box */
+    .resonator-stage {
+      background: var(--surface-white);
+      border: 1px solid var(--border-parchment);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      box-shadow: var(--shadow-elevated);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .resonator-stage::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--accent-terracotta), var(--accent-surya), var(--accent-celadon));
+    }
+
+    .stage-hosts-duo {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .host-resonator-card {
+      background: var(--surface-tinted);
+      border: 1px solid var(--border-parchment);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: all 0.3s ease;
+    }
+    .host-resonator-card.active-voice {
+      background: var(--surface-white);
+      border-color: var(--accent-terracotta);
+      box-shadow: 0 4px 18px rgba(224, 90, 71, 0.12);
+    }
+    .host-badge-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .host-avatar-initial {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 14px;
+      color: white;
+    }
+    .avatar-yash { background: var(--accent-terracotta); }
+    .avatar-priya { background: var(--accent-surya); }
+
+    .waveform-visualizer {
+      display: flex;
+      gap: 3px;
+      align-items: center;
+      height: 24px;
+      margin-top: 6px;
+    }
+    .wave-bar {
+      width: 3px;
+      height: 6px;
+      background: var(--ink-subtle);
+      border-radius: 2px;
+      transition: height 0.2s;
+    }
+    .host-resonator-card.active-voice .wave-bar {
+      background: var(--accent-terracotta);
+      animation: waveDance 0.8s infinite alternate ease-in-out;
+    }
+    .host-resonator-card.host-priya.active-voice .wave-bar {
+      background: var(--accent-surya);
+    }
+    .wave-bar:nth-child(2) { animation-delay: 0.15s; }
+    .wave-bar:nth-child(3) { animation-delay: 0.35s; }
+    .wave-bar:nth-child(4) { animation-delay: 0.5s; }
+    .wave-bar:nth-child(5) { animation-delay: 0.2s; }
+    .wave-bar:nth-child(6) { animation-delay: 0.4s; }
+
+    @keyframes waveDance {
+      0% { height: 4px; }
+      100% { height: 22px; }
+    }
+
+    /* 10-Step Cognitive Learning Loop Section */
+    .loop-strip-header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .cognitive-loop-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+      margin-top: 16px;
+    }
+    .loop-node-box {
+      background: var(--surface-white);
+      border: 1px solid var(--border-parchment);
+      border-radius: var(--radius-md);
+      padding: 18px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      position: relative;
+    }
+    .loop-step-num {
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--accent-terracotta);
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+    }
+    .loop-node-title {
+      font-family: var(--font-editorial);
+      font-size: 19px;
+      font-weight: 500;
+      color: var(--ink-primary);
+    }
+    .loop-node-desc {
+      font-size: 12px;
+      color: var(--ink-secondary);
+      line-height: 1.4;
+    }
+
+    /* ==============================================================
+       SCREEN 2 & 3: AUTHENTICATION (Login, Registration, Reset)
+       ============================================================== */
+    .auth-split-wrapper {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      min-height: 580px;
+      background: var(--surface-white);
+      border: 1px solid var(--border-parchment);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-elevated);
+      max-width: 980px;
+      margin: 0 auto;
+    }
+    .auth-art-column {
+      background: #101E1A;
+      color: var(--canvas-bg);
+      padding: 48px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+    .auth-art-column::after {
+      content: "";
+      position: absolute;
+      bottom: -40px;
+      right: -40px;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 159, 28, 0.15);
+      pointer-events: none;
+    }
+    .auth-quote {
+      font-family: var(--font-editorial);
+      font-size: 26px;
+      font-style: italic;
+      line-height: 1.35;
+      color: #E6DFD3;
+    }
+    .auth-form-column {
+      padding: 48px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .form-field {
+      margin-bottom: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .form-field label {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: var(--ink-secondary);
+    }
+    .form-input {
+      background: var(--surface-tinted);
+      border: 1px solid var(--border-parchment);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      font-family: var(--font-sans);
+      font-size: 14px;
+      color: var(--ink-primary);
+      outline: none;
+      transition: all 0.2s;
+    }
+    .form-input:focus {
+      background: var(--surface-white);
+      border-color: var(--ink-primary);
+      box-shadow: var(--shadow-focus);
+    }
+    .password-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .password-wrap input {
+      width: 100%;
+      padding-right: 40px;
+    }
+    .password-toggle-btn {
+      position: absolute;
+      right: 12px;
+      background: none;
+      border: none;
+      color: var(--ink-secondary);
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* ==============================================================
+       SCREEN 4: PERSONAL HOME ("My Atelier / Dashboard")
+       ============================================================== */
+    .atelier-home-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 28px;
+      margin-top: 24px;
+    }
+
+    .hero-resume-card {
+      background: linear-gradient(135deg, #13221E 0%, #1A302A 100%);
+      color: var(--canvas-bg);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 240px;
+      box-shadow: var(--shadow-elevated);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-resume-card::after {
+      content: "POD-SIKSHA";
+      position: absolute;
+      right: -10px;
+      bottom: -20px;
+      font-family: var(--font-editorial);
+      font-size: 96px;
+      font-style: italic;
+      color: rgba(255, 255, 255, 0.03);
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    .pulse-metrics-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 20px;
+    }
+    .pulse-box {
+      background: var(--surface-white);
+      border: 1px solid var(--border-parchment);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .pulse-val {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--ink-primary);
+    }
+    .pulse-lbl {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--ink-secondary);
+    }
+
+    .journey-tile {
+      background: var(--surface-white);
+      border: 1px solid var(--border-parchment);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.2s;
+      cursor: pointer;
+      margin-top: 12px;
+    }
+    .journey-tile:hover {
+      border-color: var(--ink-primary);
+      box-shadow: var(--shadow-ambient);
+      transform: translateY(-1px);
+    }
+
+    /* ==============================================================
+       SCREEN 5: LEARNING INSIGHTS (Priority Showcase)
+       ============================================================== */
+    .insights-master-grid {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr;
+      gap: 28px;
+      margin-top: 24px;
+    }
+
+    .circular-cognitive-ring {
+      width: 140px;
+      height: 140px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .circular-cognitive-ring svg {
+      transform: rotate(-90deg);
+      width: 100%;
+      height: 100%;
+    }
+    .ring-bg {
+      fill: none;
+      stroke: #EAE4D6;
+      stroke-width: 9;
+    }
+    .ring-progress-outer {
+      fill: none;
+      stroke: var(--accent-celadon);
+      stroke-width: 9;
+      stroke-linecap: round;
+      stroke-dasharray: 376.99;
+      stroke-dashoffset: 82.9; /* 78% mastery */
+      transition: stroke-dashoffset 1s ease;
+    }
+    .ring-center-score {
+      position: absolute;
+      font-family: var(--font-editorial);
+      font-size: 34px;
+      font-weight: 500;
+      color: var(--ink-primary);
+    }
+
+    .concept-track-row {
+      padding: 14px 0;
+      border-bottom: 1px solid #EFEAE0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .concept-track-row:last-child {
+      border-bottom: none;
+    }
+    .track-meta-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .track-name {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--ink-primary);
+    }
+    .track-pill {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      padding: 3px 8px;
+      border-radius: var(--radius-full);
+    }
+    .pill-mastered { background: var(--accent-celadon-light); color: var(--accent-celadon); }
+    .pill-progress { background: #FFF7EB; color: #D97706; }
+    .pill-danger { background: var(--accent-danger-soft); color: var(--accent-terracotta); }
+
+    .track-bar-container {
+      height: 6px;
+      background: #ECE5D8;
+      border-radius: var(--radius-full);
+      overflow: hidden;
+      width: 100%;
+    }
+    .track-bar-fill {
+      height: 100%;
+      border-radius: var(--radius-full);
+      transition: width 0.8s ease;
+    }
+
+    /* Misconception Diagnostic Card */
+    .misconception-radar-box {
+      background: var(--surface-white);
+      border: 1px solid var(--border-parchment);
+      border-left: 4px solid var(--accent-terracotta);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      margin-top: 14px;
+      box-shadow: var(--shadow-ambient);
+    }
+    .misconception-kicker {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--accent-terracotta);
+    }
+    .misconception-body {
+      font-size: 14px;
+      color: var(--ink-primary);
+      margin-top: 6px;
+      line-height: 1.45;
+    }
+    .misconception-citation {
+      background: var(--surface-tinted);
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
+      font-size: 12px;
+      color: var(--ink-secondary);
+      margin-top: 10px;
+    }
+
+    /* ==============================================================
+       SCREEN 6: LEARNING STUDIO ("The Acoustic Stage")
+       ============================================================== */
+    .studio-layout {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      margin-top: 24px;
+    }
+
+    .studio-top-strip {
+      background: var(--surface-white);
+      border: 1px solid var(--border-parchment);
+      border-radius: var(--radius-lg);
+      padding: 24px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow-ambient);
+    }
+
+    .two-hosts-stage {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    .host-broadcast-card {
+      background: var(--surface-white);
+      border: 2px solid transparent;
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      box-shadow: var(--shadow-ambient);
+      transition: all 0.3s;
+    }
+    .host-broadcast-card.broadcasting {
+      border-color: var(--accent-terracotta);
+      box-shadow: 0 8px 30px rgba(224, 90, 71, 0.15);
+      background: #FFFAF8;
+    }
+    .host-broadcast-card.host-b.broadcasting {
+      border-color: var(--accent-surya);
+      box-shadow: 0 8px 30px rgba(255, 159, 28, 0.15);
+      background: #FFFDF8;
+    }
+    .host-big-avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 28px;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .teleprompter-enclosure {
+      background: var(--surface-white);
+      border: 1px solid var(--border-parchment);
+      border-radius: var(--radius-lg);
+      padding: 36px;
+      box-shadow: var(--shadow-ambient);
+    }
+    .teleprompter-line {
+      font-family: var(--font-editorial);
+      font-size: 28px;
+      line-height: 1.4;
+      color: var(--ink-primary);
+      min-height: 84px;
+    }
+
+    .segmented-timeline {
+      display: flex;
+      gap: 4px;
+      height: 8px;
+      background: #EAE4D6;
+      border-radius: var(--radius-full);
+      overflow: hidden;
+      margin-top: 24px;
+    }
+    .timeline-segment {
+      flex: 1;
+      height: 100%;
+      background: transparent;
+      transition: background 0.2s;
+    }
+    .timeline-segment.played { background: var(--accent-celadon); }
+    .timeline-segment.current { background: var(--accent-terracotta); }
+
+    .tactile-interruption-deck {
+      background: #13221E;
+      color: var(--canvas-bg);
+      border-radius: var(--radius-lg);
+      padding: 24px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .tactile-mic-trigger {
+      background: var(--accent-terracotta);
+      color: white;
+      border: none;
+      padding: 14px 28px;
+      border-radius: var(--radius-full);
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 4px 20px rgba(224, 90, 71, 0.4);
+      transition: all 0.2s;
+      user-select: none;
+    }
+    .tactile-mic-trigger:active, .tactile-mic-trigger.holding {
+      background: #C44332;
+      transform: scale(0.97);
+      box-shadow: 0 0 0 8px rgba(224, 90, 71, 0.3);
+    }
+
+    /* ==============================================================
+       SCREEN 7: LEARNING WORKSPACE ("The Cognitive Desk")
+       ============================================================== */
+    .desk-split-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.35fr;
+      gap: 28px;
+      margin-top: 24px;
+      height: calc(100vh - 190px);
+    }
+    .desk-pane {
+      background: var(--surface-white);
+      border: 1px solid var(--border-parchment);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      overflow-y: auto;
+      box-shadow: var(--shadow-ambient);
+      display: flex;
+      flex-direction: column;
+    }
+    .source-quote-block {
+      background: var(--surface-tinted);
+      border: 1px solid var(--border-parchment);
+      border-left: 3px solid var(--accent-celadon);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      font-size: 14px;
+      line-height: 1.55;
+      margin-top: 14px;
+    }
+
+    /* ==============================================================
+       SCREEN 8: CONCEPT DNA ("Interactive Knowledge Visualizer")
+       ============================================================== */
+    .concept-dna-canvas {
+      background: var(--surface-tinted);
+      border: 1px solid var(--border-parchment);
+      border-radius: var(--radius-lg);
+      padding: 40px;
+      min-height: 480px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      margin-top: 24px;
+    }
+    .dna-cluster-row {
+      display: flex;
+      gap: 36px;
+      align-items: center;
+      margin: 20px 0;
+      position: relative;
+      z-index: 2;
+    }
+    .dna-node {
+      background: var(--surface-white);
+      border: 2px solid var(--border-parchment);
+      padding: 14px 22px;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-ambient);
+      cursor: pointer;
+      transition: all 0.25s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .dna-node:hover, .dna-node.selected {
+      border-color: var(--accent-terracotta);
+      box-shadow: 0 8px 24px rgba(224, 90, 71, 0.18);
+      transform: translateY(-2px);
+    }
+    .dna-node.mastered {
+      border-color: var(--accent-celadon);
+    }
+    .dna-node-label {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--ink-primary);
+    }
+    .dna-node-status {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--ink-secondary);
+    }
+
+    /* ==============================================================
+       SCREEN 9: TEACH-BACK MODE ("The Signature Innovation")
+       ============================================================== */
+    .teachback-console {
+      background: var(--surface-white);
+      border: 1px solid var(--border-parchment);
+      border-radius: var(--radius-lg);
+      padding: 36px;
+      box-shadow: var(--shadow-ambient);
+      margin-top: 24px;
+    }
+    .teachback-prompt-banner {
+      background: #FDF9F3;
+      border: 1px solid #EEDFCE;
+      border-radius: var(--radius-md);
+      padding: 24px;
+      margin: 18px 0;
+    }
+    .teachback-eval-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 20px;
+    }
+    .eval-box {
+      border-radius: var(--radius-md);
+      padding: 20px;
+      border: 1px solid;
+    }
+    .eval-box.understood {
+      background: var(--accent-celadon-light);
+      border-color: #C8DFD7;
+    }
+    .eval-box.misconception {
+      background: var(--accent-danger-soft);
+      border-color: #F8D0C9;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Global Command Header -->
+  <header class="master-header">
+    <div class="brand-cluster" onclick="switchScreen('landing')">
+      <div class="brand-glyph">P</div>
+      <div class="brand-text-block">
+        <span class="brand-name">Pod-Siksha</span>
+        <span class="brand-edition">Aura Atelier 2.0</span>
+      </div>
+    </div>
+
+    <!-- Master Screen Switcher (All 9 Requested Screens) -->
+    <nav class="screen-switcher-bar">
+      <button class="screen-tab-btn active" id="tab-landing" onclick="switchScreen('landing')">1. Landing</button>
+      <button class="screen-tab-btn" id="tab-login" onclick="switchScreen('login')">2. Login</button>
+      <button class="screen-tab-btn" id="tab-register" onclick="switchScreen('register')">3. Register</button>
+      <button class="screen-tab-btn" id="tab-home" onclick="switchScreen('home')">4. Personal Home</button>
+      <button class="screen-tab-btn highlight" id="tab-insights" onclick="switchScreen('insights')">5. Learning Insights</button>
+      <button class="screen-tab-btn" id="tab-studio" onclick="switchScreen('studio')">6. Learning Studio</button>
+      <button class="screen-tab-btn" id="tab-workspace" onclick="switchScreen('workspace')">7. Workspace</button>
+      <button class="screen-tab-btn" id="tab-concept-dna" onclick="switchScreen('concept-dna')">8. Concept DNA</button>
+      <button class="screen-tab-btn" id="tab-teachback" onclick="switchScreen('teachback')">9. Teach-Back</button>
+    </nav>
+
+    <!-- Global Sound & Action Controls -->
+    <div class="header-ctrls">
+      <button class="btn-chime-test" onclick="triggerHarmonicChime()">
+        <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+        <span>Test Speakers</span>
+      </button>
+      <button class="btn-action-primary" onclick="switchScreen('insights')">
+        <span>Mastery Pulse</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Viewport Container -->
+  <main class="viewport-container">
+
+    <!-- ==============================================================
+         1. LANDING PAGE
+         ============================================================== -->
+    <section class="screen-frame active" id="view-landing">
+      <div class="landing-hero-grid">
+        <div>
+          <div class="editorial-label">Voice-First AI Multilingual Learning Platform</div>
+          <h1 class="editorial-h1">Your textbooks have a voice.<br>Now, they can listen too.</h1>
+          
+          <div class="hero-tagline-box">
+            <div class="hero-tagline">"Don't just learn it. Understand it. Explain it. Master it."</div>
+            <div class="hero-subtag">Turn complex educational chapters into two-host conversational podcasts. Interrupt in your mother tongue, explain concepts back to AI, and cure misconceptions.</div>
+          </div>
+
+          <div class="hero-cta-cluster">
+            <button class="btn-action-primary" style="padding:13px 28px; font-size:14px;" onclick="switchScreen('register')">
+              Start Your Learning Journey &rarr;
+            </button>
+            <button class="btn-chime-test" style="padding:13px 22px; font-size:14px;" onclick="switchScreen('insights')">
+              Explore Cognitive Insights
+            </button>
+          </div>
+        </div>
+
+        <!-- Acoustic Resonator Live Preview -->
+        <div class="resonator-stage">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span class="editorial-label" style="margin-bottom:0;">Live Acoustic Stage</span>
+            <span style="font-size:11px; font-weight:700; color:var(--ink-secondary);">Gnani Timbre 24kHz Linear PCM</span>
+          </div>
+
+          <div class="stage-hosts-duo">
+            <!-- Host A -->
+            <div class="host-resonator-card active-voice" id="lHostA">
+              <div class="host-badge-row">
+                <div class="host-avatar-initial avatar-yash">Y</div>
+                <span style="font-size:10px; font-weight:800; text-transform:uppercase; color:var(--accent-terracotta);">Speaking Live</span>
+              </div>
+              <div style="font-weight:700; font-size:15px; margin-top:4px;">Host A • Yash</div>
+              <div style="font-size:11px; color:var(--ink-secondary);">Warm Explainer • Shivani Voice</div>
+              <div class="waveform-visualizer">
+                <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+                <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+              </div>
+            </div>
+
+            <!-- Host B -->
+            <div class="host-resonator-card host-priya" id="lHostB">
+              <div class="host-badge-row">
+                <div class="host-avatar-initial avatar-priya">P</div>
+                <span style="font-size:10px; font-weight:800; text-transform:uppercase; color:var(--ink-subtle);">Listening</span>
+              </div>
+              <div style="font-weight:700; font-size:15px; margin-top:4px;">Host B • Priya</div>
+              <div style="font-size:11px; color:var(--ink-secondary);">Inquisitive Co-Host • Yashraj Voice</div>
+              <div class="waveform-visualizer">
+                <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+                <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+              </div>
+            </div>
+          </div>
+
+          <div style="background:var(--surface-tinted); border-radius:var(--radius-sm); padding:12px 16px; font-family:var(--font-editorial); font-size:15px; font-style:italic;">
+            "Pod-Siksha ki swagatam! Chettu leaf lo solar energy ela chemical energy ga marutundo asalu epudaina alochinchara?"
+          </div>
+        </div>
+      </div>
+
+      <!-- The 10-Step Cognitive Learning Loop -->
+      <div class="atelier-card" style="margin-top:32px;">
+        <div class="loop-strip-header">
+          <div class="editorial-label" style="justify-content:center;">The Core Cognitive Loop</div>
+          <h2 class="editorial-h2">From Passive Hearing to Verified Mastery</h2>
+        </div>
+
+        <div class="cognitive-loop-grid">
+          <div class="loop-node-box">
+            <span class="loop-step-num">01 • Discover</span>
+            <div class="loop-node-title">Ingest Chapter</div>
+            <p class="loop-node-desc">Upload syllabus PDFs or paste text. Automatic grounding in verified curriculum.</p>
+          </div>
+          <div class="loop-node-box">
+            <span class="loop-step-num">02 • Listen</span>
+            <div class="loop-node-title">Two-Host Dialogue</div>
+            <p class="loop-node-desc">Host A &amp; B unpack concepts with natural questions and vivid metaphors.</p>
+          </div>
+          <div class="loop-node-box">
+            <span class="loop-step-num">03 • Question</span>
+            <div class="loop-node-title">Tactile Interruption</div>
+            <p class="loop-node-desc">Press Space to interrupt. Ask questions in your mother tongue with zero penalty.</p>
+          </div>
+          <div class="loop-node-box">
+            <span class="loop-step-num">04 • Explain</span>
+            <div class="loop-node-title">Teach-Back Mode</div>
+            <p class="loop-node-desc">Explain concepts back to AI in your words. Semantic diagnostic evaluates meaning.</p>
+          </div>
+          <div class="loop-node-box">
+            <span class="loop-step-num">05 • Master</span>
+            <div class="loop-node-title">Memory Loop</div>
+            <p class="loop-node-desc">Adaptive spaced revision schedules weak concepts until misconceptions vanish.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================================================
+         2. LOGIN PAGE
+         ============================================================== -->
+    <section class="screen-frame" id="view-login">
+      <div class="auth-split-wrapper">
+        <div class="auth-art-column">
+          <div>
+            <div class="editorial-label" style="color:var(--accent-surya);">Vedic Lumina Architecture</div>
+            <h2 style="font-family:var(--font-editorial); font-size:32px; color:white; margin-top:8px;">Welcome Back to Your Atelier</h2>
+          </div>
+          <div class="auth-quote">
+            "Knowledge is not merely absorbed; it is articulated, questioned and made your own."
+          </div>
+          <div style="font-size:12px; color:#A4B5AD;">
+            Persistent learner sessions backed by PostgreSQL / SQLite.
+          </div>
+        </div>
+
+        <div class="auth-form-column">
+          <div class="editorial-label">Sign In</div>
+          <h2 class="editorial-h2" style="font-size:26px; margin-bottom:20px;">Access Your Learning Journeys</h2>
+
+          <form onsubmit="event.preventDefault(); showToast('Welcome back, Learner!'); switchScreen('home');">
+            <div class="form-field">
+              <label>Email Address</label>
+              <input type="email" class="form-input" placeholder="learner@podsiksha.in" value="learner@demo.in" required>
+            </div>
+            <div class="form-field">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <label>Password</label>
+                <a href="javascript:void(0)" onclick="showToast('Password reset link dispatched via secure token.')" style="font-size:11px; color:var(--accent-terracotta); text-decoration:none; font-weight:600;">Forgot Password?</a>
+              </div>
+              <div class="password-wrap">
+                <input type="password" id="loginPass" class="form-input" value="podsiksha2026" required>
+                <button type="button" class="password-toggle-btn" onclick="togglePass('loginPass')">Show</button>
+              </div>
+            </div>
+            <button type="submit" class="btn-action-primary" style="width:100%; justify-content:center; padding:12px; font-size:14px; margin-top:10px;">
+              Enter Learning Atelier &rarr;
+            </button>
+          </form>
+
+          <div style="text-align:center; font-size:13px; color:var(--ink-secondary); margin-top:20px;">
+            Don't have a personal account? <a href="javascript:void(0)" onclick="switchScreen('register')" style="color:var(--accent-terracotta); font-weight:700; text-decoration:none;">Create one</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================================================
+         3. REGISTRATION PAGE
+         ============================================================== -->
+    <section class="screen-frame" id="view-register">
+      <div class="auth-split-wrapper">
+        <div class="auth-art-column">
+          <div>
+            <div class="editorial-label" style="color:var(--accent-surya);">Sovereign Learning Identity</div>
+            <h2 style="font-family:var(--font-editorial); font-size:32px; color:white; margin-top:8px;">Begin Your Mastery Journey</h2>
+          </div>
+          <div class="auth-quote">
+            "Every question you ask shapes a personalized map of concepts, misconceptions and breakthroughs."
+          </div>
+          <div style="font-size:12px; color:#A4B5AD;">
+            No forced student/teacher separation. A single personal account built for genuine understanding.
+          </div>
+        </div>
+
+        <div class="auth-form-column">
+          <div class="editorial-label">New Learner Profile</div>
+          <h2 class="editorial-h2" style="font-size:26px; margin-bottom:16px;">Create Your Account</h2>
+
+          <form onsubmit="event.preventDefault(); showToast('Account created! Welcome to Pod-Siksha.'); switchScreen('home');">
+            <div class="form-field">
+              <label>Full Name</label>
+              <input type="text" class="form-input" placeholder="Rishitha J.V." required>
+            </div>
+            <div class="form-field">
+              <label>Email Address</label>
+              <input type="email" class="form-input" placeholder="rishitha@example.in" required>
+            </div>
+            <div class="form-field">
+              <label>Password</label>
+              <div class="password-wrap">
+                <input type="password" id="regPass" class="form-input" placeholder="Minimum 8 characters" required>
+                <button type="button" class="password-toggle-btn" onclick="togglePass('regPass')">Show</button>
+              </div>
+            </div>
+            <div class="form-field">
+              <label>Preferred Voice Language</label>
+              <select class="form-input">
+                <option value="te" selected>Telugu (తెలుగు)</option>
+                <option value="hi">Hindi (हिन्दी)</option>
+                <option value="ta">Tamil (தமிழ்)</option>
+                <option value="kn">Kannada (ಕನ್ನಡ)</option>
+                <option value="mr">Marathi (मराठी)</option>
+                <option value="bn">Bengali (বাংলা)</option>
+              </select>
+            </div>
+            <button type="submit" class="btn-action-primary" style="width:100%; justify-content:center; padding:12px; font-size:14px; margin-top:8px;">
+              Create Personal Account &rarr;
+            </button>
+          </form>
+
+          <div style="text-align:center; font-size:13px; color:var(--ink-secondary); margin-top:16px;">
+            Already have an account? <a href="javascript:void(0)" onclick="switchScreen('login')" style="color:var(--accent-terracotta); font-weight:700; text-decoration:none;">Sign in</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================================================
+         4. PERSONAL HOME ("My Atelier / Dashboard")
+         ============================================================== -->
+    <section class="screen-frame" id="view-home">
+      <div class="editorial-label">Personal Learning Atelier</div>
+      <h1 class="editorial-h1">Namaskaram, Learner.</h1>
+      <p class="editorial-lead">Here is where your understanding deepens. Pick up where you left off or start an exploration.</p>
+
+      <div class="atelier-home-grid">
+        <!-- Left: Continue Learning & Journey History -->
+        <div>
+          <!-- Hero Resume Card -->
+          <div class="hero-resume-card">
+            <div>
+              <span style="font-size:11px; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:var(--accent-surya);">In Progress • Turn 6 of 14</span>
+              <h2 style="font-family:var(--font-editorial); font-size:28px; color:white; margin-top:6px;">Photosynthesis &amp; Cellular Energetics</h2>
+              <p style="font-size:14px; color:#CAD8D2; margin-top:4px;">Andhra Pradesh Class 10 Biology • Telugu Voice Narration</p>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; z-index:2;">
+              <div>
+                <span style="font-size:12px; color:#A4B5AD;">Last doubt: </span>
+                <span style="font-size:12px; font-weight:700; color:white;">Water photolysis electron replenishment</span>
+              </div>
+              <button class="btn-action-primary" style="background:var(--accent-terracotta);" onclick="switchScreen('studio')">
+                Resume at Turn 6 &rarr;
+              </button>
+            </div>
+          </div>
+
+          <!-- My Journeys List -->
+          <div style="margin-top:28px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+              <h3 class="editorial-h2" style="font-size:22px;">Recent Learning Journeys</h3>
+              <span style="font-size:12px; font-weight:700; color:var(--ink-secondary);">102 Sessions in Database</span>
+            </div>
+
+            <div class="journey-tile" onclick="switchScreen('studio')">
+              <div>
+                <div style="font-weight:700; font-size:15px;">Photosynthesis and Cellular Energetics</div>
+                <div style="font-size:12px; color:var(--ink-secondary); margin-top:2px;">14 Turns • Telugu • 78% Concept Mastery • Active</div>
+              </div>
+              <span style="font-size:13px; font-weight:700; color:var(--accent-terracotta);">Continue &rarr;</span>
+            </div>
+
+            <div class="journey-tile" onclick="switchScreen('workspace')">
+              <div>
+                <div style="font-weight:700; font-size:15px;">Quadratic Equations Class 10</div>
+                <div style="font-size:12px; color:var(--ink-secondary); margin-top:2px;">14 Turns • Telugu-English • 92% Concept Mastery</div>
+              </div>
+              <span style="font-size:13px; font-weight:700; color:var(--ink-secondary);">Workspace &rarr;</span>
+            </div>
+
+            <div class="journey-tile" onclick="switchScreen('insights')">
+              <div>
+                <div style="font-weight:700; font-size:15px;">Science of Happiness &amp; Well-being</div>
+                <div style="font-size:12px; color:var(--ink-secondary); margin-top:2px;">14 Turns • Telugu • 4 Completed Quizzes</div>
+              </div>
+              <span style="font-size:13px; font-weight:700; color:var(--ink-secondary);">Insights &rarr;</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Daily Cognitive Pulse & Start New -->
+        <div>
+          <div class="atelier-card" style="padding:24px;">
+            <div class="editorial-label">Daily Cognitive Pulse</div>
+            <div class="pulse-metrics-strip">
+              <div class="pulse-box">
+                <span class="pulse-val" style="color:var(--accent-celadon);">78%</span>
+                <span class="pulse-lbl">Overall Mastery</span>
+              </div>
+              <div class="pulse-box">
+                <span class="pulse-val">57</span>
+                <span class="pulse-lbl">Quizzes Done</span>
+              </div>
+              <div class="pulse-box">
+                <span class="pulse-val" style="color:var(--accent-terracotta);">1</span>
+                <span class="pulse-lbl">Misconception</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Chapter Start Box -->
+          <div class="atelier-card" style="margin-top:20px; padding:24px;">
+            <div class="editorial-label">Start a New Exploration</div>
+            <h4 class="editorial-h2" style="font-size:20px;">Upload Study Material</h4>
+            <p style="font-size:13px; color:var(--ink-secondary); margin:6px 0 16px 0;">Drag and drop a PDF or enter a topic title.</p>
+
+            <div style="border:2px dashed var(--border-parchment); border-radius:var(--radius-md); padding:24px; text-align:center; background:var(--surface-tinted); cursor:pointer;" onclick="showToast('Sample chapter loaded: sample_chapter.pdf'); switchScreen('studio');">
+              <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" style="color:var(--accent-terracotta); margin-bottom:6px;"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M12 18v-6M9 15l3-3 3 3"/></svg>
+              <div style="font-weight:700; font-size:13px;">Choose PDF or Drop Here</div>
+              <div style="font-size:11px; color:var(--ink-secondary);">Automatic text extraction &amp; 14-turn podcast generation</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================================================
+         5. LEARNING INSIGHTS (Priority Benchmark)
+         ============================================================== -->
+    <section class="screen-frame" id="view-insights">
+      <div class="editorial-label">Sovereign Cognitive Telemetry</div>
+      <h1 class="editorial-h1">Personal Learning Insights</h1>
+      <p class="editorial-lead">A visual map of your understanding. Identify mastered concepts, examine diagnosed misconceptions, and schedule adaptive recall.</p>
+
+      <div class="insights-master-grid">
+        <!-- Left: Concept Understanding Matrix -->
+        <div class="atelier-card">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <div>
+              <h2 class="editorial-h2">Concept Mastery Matrix</h2>
+              <span style="font-size:12px; color:var(--ink-secondary);">Photosynthesis &amp; Cellular Energetics</span>
+            </div>
+            <div class="circular-cognitive-ring">
+              <svg viewBox="0 0 140 140">
+                <circle class="ring-bg" cx="70" cy="70" r="60" />
+                <circle class="ring-progress-outer" cx="70" cy="70" r="60" />
+              </svg>
+              <span class="ring-center-score">78%</span>
+            </div>
+          </div>
+
+          <!-- Concepts Tracks from DB -->
+          <div class="concept-track-row">
+            <div class="track-meta-line">
+              <span class="track-name">Chloroplast Structure &amp; Double Membrane</span>
+              <span class="track-pill pill-mastered">100% • Mastered</span>
+            </div>
+            <div class="track-bar-container">
+              <div class="track-bar-fill" style="width: 100%; background:var(--accent-celadon);"></div>
+            </div>
+          </div>
+
+          <div class="concept-track-row">
+            <div class="track-meta-line">
+              <span class="track-name">Light Reactions &amp; Thylakoid Stacks</span>
+              <span class="track-pill pill-mastered">100% • Mastered</span>
+            </div>
+            <div class="track-bar-container">
+              <div class="track-bar-fill" style="width: 100%; background:var(--accent-celadon);"></div>
+            </div>
+          </div>
+
+          <div class="concept-track-row">
+            <div class="track-meta-line">
+              <span class="track-name">Chlorophyll Photon Absorption Spectrum</span>
+              <span class="track-pill pill-mastered">81% • Mastered</span>
+            </div>
+            <div class="track-bar-container">
+              <div class="track-bar-fill" style="width: 81%; background:var(--accent-celadon);"></div>
+            </div>
+          </div>
+
+          <div class="concept-track-row">
+            <div class="track-meta-line">
+              <span class="track-name">Stomatal Gas Exchange &amp; Transpiration</span>
+              <span class="track-pill pill-progress">38% • In Progress</span>
+            </div>
+            <div class="track-bar-container">
+              <div class="track-bar-fill" style="width: 38%; background:var(--accent-surya);"></div>
+            </div>
+          </div>
+
+          <div class="concept-track-row">
+            <div class="track-meta-line">
+              <span class="track-name">Water Photolysis &amp; Electron Replenishment</span>
+              <span class="track-pill pill-danger">13% • Revision Needed</span>
+            </div>
+            <div class="track-bar-container">
+              <div class="track-bar-fill" style="width: 13%; background:var(--accent-terracotta);"></div>
+            </div>
+          </div>
+
+          <div class="concept-track-row">
+            <div class="track-meta-line">
+              <span class="track-name">Calvin Cycle &amp; RuBisCO Carbon Fixation</span>
+              <span class="track-pill pill-danger">25% • Revision Needed</span>
+            </div>
+            <div class="track-bar-container">
+              <div class="track-bar-fill" style="width: 25%; background:var(--accent-terracotta);"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Misconception Radar & Memory Loop -->
+        <div>
+          <div class="atelier-card" style="margin-bottom:20px;">
+            <div class="editorial-label">Diagnosed Misconceptions</div>
+            <h3 class="editorial-h2" style="font-size:22px;">Misconception Radar</h3>
+
+            <div class="misconception-radar-box">
+              <span class="misconception-kicker">Concept: Water Photolysis</span>
+              <p class="misconception-body">
+                <strong>Student mental model:</strong> "Water is split directly to synthesize glucose sugar."
+              </p>
+              <div class="misconception-citation">
+                <strong>Textbook truth:</strong> Water photolysis replenishes chlorophyll electrons in Photosystem II; oxygen is released as a byproduct while electrons power ATP synthase.
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px;">
+                <span style="font-size:11px; font-weight:800; color:var(--ink-secondary);">Confidence: 88%</span>
+                <button class="btn-chime-test" style="font-size:11px; padding:4px 10px;" onclick="switchScreen('teachback')">Test in Teach-Back &rarr;</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Memory Loop Queue -->
+          <div class="atelier-card">
+            <div class="editorial-label">Memory Loop Spaced Recall</div>
+            <h3 class="editorial-h2" style="font-size:22px;">Scheduled Touchpoints</h3>
+
+            <div style="display:flex; flex-direction:column; gap:10px; margin-top:14px;">
+              <div class="journey-tile" style="margin-top:0; padding:14px;">
+                <div>
+                  <div style="font-weight:700; font-size:13px;">Water Photolysis Mechanism</div>
+                  <div style="font-size:11px; color:var(--ink-secondary);">Interval: 24h • Spoken quiz queued</div>
+                </div>
+                <button class="btn-action-primary" style="padding:5px 12px; font-size:11px;" onclick="showToast('Starting 60-second oral check...')">Recall Now</button>
+              </div>
+
+              <div class="journey-tile" style="margin-top:0; padding:14px;">
+                <div>
+                  <div style="font-weight:700; font-size:13px;">RuBisCO Enzyme Function</div>
+                  <div style="font-size:11px; color:var(--ink-secondary);">Interval: 72h • Teach-Back queued</div>
+                </div>
+                <span style="font-size:11px; font-weight:700; color:var(--ink-secondary);">Due Tomorrow</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================================================
+         6. LEARNING STUDIO ("The Acoustic Stage")
+         ============================================================== -->
+    <section class="screen-frame" id="view-studio">
+      <div class="studio-layout">
+        <!-- Top Studio Control Bar -->
+        <div class="studio-top-strip">
+          <div>
+            <div class="editorial-label">Classroom Broadcast Stage • Turn 1 of 14</div>
+            <h2 class="editorial-h2" style="font-size:26px;">Photosynthesis &amp; Cellular Energetics</h2>
+          </div>
+          <div style="display:flex; gap:12px; align-items:center;">
+            <button class="btn-chime-test" onclick="triggerHarmonicChime()">
+              <span>Test Speakers</span>
+            </button>
+            <button class="btn-action-primary" id="studioPlayBtn" onclick="toggleStudioAudio()">
+              <span id="studioPlayText">Pause</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- The Two Hosts -->
+        <div class="two-hosts-stage">
+          <!-- Host A -->
+          <div class="host-broadcast-card broadcasting" id="stageHostA">
+            <div class="host-big-avatar avatar-yash">Y</div>
+            <div>
+              <div style="font-weight:700; font-size:19px;">Host A • Yash</div>
+              <div style="font-size:12px; color:var(--ink-secondary);">Warm Explainer • Gnani Timbre (Shivani Voice)</div>
+              <div class="waveform-visualizer" style="margin-top:10px;">
+                <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+                <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Host B -->
+          <div class="host-broadcast-card host-b" id="stageHostB">
+            <div class="host-big-avatar avatar-priya">P</div>
+            <div>
+              <div style="font-weight:700; font-size:19px;">Host B • Priya</div>
+              <div style="font-size:12px; color:var(--ink-secondary);">Inquisitive Co-Host • Gnani Timbre (Yashraj Voice)</div>
+              <div class="waveform-visualizer" style="margin-top:10px;">
+                <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+                <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Teleprompter / Transcript Enclosure -->
+        <div class="teleprompter-enclosure">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+            <span class="editorial-label" style="margin-bottom:0;">Concept: Chloroplast Structure</span>
+            <span style="font-size:12px; color:var(--ink-secondary);">Telugu Spoken Audio • English Transcript</span>
+          </div>
+          <div class="teleprompter-line" id="studioTeleprompter">
+            "Pod-Siksha ki swagatam! Chettu leaf lo solar energy ela chemical energy ga marutundo asalu epudaina alochinchara? That magic organelle is the chloroplast!"
+          </div>
+          <!-- 14-Turn Segmented Timeline -->
+          <div class="segmented-timeline">
+            <div class="timeline-segment current"></div>
+            <div class="timeline-segment played"></div>
+            <div class="timeline-segment"></div>
+            <div class="timeline-segment"></div>
+            <div class="timeline-segment"></div>
+            <div class="timeline-segment"></div>
+            <div class="timeline-segment"></div>
+            <div class="timeline-segment"></div>
+            <div class="timeline-segment"></div>
+            <div class="timeline-segment"></div>
+            <div class="timeline-segment"></div>
+            <div class="timeline-segment"></div>
+            <div class="timeline-segment"></div>
+            <div class="timeline-segment"></div>
+          </div>
+        </div>
+
+        <!-- Tactile Interruption Controller -->
+        <div class="tactile-interruption-deck">
+          <div>
+            <div style="font-weight:700; font-size:16px;">Have a doubt? Interrupt the hosts anytime.</div>
+            <div style="font-size:13px; color:#A4B5AD;">Hold Spacebar on your keyboard or hold the microphone trigger below to pause and ask in Telugu.</div>
+          </div>
+          <button class="tactile-mic-trigger" id="interruptionTrigger" onmousedown="holdMicStart()" onmouseup="holdMicEnd()">
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+            <span id="triggerLabel">Hold to Interrupt (Space)</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================================================
+         7. LEARNING WORKSPACE ("The Cognitive Desk")
+         ============================================================== -->
+    <section class="screen-frame" id="view-workspace">
+      <div class="editorial-label">Personal Study Workspace</div>
+      <h1 class="editorial-h1">Photosynthesis &amp; Energetics</h1>
+      <p class="editorial-lead">Inspect grounded textbook citations alongside live audio commentary and concept notes.</p>
+
+      <div class="desk-split-grid">
+        <!-- Left: Source Document Grounding -->
+        <div class="desk-pane">
+          <div class="editorial-label">Source Document Grounding</div>
+          <h3 class="editorial-h2" style="font-size:22px;">Textbook Evidence</h3>
+
+          <div class="source-quote-block">
+            <span style="font-size:11px; font-weight:800; text-transform:uppercase; color:var(--accent-celadon);">Page 12 • Equation</span>
+            <p style="margin-top:4px;">
+              "6CO2 + 6H2O + Solar Photons &rarr; C6H12O6 + 6O2. The light reactions take place exclusively across thylakoid membranes."
+            </p>
+          </div>
+
+          <div class="source-quote-block" style="border-left-color:var(--accent-terracotta);">
+            <span style="font-size:11px; font-weight:800; text-transform:uppercase; color:var(--accent-terracotta);">Page 13 • Diagnostic Focus</span>
+            <p style="margin-top:4px;">
+              "Photolysis of water (2H2O &rarr; 4H+ + 4e- + O2) occurs within the thylakoid lumen to replenish electrons lost by excited chlorophyll."
+            </p>
+          </div>
+
+          <div style="margin-top:auto; padding-top:20px;">
+            <button class="btn-action-primary" style="width:100%; justify-content:center;" onclick="switchScreen('concept-dna')">
+              Open Concept DNA Map &rarr;
+            </button>
+          </div>
+        </div>
+
+        <!-- Right: Active Study Desk & Quiz Runner -->
+        <div class="desk-pane">
+          <div class="editorial-label">Active Learning Console</div>
+          <h3 class="editorial-h2" style="font-size:22px;">Oral Comprehension Quiz</h3>
+          <p style="font-size:13px; color:var(--ink-secondary); margin-top:2px;">Answer questions by voice in Telugu. Evaluated by Gemini with spoken feedback via Timbre.</p>
+
+          <div style="background:var(--surface-tinted); border:1px solid var(--border-parchment); border-radius:var(--radius-md); padding:20px; margin-top:16px;">
+            <span style="font-size:11px; font-weight:800; text-transform:uppercase; color:var(--accent-terracotta);">Question 1 of 4 • Reasoning</span>
+            <h4 style="font-family:var(--font-editorial); font-size:20px; margin-top:6px;">"Why does water splitting fail to occur in the dark, even if ample water is present?"</h4>
+
+            <div style="margin-top:16px; display:flex; gap:10px;">
+              <button class="btn-action-primary" onclick="showToast('Recording voice answer in Telugu via Gnani Prisma...')">
+                🎙️ Hold to Answer by Voice
+              </button>
+              <button class="btn-chime-test" onclick="showToast('Sample answer submitted: Photons are required to excite chlorophyll electrons in PS II.')">
+                Test Sample Answer
+              </button>
+            </div>
+          </div>
+
+          <div style="margin-top:auto; padding-top:20px; display:flex; gap:10px;">
+            <button class="btn-chime-test" style="flex:1; justify-content:center;" onclick="switchScreen('studio')">
+              Return to Studio &rarr;
+            </button>
+            <button class="btn-action-primary" style="flex:1; justify-content:center;" onclick="switchScreen('teachback')">
+              Enter Teach-Back Mode &rarr;
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================================================
+         8. CONCEPT DNA ("Interactive Knowledge Visualizer")
+         ============================================================== -->
+    <section class="screen-frame" id="view-concept-dna">
+      <div class="editorial-label">Knowledge Topology</div>
+      <h1 class="editorial-h1">Concept DNA</h1>
+      <p class="editorial-lead">An interactive map of concept relationships extracted from your chapter. See prerequisites, dependencies, and mastery status.</p>
+
+      <div class="concept-dna-canvas">
+        <div class="dna-cluster-row">
+          <div class="dna-node mastered" onclick="showToast('Selected: Chloroplast Structure (100% Mastery)')">
+            <span class="dna-node-label">Chloroplast Organelle</span>
+            <span class="dna-node-status" style="color:var(--accent-celadon);">100% • Mastered</span>
+          </div>
+          <div style="font-size:20px; color:var(--ink-secondary);">&rarr;</div>
+          <div class="dna-node mastered" onclick="showToast('Selected: Thylakoid Membranes (100% Mastery)')">
+            <span class="dna-node-label">Thylakoid Grana Stacks</span>
+            <span class="dna-node-status" style="color:var(--accent-celadon);">100% • Mastered</span>
+          </div>
+        </div>
+
+        <div style="font-size:20px; color:var(--ink-secondary); margin:4px 0;">&darr;</div>
+
+        <div class="dna-cluster-row">
+          <div class="dna-node selected" onclick="showToast('Selected: Water Photolysis (13% Mastery - Revision Needed)')">
+            <span class="dna-node-label">Water Photolysis ($2\text{H}_2\text{O} \to 4\text{H}^+ + 4e^-$)</span>
+            <span class="dna-node-status" style="color:var(--accent-terracotta);">13% • Revision Needed</span>
+          </div>
+          <div style="font-size:20px; color:var(--ink-secondary);">&rarr;</div>
+          <div class="dna-node" onclick="showToast('Selected: RuBisCO Carbon Fixation (25% Mastery)')">
+            <span class="dna-node-label">RuBisCO Calvin Cycle</span>
+            <span class="dna-node-status" style="color:var(--accent-terracotta);">25% • Revision Needed</span>
+          </div>
+        </div>
+
+        <div style="margin-top:28px; text-align:center;">
+          <button class="btn-action-primary" onclick="switchScreen('teachback')">
+            Explain Selected Node in Teach-Back Mode &rarr;
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================================================
+         9. TEACH-BACK MODE ("The Signature Innovation")
+         ============================================================== -->
+    <section class="screen-frame" id="view-teachback">
+      <div class="editorial-label">Signature Cognitive Feature</div>
+      <h1 class="editorial-h1">Teach-Back Mode</h1>
+      <p class="editorial-lead">Don't just listen to an explanation. Explain the concept back to the AI hosts in your own words. The system evaluates semantic meaning, not just keywords.</p>
+
+      <div class="teachback-console">
+        <div class="teachback-prompt-banner">
+          <div class="editorial-label" style="margin-bottom:4px;">Host Prompt to Learner</div>
+          <div style="font-family:var(--font-editorial); font-size:22px; color:var(--ink-primary);">
+            "Priya wants to know: Why do leaves need water during photosynthesis, and where does the oxygen gas actually come from?"
+          </div>
+        </div>
+
+        <div style="display:flex; gap:12px; align-items:center; margin:16px 0;">
+          <button class="btn-action-primary" style="padding:12px 24px; font-size:14px;" onclick="showToast('Microphone active. Explain in Telugu or English...')">
+            🎙️ Speak Your Explanation
+          </button>
+          <button class="btn-chime-test" style="padding:12px 20px; font-size:14px;" onclick="showToast('Simulated voice explanation loaded for semantic evaluation.')">
+            Load Sample Explanation
+          </button>
+        </div>
+
+        <!-- Semantic Diagnostic Breakdown -->
+        <div class="teachback-eval-grid">
+          <div class="eval-box understood">
+            <div style="font-weight:700; color:var(--accent-celadon); font-size:14px; margin-bottom:6px;">
+              ✓ What You Understood Correctly
+            </div>
+            <p style="font-size:13px; color:var(--ink-primary); line-height:1.45;">
+              You correctly articulated that water splitting produces oxygen gas as a byproduct, and that sunlight is required to power the reaction.
+            </p>
+          </div>
+
+          <div class="eval-box misconception">
+            <div style="font-weight:700; color:var(--accent-terracotta); font-size:14px; margin-bottom:6px;">
+              ! Misconception Detected
+            </div>
+            <p style="font-size:13px; color:var(--ink-primary); line-height:1.45;">
+              You stated that water splitting directly builds glucose sugar. In reality, photolysis only replenishes chlorophyll electrons in Photosystem II.
+            </p>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:24px; padding-top:16px; border-top:1px solid var(--border-parchment);">
+          <span style="font-size:13px; font-weight:700;">Recommended Next Step: Listen to Host A Turn 6</span>
+          <button class="btn-action-primary" onclick="switchScreen('studio')">Jump to Turn 6 in Studio &rarr;</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Notification Toast -->
+  <div id="toastMessage">Notification message</div>
+
+  <script>
+    // Master Screen Switcher
+    const screens = ['landing', 'login', 'register', 'home', 'insights', 'studio', 'workspace', 'concept-dna', 'teachback'];
+
+    function switchScreen(screenId) {
+      screens.forEach(s => {
+        const frame = document.getElementById('view-' + s);
+        const tab = document.getElementById('tab-' + s);
+        if (frame) frame.classList.remove('active');
+        if (tab) tab.classList.remove('active');
+      });
+
+      const targetFrame = document.getElementById('view-' + screenId);
+      const targetTab = document.getElementById('tab-' + screenId);
+
+      if (targetFrame) targetFrame.classList.add('active');
+      if (targetTab) targetTab.classList.add('active');
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById("toastMessage");
+      toast.innerText = msg;
+      toast.style.display = "block";
+      setTimeout(() => { toast.style.display = "none"; }, 3500);
+    }
+
+    // Harmonic Chime Test (Validating Web Audio in browser)
+    function triggerHarmonicChime() {
+      showToast("Verifying laptop speakers with 3-tone harmonic chime...");
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        if (ctx.state === "suspended") ctx.resume();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(523.25, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(659.25, ctx.currentTime + 0.14);
+        osc.frequency.exponentialRampToValueAtTime(783.99, ctx.currentTime + 0.28);
+        gain.gain.setValueAtTime(0.22, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.48);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.48);
+        setTimeout(() => showToast("Laptop sound is verified and working!"), 550);
+      } catch (err) {
+        showToast("Audio error: " + err.message);
+      }
+    }
+
+    function togglePass(id) {
+      const input = document.getElementById(id);
+      if (input.type === "password") {
+        input.type = "text";
+      } else {
+        input.type = "password";
+      }
+    }
+
+    let isStudioPlaying = true;
+    function toggleStudioAudio() {
+      isStudioPlaying = !isStudioPlaying;
+      const label = document.getElementById("studioPlayText");
+      const hostA = document.getElementById("stageHostA");
+      if (isStudioPlaying) {
+        label.innerText = "Pause";
+        hostA.classList.add("broadcasting");
+        showToast("Resumed podcast playback.");
+      } else {
+        label.innerText = "Resume";
+        hostA.classList.remove("broadcasting");
+        showToast("Paused podcast playback.");
+      }
+    }
+
+    function holdMicStart() {
+      const btn = document.getElementById("interruptionTrigger");
+      const label = document.getElementById("triggerLabel");
+      btn.classList.add("holding");
+      label.innerText = "Listening to your doubt... Keep holding!";
+      showToast("Interrupted podcast at exact saved timestamp (~200ms). Listening in Telugu...");
+    }
+
+    function holdMicEnd() {
+      const btn = document.getElementById("interruptionTrigger");
+      const label = document.getElementById("triggerLabel");
+      btn.classList.remove("holding");
+      label.innerText = "Hold to Interrupt (Space)";
+      showToast("Transcribing voice with Gnani Prisma... Generating Socratic answer with Gemini...");
+    }
+
+    // Spacebar listener for tactile interruption
+    window.addEventListener("keydown", (e) => {
+      if (e.code === "Space" && e.target.tagName !== "INPUT" && e.target.tagName !== "TEXTAREA") {
+        e.preventDefault();
+        holdMicStart();
+      }
+    });
+    window.addEventListener("keyup", (e) => {
+      if (e.code === "Space" && e.target.tagName !== "INPUT" && e.target.tagName !== "TEXTAREA") {
+        e.preventDefault();
+        holdMicEnd();
+      }
+    });
+  </script>
+</body>
+</html>

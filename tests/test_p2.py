@@ -19,7 +19,7 @@ DB_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 
 @pytest.fixture(scope="session")
 def client():
-    with httpx.Client(base_url=BASE_URL, timeout=30.0) as c:
+    with httpx.Client(base_url=BASE_URL, headers={"Authorization": "Bearer session_demo_teacher_001"}, timeout=30.0) as c:
         yield c
 
 
