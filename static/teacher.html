@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teacher Observatory — Pod-Siksha</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Newsreader:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ivory-paper: #F7F3E9;
+      --forest-ink: #263C35;
+      --muted-sage: #69786E;
+      --terracotta: #E8794F;
+      --saffron-gold: #E8B94F;
+      --botanical-sage: #8BA99A;
+      --rose-clay: #D9B7A6;
+      --clean-white: #FFFFFF;
+      --parchment-border: #E5DED0;
+      --shadow-sm: 0 2px 8px rgba(38, 60, 53, 0.04);
+      --shadow-md: 0 8px 24px rgba(38, 60, 53, 0.08);
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --radius-full: 9999px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--ivory-paper);
+      color: var(--forest-ink);
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: var(--clean-white);
+      border-bottom: 1px solid var(--parchment-border);
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--forest-ink), #182622);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 800;
+      font-size: 20px;
+    }
+
+    .brand-title {
+      font-weight: 800;
+      font-size: 20px;
+      color: var(--forest-ink);
+    }
+
+    .brand-badge {
+      font-size: 11px;
+      font-weight: 700;
+      background: #F4E8D6;
+      color: #9A6324;
+      padding: 3px 8px;
+      border-radius: var(--radius-full);
+      text-transform: uppercase;
+    }
+
+    main {
+      flex: 1;
+      max-width: 1240px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 32px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .page-header h1 {
+      font-family: 'Newsreader', serif;
+      font-size: 32px;
+      font-weight: 600;
+    }
+
+    .page-header p {
+      color: var(--muted-sage);
+      font-size: 15px;
+    }
+
+    /* Filters Bar */
+    .filter-bar {
+      background: var(--clean-white);
+      border: 1px solid var(--parchment-border);
+      border-radius: var(--radius-md);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 14px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .filter-label {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--muted-sage);
+    }
+
+    select {
+      font-family: inherit;
+      font-size: 13px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--parchment-border);
+      background: var(--ivory-paper);
+      color: var(--forest-ink);
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn {
+      font-size: 13px;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 8px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--forest-ink);
+      color: white;
+    }
+    .btn-primary:hover {
+      background: #182622;
+    }
+
+    .btn-outline {
+      border-color: var(--parchment-border);
+      background: white;
+      color: var(--forest-ink);
+    }
+    .btn-outline:hover {
+      background: #F8F5EE;
+    }
+
+    /* KPI Summary Cards */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 1024px) {
+      .kpi-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 680px) {
+      .kpi-grid { grid-template-columns: 1fr; }
+    }
+
+    .kpi-card {
+      background: var(--clean-white);
+      border: 1px solid var(--parchment-border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .kpi-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--muted-sage);
+      letter-spacing: 0.5px;
+    }
+
+    .kpi-value {
+      font-family: 'Newsreader', serif;
+      font-size: 32px;
+      font-weight: 600;
+      color: var(--forest-ink);
+    }
+
+    .kpi-sub {
+      font-size: 12px;
+      color: var(--botanical-sage);
+      font-weight: 600;
+    }
+
+    /* Content Layout */
+    .panel-card {
+      background: var(--clean-white);
+      border: 1px solid var(--parchment-border);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .panel-title {
+      font-family: 'Newsreader', serif;
+      font-size: 22px;
+      font-weight: 600;
+    }
+
+    .tag {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: var(--radius-full);
+      display: inline-block;
+    }
+    .tag-high { background: #FFEBEE; color: #C62828; }
+    .tag-mod { background: #FFF9C4; color: #B78103; }
+    .tag-impr { background: #E8F5E9; color: #2D6A4F; }
+    .tag-well { background: #E0F2F1; color: #00695C; }
+    .tag-warn { background: #FBE9E7; color: #D84315; }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th {
+      text-align: left;
+      padding: 12px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--muted-sage);
+      border-bottom: 1px solid var(--parchment-border);
+    }
+
+    td {
+      padding: 12px;
+      border-bottom: 1px solid #F0ECE1;
+      vertical-align: middle;
+    }
+
+    /* Radar Quadrants Grid */
+    .radar-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+    @media (max-width: 900px) {
+      .radar-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 500px) {
+      .radar-grid { grid-template-columns: 1fr; }
+    }
+
+    .radar-box {
+      border-radius: var(--radius-md);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .rec-card {
+      background: #FDFBF7;
+      border: 1px solid var(--parchment-border);
+      border-left: 4px solid var(--terracotta);
+      border-radius: 8px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    /* Modal */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(38, 60, 53, 0.4);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-content {
+      background: var(--clean-white);
+      border-radius: var(--radius-lg);
+      max-width: 760px;
+      width: 100%;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 32px;
+      box-shadow: var(--shadow-md);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <div class="brand-logo">T</div>
+      <div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span class="brand-title">Pod-Siksha Observatory</span>
+          <span class="brand-badge">Teacher Intelligence</span>
+        </div>
+        <p style="font-size:11px; color:var(--muted-sage);">Aggregated student interruption diagnostics &amp; concept confusion radar</p>
+      </div>
+    </div>
+    <div style="display:flex; gap:12px;">
+      <a href="/" class="btn btn-outline">&larr; Student Studio</a>
+      <button class="btn btn-primary" onclick="exportCsv()">Download Classroom CSV</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="page-header">
+      <div>
+        <h1>Classroom Learning Observatory</h1>
+        <p>Real-time pedagogical intelligence grounded in student voice doubts and oral quiz responses.</p>
+      </div>
+    </div>
+
+    <!-- Filters Bar -->
+    <div class="filter-bar">
+      <div class="filter-group">
+        <span class="filter-label">Chapter:</span>
+        <select id="filterChapter" onchange="loadDashboard()">
+          <option value="all">All Chapters</option>
+        </select>
+
+        <span class="filter-label">Language:</span>
+        <select id="filterLanguage" onchange="loadDashboard()">
+          <option value="all">All Languages</option>
+        </select>
+
+        <span class="filter-label">Timeframe:</span>
+        <select id="filterDate" onchange="loadDashboard()">
+          <option value="all">All Time</option>
+          <option value="today">Today</option>
+          <option value="7d">Last 7 Days</option>
+        </select>
+      </div>
+
+      <div style="display:flex; gap:10px;">
+        <button class="btn btn-outline" onclick="loadDashboard()">Apply Filters</button>
+        <button class="btn btn-outline" onclick="refreshRecommendations()">Refresh AI Insights</button>
+      </div>
+    </div>
+
+    <!-- KPI Summary Grid -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <span class="kpi-label">Active Lessons</span>
+        <span class="kpi-value" id="kpiSessions">0</span>
+        <span class="kpi-sub">Total podcast sessions</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-label">Student Doubts</span>
+        <span class="kpi-value" id="kpiDoubts">0</span>
+        <span class="kpi-sub">Interrupted questions</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-label">Completed Quizzes</span>
+        <span class="kpi-value" id="kpiQuizzes">0</span>
+        <span class="kpi-sub">Verified submissions</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-label">Class Mastery</span>
+        <span class="kpi-value" id="kpiScore">0%</span>
+        <span class="kpi-sub">Average oral quiz score</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-label">Attention Concepts</span>
+        <span class="kpi-value" id="kpiAttention" style="color:var(--terracotta);">0</span>
+        <span class="kpi-sub">Severity index &ge; 15</span>
+      </div>
+    </div>
+
+    <!-- Oral Quiz Mastery Meter -->
+    <div class="panel-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+        <div>
+          <h2 class="panel-title">Oral Quiz Mastery Distribution</h2>
+          <p style="font-size:13px; color:var(--muted-sage);">Aggregated conceptual evaluation across all completed oral quiz submissions</p>
+        </div>
+        <div style="display:flex; gap:16px; font-size:12px; font-weight:700;">
+          <span style="color:#2D6A4F;">&bull; Correct: <span id="rateCorrect">0%</span></span>
+          <span style="color:#B78103;">&bull; Partially Correct: <span id="ratePartial">0%</span></span>
+          <span style="color:#C62828;">&bull; Incorrect: <span id="rateIncorrect">0%</span></span>
+        </div>
+      </div>
+      <div style="display:flex; height:14px; border-radius:var(--radius-full); overflow:hidden; background:#F0ECE1; margin-top:8px;">
+        <div id="barCorrect" style="background:#2D6A4F; width:0%; transition:width 0.5s ease;"></div>
+        <div id="barPartial" style="background:#E8B94F; width:0%; transition:width 0.5s ease;"></div>
+        <div id="barIncorrect" style="background:#E8794F; width:0%; transition:width 0.5s ease;"></div>
+      </div>
+    </div>
+
+    <!-- Grounded AI Pedagogical Recommendations -->
+    <div class="panel-card">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <h2 class="panel-title">Actionable Teaching Recommendations (Gemini AI)</h2>
+          <p style="font-size:13px; color:var(--muted-sage);">Pedagogical suggestions strictly grounded in actual student doubt counts and quiz mistake rates.</p>
+        </div>
+        <span class="tag tag-impr" id="recStatusBadge">Active</span>
+      </div>
+      <div id="recommendationsList" style="display:flex; flex-direction:column; gap:12px;">
+        <p style="color:var(--muted-sage); font-size:14px;">Loading teaching recommendations...</p>
+      </div>
+    </div>
+
+    <!-- Learning Friction Radar (Quadrants) -->
+    <div class="panel-card">
+      <h2 class="panel-title">Learning Friction Radar</h2>
+      <p style="font-size:13px; color:var(--muted-sage);">Concepts classified into four pedagogical quadrants based on the transparent friction formula: (Doubts &times; 2) + (Quiz Errors &times; 3) + (Partial Answers &times; 1.5) + (Level 3 Hints &times; 3).</p>
+      
+      <div class="radar-grid">
+        <div class="radar-box" style="background:#FFEBEE; border:1px solid #FFCDD2;">
+          <div style="font-size:12px; font-weight:800; text-transform:uppercase; color:#C62828;">High Confusion (&ge; 15)</div>
+          <div id="radarHigh" style="display:flex; flex-direction:column; gap:6px; font-size:13px; font-weight:600;"></div>
+        </div>
+
+        <div class="radar-box" style="background:#FFF9C4; border:1px solid #FFF59D;">
+          <div style="font-size:12px; font-weight:800; text-transform:uppercase; color:#F57F17;">Moderate (7 - 14)</div>
+          <div id="radarMod" style="display:flex; flex-direction:column; gap:6px; font-size:13px; font-weight:600;"></div>
+        </div>
+
+        <div class="radar-box" style="background:#E8F5E9; border:1px solid #C8E6C9;">
+          <div style="font-size:12px; font-weight:800; text-transform:uppercase; color:#2E7D32;">Improving (3 - 6)</div>
+          <div id="radarImpr" style="display:flex; flex-direction:column; gap:6px; font-size:13px; font-weight:600;"></div>
+        </div>
+
+        <div class="radar-box" style="background:#E0F2F1; border:1px solid #B2DFDB;">
+          <div style="font-size:12px; font-weight:800; text-transform:uppercase; color:#00695C;">Well Understood (&lt; 3)</div>
+          <div id="radarWell" style="display:flex; flex-direction:column; gap:6px; font-size:13px; font-weight:600;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detailed Concept Confusion Ranking Table -->
+    <div class="panel-card">
+      <h2 class="panel-title">Concept Confusion Intelligence &amp; Friction Ranking</h2>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Concept Name</th>
+              <th>Category</th>
+              <th>Score</th>
+              <th>Doubts</th>
+              <th>Quiz Accuracy</th>
+              <th>L3 Hints</th>
+              <th>Avg Level</th>
+              <th>Sessions</th>
+              <th>Primary Friction Reason</th>
+            </tr>
+          </thead>
+          <tbody id="frictionTableBody">
+            <tr><td colspan="9" style="text-align:center; color:var(--muted-sage);">Loading concepts...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Level 3 Hint Bottlenecks & Teacher Action -->
+    <div class="panel-card">
+      <h2 class="panel-title">Level 3 Full Explanation Analysis</h2>
+      <p style="font-size:13px; color:var(--muted-sage);">Concepts where students repeatedly escalated through Levels 1 and 2, requiring explicit pedagogical resolution.</p>
+      <div id="level3Callout" style="display:flex; flex-direction:column; gap:12px;"></div>
+    </div>
+
+    <!-- Recent Classroom Activity -->
+    <div class="panel-card">
+      <h2 class="panel-title">Recent Student Sessions</h2>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Anonymous Session</th>
+              <th>Chapter Title</th>
+              <th>Language</th>
+              <th>Created At</th>
+              <th>Doubts</th>
+              <th>Quizzes</th>
+              <th>Avg Score</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="sessionsTableBody">
+            <tr><td colspan="8" style="text-align:center; color:var(--muted-sage);">Loading sessions...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- Transcript Modal -->
+  <div class="modal-backdrop" id="transcriptModal" onclick="closeModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3 style="font-family:'Newsreader', serif; font-size:24px;" id="modalTitle">Session Transcript</h3>
+        <button onclick="document.getElementById('transcriptModal').style.display='none'" style="border:none; background:none; font-size:20px; cursor:pointer;">&times;</button>
+      </div>
+      <div id="modalBody" style="display:flex; flex-direction:column; gap:12px; font-size:14px;"></div>
+    </div>
+  </div>
+
+  <script>
+    let filterOptionsLoaded = false;
+
+    async function loadDashboard() {
+      const chapter = document.getElementById("filterChapter").value;
+      const language = document.getElementById("filterLanguage").value;
+      const dateRange = document.getElementById("filterDate").value;
+
+      const url = `/api/dashboard?chapter=${encodeURIComponent(chapter)}&language=${encodeURIComponent(language)}&date_range=${encodeURIComponent(dateRange)}`;
+
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+
+        // Populate dropdowns once
+        if (!filterOptionsLoaded && data.available_chapters) {
+          const chapSelect = document.getElementById("filterChapter");
+          data.available_chapters.forEach(ch => {
+            if (ch) {
+              const opt = document.createElement("option");
+              opt.value = ch;
+              opt.innerText = ch;
+              chapSelect.appendChild(opt);
+            }
+          });
+
+          const langSelect = document.getElementById("filterLanguage");
+          data.available_languages.forEach(l => {
+            if (l) {
+              const opt = document.createElement("option");
+              opt.value = l;
+              opt.innerText = l.toUpperCase();
+              langSelect.appendChild(opt);
+            }
+          });
+          filterOptionsLoaded = true;
+        }
+
+        // Update KPIs
+        const s = data.summary;
+        document.getElementById("kpiSessions").innerText = s.total_sessions;
+        document.getElementById("kpiDoubts").innerText = s.total_doubts;
+        document.getElementById("kpiQuizzes").innerText = s.total_quizzes;
+        document.getElementById("kpiScore").innerText = s.avg_quiz_score + "%";
+        document.getElementById("kpiAttention").innerText = s.concepts_requiring_attention || 0;
+
+        // Update Mastery Meter
+        if (s.rates) {
+          document.getElementById("rateCorrect").innerText = s.rates.correct_rate + "%";
+          document.getElementById("ratePartial").innerText = s.rates.partial_rate + "%";
+          document.getElementById("rateIncorrect").innerText = s.rates.incorrect_rate + "%";
+
+          document.getElementById("barCorrect").style.width = s.rates.correct_rate + "%";
+          document.getElementById("barPartial").style.width = s.rates.partial_rate + "%";
+          document.getElementById("barIncorrect").style.width = s.rates.incorrect_rate + "%";
+        }
+
+        // Update Radar Quadrants
+        const q = data.radar_quadrants || {};
+        renderRadarList("radarHigh", q.high_confusion || [], "#C62828");
+        renderRadarList("radarMod", q.moderate_confusion || [], "#F57F17");
+        renderRadarList("radarImpr", q.improving || [], "#2E7D32");
+        renderRadarList("radarWell", q.well_understood || [], "#00695C");
+
+        // Render Friction Concepts Table
+        const fBody = document.getElementById("frictionTableBody");
+        fBody.innerHTML = "";
+        if (!data.friction_concepts || data.friction_concepts.length === 0) {
+          fBody.innerHTML = `<tr><td colspan="9" style="text-align:center; color:var(--muted-sage); padding:24px;">No concept friction records match the selected filters.</td></tr>`;
+        } else {
+          data.friction_concepts.forEach(c => {
+            let catTag = "tag-well";
+            if (c.severity_category === "High Confusion") catTag = "tag-high";
+            else if (c.severity_category === "Moderate Confusion") catTag = "tag-mod";
+            else if (c.severity_category === "Improving") catTag = "tag-impr";
+
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td style="font-weight:700;">
+                ${c.concept}
+                ${c.is_small_sample ? '<span class="tag tag-warn" style="font-size:9px; margin-left:6px;">Small Sample</span>' : ''}
+              </td>
+              <td><span class="tag ${catTag}">${c.severity_category}</span></td>
+              <td style="font-weight:700; color:var(--forest-ink);">${c.severity_score}</td>
+              <td>${c.doubts}</td>
+              <td>
+                <span style="color:#2D6A4F; font-weight:700;">${c.quiz_correct}C</span> /
+                <span style="color:#B78103; font-weight:700;">${c.quiz_partial}P</span> /
+                <span style="color:#C62828; font-weight:700;">${c.quiz_incorrect}I</span>
+              </td>
+              <td>${c.level3_hints}</td>
+              <td>L${c.avg_hint_level}</td>
+              <td>${c.sessions_affected}</td>
+              <td style="color:var(--muted-sage); font-size:12px;">${c.primary_friction_reason}</td>
+            `;
+            fBody.appendChild(row);
+          });
+        }
+
+        // Render Level 3 Analysis
+        const l3Box = document.getElementById("level3Callout");
+        l3Box.innerHTML = "";
+        if (data.level3_analysis && data.level3_analysis.length > 0) {
+          data.level3_analysis.forEach(item => {
+            const div = document.createElement("div");
+            div.style.background = "#FDFBF7";
+            div.style.borderLeft = "4px solid var(--terracotta)";
+            div.style.padding = "14px";
+            div.style.borderRadius = "4px";
+            div.innerHTML = `
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                <strong style="font-size:15px; color:var(--forest-ink);">${item.concept}</strong>
+                <span style="font-size:12px; font-weight:700; color:var(--terracotta);">${item.level3_count} L3 Full Explanations across ${item.sessions_affected} sessions</span>
+              </div>
+              <div style="font-size:13px; color:var(--muted-sage); margin-bottom:4px;">Related Quiz Accuracy: ${item.quiz_accuracy}%</div>
+              <div style="font-size:13px; color:var(--forest-ink);"><strong>Recommended Action:</strong> ${item.recommended_action}</div>
+            `;
+            l3Box.appendChild(div);
+          });
+        } else {
+          l3Box.innerHTML = `
+            <div style="background:#F2F8F4; border-left:4px solid var(--botanical-sage); padding:14px; border-radius:4px; font-size:14px;">
+              <strong>Clean Understanding:</strong> No concepts have required full Level 3 escalations under current filters. Students successfully resolved questions with Level 1 and 2 guiding questions.
+            </div>
+          `;
+        }
+
+        // Render Recent Sessions
+        const sBody = document.getElementById("sessionsTableBody");
+        sBody.innerHTML = "";
+        if (!data.recent_sessions || data.recent_sessions.length === 0) {
+          sBody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:var(--muted-sage); padding:24px;">No sessions found.</td></tr>`;
+        } else {
+          data.recent_sessions.forEach(s => {
+            const row = document.createElement("tr");
+            const scoreDisplay = s.avg_score !== null ? `${Math.round(s.avg_score)}%` : "Pending";
+            row.innerHTML = `
+              <td><code>${s.id.substring(0, 8)}...</code></td>
+              <td style="font-weight:600;">${s.title}</td>
+              <td><span style="text-transform:uppercase; font-size:11px; font-weight:700; background:#EFEFEF; padding:2px 6px; border-radius:4px;">${s.language}</span></td>
+              <td style="color:var(--muted-sage); font-size:12px;">${s.created_at}</td>
+              <td>${s.doubt_count}</td>
+              <td>${s.quiz_count}</td>
+              <td style="font-weight:700; color:var(--forest-ink);">${scoreDisplay}</td>
+              <td>
+                <div style="display:flex; gap:6px;">
+                  <button class="btn btn-outline" style="padding:4px 8px; font-size:11px;" onclick="viewTranscript('${s.id}')">Transcript</button>
+                  <a href="/report?session_id=${s.id}" target="_blank" class="btn btn-outline" style="padding:4px 8px; font-size:11px; text-decoration:none;">Report</a>
+                  <a href="/api/student/${s.id}/export/csv" class="btn btn-outline" style="padding:4px 8px; font-size:11px; text-decoration:none;">CSV</a>
+                </div>
+              </td>
+            `;
+            sBody.appendChild(row);
+          });
+        }
+
+      } catch (err) {
+        console.error("Dashboard error:", err);
+      }
+    }
+
+    function renderRadarList(elemId, items, color) {
+      const el = document.getElementById(elemId);
+      if (!items || items.length === 0) {
+        el.innerHTML = `<span style="font-size:12px; color:var(--muted-sage); font-style:italic;">None</span>`;
+      } else {
+        el.innerHTML = items.map(c => `<span style="color:${color};">&bull; ${c}</span>`).join('');
+      }
+    }
+
+    async function loadRecommendations(refresh = false) {
+      const chapter = document.getElementById("filterChapter").value;
+      const recContainer = document.getElementById("recommendationsList");
+      const badge = document.getElementById("recStatusBadge");
+
+      try {
+        const res = await fetch(`/api/teacher/recommendations?chapter=${encodeURIComponent(chapter)}&refresh=${refresh}`);
+        const data = await res.json();
+
+        if (data.status === "insufficient_data") {
+          badge.innerText = "Notice";
+          badge.className = "tag tag-mod";
+          recContainer.innerHTML = `
+            <div style="background:#FFF9C4; padding:16px; border-radius:8px; font-size:14px; color:#5D4037;">
+              ${data.message}
+            </div>
+          `;
+          return;
+        }
+
+        badge.innerText = data.status === "fallback" ? "Database Grounded" : "AI Verified";
+        badge.className = "tag tag-impr";
+
+        recContainer.innerHTML = data.recommendations.map(r => `
+          <div class="rec-card">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <strong style="font-size:16px; color:var(--forest-ink);">${r.concept}</strong>
+              <span class="tag tag-warn">Evidence Grounded</span>
+            </div>
+            <div style="font-size:13px; color:var(--muted-sage); margin-top:2px;">
+              <strong>Empirical Evidence:</strong> ${r.evidence}
+            </div>
+            <div style="font-size:14px; color:var(--forest-ink); line-height:1.4; margin-top:4px;">
+              <strong>Pedagogical Insight:</strong> ${r.recommendation}
+            </div>
+            <div style="font-size:13px; color:#2D6A4F; background:#E8F5E9; padding:8px 12px; border-radius:6px; margin-top:6px; font-weight:600;">
+              <strong>Suggested Action:</strong> ${r.suggested_action}
+            </div>
+          </div>
+        `).join('');
+
+      } catch (err) {
+        recContainer.innerHTML = `<p style="color:red; font-size:13px;">Failed to load recommendations: ${err.message}</p>`;
+      }
+    }
+
+    function refreshRecommendations() {
+      loadRecommendations(true);
+    }
+
+    function exportCsv() {
+      const chapter = document.getElementById("filterChapter").value;
+      const language = document.getElementById("filterLanguage").value;
+      const dateRange = document.getElementById("filterDate").value;
+      window.location.href = `/api/teacher/export/csv?chapter=${encodeURIComponent(chapter)}&language=${encodeURIComponent(language)}&date_range=${encodeURIComponent(dateRange)}`;
+    }
+
+    async function viewTranscript(sessionId) {
+      try {
+        const res = await fetch(`/api/session/${sessionId}/transcript`);
+        const data = await res.json();
+        
+        document.getElementById("modalTitle").innerText = data.title + " (Transcript)";
+        const modalBody = document.getElementById("modalBody");
+        modalBody.innerHTML = "";
+
+        const tTitle = document.createElement("h4");
+        tTitle.innerText = "Podcast Turns (14 turns)";
+        modalBody.appendChild(tTitle);
+
+        data.turns.forEach(t => {
+          const div = document.createElement("div");
+          div.style.padding = "8px 12px";
+          div.style.background = t.speaker === "A" ? "#FDF6F2" : "#FEFBF0";
+          div.style.borderRadius = "8px";
+          div.innerHTML = `<strong>Host ${t.speaker} [${t.concept_tag || 'Concept'}]:</strong> ${t.display_text}`;
+          modalBody.appendChild(div);
+        });
+
+        if (data.doubts && data.doubts.length > 0) {
+          const dTitle = document.createElement("h4");
+          dTitle.innerText = `Student Doubts (${data.doubts.length})`;
+          dTitle.style.marginTop = "16px";
+          modalBody.appendChild(dTitle);
+
+          data.doubts.forEach(d => {
+            const div = document.createElement("div");
+            div.style.padding = "10px 12px";
+            div.style.background = "#F5EDE0";
+            div.style.borderLeft = "4px solid var(--terracotta)";
+            div.style.borderRadius = "4px";
+            div.innerHTML = `
+              <strong>Student Doubt:</strong> "${d.transcribed_text}"<br>
+              <strong>Host A Answer (Hint L${d.hint_level}):</strong> ${d.answer_text}
+            `;
+            modalBody.appendChild(div);
+          });
+        }
+
+        document.getElementById("transcriptModal").style.display = "flex";
+      } catch (e) {
+        alert("Error loading transcript: " + e.message);
+      }
+    }
+
+    function closeModal(e) {
+      if (e.target.id === "transcriptModal") {
+        document.getElementById("transcriptModal").style.display = "none";
+      }
+    }
+
+    // Initialize
+    loadDashboard();
+    loadRecommendations(false);
+    setInterval(loadDashboard, 15000);
+  </script>
+</body>
+</html>

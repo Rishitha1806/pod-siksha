@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Study Report — Pod-Siksha</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Newsreader:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ivory-paper: #F7F3E9;
+      --forest-ink: #263C35;
+      --muted-sage: #69786E;
+      --terracotta: #E8794F;
+      --saffron-gold: #E8B94F;
+      --botanical-sage: #8BA99A;
+      --clean-white: #FFFFFF;
+      --parchment-border: #E5DED0;
+      --shadow-sm: 0 2px 8px rgba(38, 60, 53, 0.04);
+      --shadow-md: 0 8px 24px rgba(38, 60, 53, 0.08);
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --radius-full: 9999px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--ivory-paper);
+      color: var(--forest-ink);
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: var(--clean-white);
+      border-bottom: 1px solid var(--parchment-border);
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--forest-ink), #182622);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 800;
+      font-size: 20px;
+    }
+
+    .brand-title {
+      font-weight: 800;
+      font-size: 20px;
+      color: var(--forest-ink);
+    }
+
+    .brand-badge {
+      font-size: 11px;
+      font-weight: 700;
+      background: #F4E8D6;
+      color: #9A6324;
+      padding: 3px 8px;
+      border-radius: var(--radius-full);
+      text-transform: uppercase;
+    }
+
+    main {
+      flex: 1;
+      max-width: 960px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 32px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .card {
+      background: var(--clean-white);
+      border: 1px solid var(--parchment-border);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .card-title {
+      font-family: 'Newsreader', serif;
+      font-size: 22px;
+      font-weight: 600;
+    }
+
+    .btn {
+      font-size: 13px;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: var(--radius-md);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--forest-ink);
+      color: white;
+    }
+    .btn-primary:hover {
+      background: #182622;
+    }
+
+    .btn-outline {
+      border-color: var(--parchment-border);
+      background: white;
+      color: var(--forest-ink);
+    }
+    .btn-outline:hover {
+      background: #F8F5EE;
+    }
+
+    .tag {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: var(--radius-full);
+    }
+    .tag-correct { background: #E8F5E9; color: #2D6A4F; }
+    .tag-partial { background: #FEF9E7; color: #B78103; }
+    .tag-incorrect { background: #FDECEA; color: #C62828; }
+    .tag-basic { background: #E3F2FD; color: #1565C0; }
+
+    .q-item {
+      padding: 16px;
+      background: #FCFAF6;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--parchment-border);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .doubt-item {
+      padding: 14px;
+      background: #FCFAF6;
+      border-left: 4px solid var(--terracotta);
+      border-radius: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <div class="brand-logo">P</div>
+      <div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span class="brand-title">Pod-Siksha</span>
+          <span class="brand-badge">Study Report</span>
+        </div>
+        <p style="font-size:11px; color:var(--muted-sage);">Personalized classroom learning summary and oral quiz breakdown</p>
+      </div>
+    </div>
+    <div style="display:flex; gap:12px;">
+      <a href="/" class="btn btn-outline">&larr; Student Studio</a>
+      <a href="/teacher" class="btn btn-outline">Teacher Observatory &rarr;</a>
+      <button id="downloadCsvBtn" class="btn btn-primary" onclick="downloadCsv()" style="display:none;">Download CSV</button>
+    </div>
+  </header>
+
+  <main id="mainContainer">
+    <div class="card" id="loadingCard">
+      <p style="color:var(--muted-sage); text-align:center;">Loading student study report...</p>
+    </div>
+  </main>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const sessionId = urlParams.get("session_id") || localStorage.getItem("pod_siksha_session_id");
+
+    async function loadReport() {
+      const container = document.getElementById("mainContainer");
+      if (!sessionId) {
+        container.innerHTML = `
+          <div class="card" style="text-align:center; padding:48px;">
+            <h2 class="card-title">No Session Specified</h2>
+            <p style="color:var(--muted-sage); margin:12px 0 24px;">Please open a completed podcast session from the Student Studio or supply a session_id.</p>
+            <div><a href="/" class="btn btn-primary">&larr; Go to Student Studio</a></div>
+          </div>
+        `;
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/student/${sessionId}/report`);
+        if (!res.ok) throw new Error("Could not find session data.");
+        const data = await res.json();
+
+        document.getElementById("downloadCsvBtn").style.display = "inline-flex";
+
+        const q = data.quiz;
+        const scorePct = q.percentage || 0;
+        const totalScore = q.total_score || 0;
+        const maxScore = q.max_score || 400;
+
+        container.innerHTML = `
+          <!-- Session Header Card -->
+          <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px;">
+              <div>
+                <span class="brand-badge" style="margin-bottom:8px; display:inline-block;">ANONYMOUS SESSION</span>
+                <h1 style="font-family:'Newsreader', serif; font-size:28px; font-weight:600;">${data.title}</h1>
+                <p style="color:var(--muted-sage); font-size:13px; margin-top:4px;">
+                  Session ID: <code>${data.session_id.substring(0, 16)}...</code> &bull; Language: <span style="text-transform:uppercase; font-weight:700;">${data.language}</span> &bull; ${data.created_at}
+                </p>
+              </div>
+              <div style="background:#F7F3E9; border:1px solid var(--parchment-border); padding:16px 24px; border-radius:var(--radius-md); text-align:center;">
+                <div style="font-size:12px; font-weight:700; text-transform:uppercase; color:var(--muted-sage);">Oral Quiz Score</div>
+                <div style="font-family:'Newsreader', serif; font-size:32px; font-weight:700; color:var(--forest-ink);">${totalScore} / ${maxScore}</div>
+                <div style="font-size:13px; font-weight:700; color:${scorePct >= 70 ? '#2D6A4F' : '#E8794F'};">${scorePct}% Mastery</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Concept Mastery Overview -->
+          <div class="card">
+            <h2 class="card-title">Concept Mastery Analysis</h2>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+              <div style="background:#F2F8F4; border:1px solid #C8E6C9; border-radius:var(--radius-md); padding:16px;">
+                <h3 style="font-size:13px; font-weight:700; text-transform:uppercase; color:#2D6A4F; margin-bottom:8px;">&bull; Mastered Concepts</h3>
+                <div style="display:flex; flex-wrap:wrap; gap:8px;">
+                  ${q.strong_concepts && q.strong_concepts.length > 0 
+                    ? q.strong_concepts.map(c => `<span class="tag tag-correct">${c}</span>`).join('') 
+                    : '<span style="font-size:13px; color:var(--muted-sage);">None yet.</span>'}
+                </div>
+              </div>
+
+              <div style="background:#FDF5F2; border:1px solid #FFCCBC; border-radius:var(--radius-md); padding:16px;">
+                <h3 style="font-size:13px; font-weight:700; text-transform:uppercase; color:#C62828; margin-bottom:8px;">&bull; Needs Revision</h3>
+                <div style="display:flex; flex-wrap:wrap; gap:8px;">
+                  ${q.needs_revision && q.needs_revision.length > 0 
+                    ? q.needs_revision.map(c => `<span class="tag tag-incorrect">${c}</span>`).join('') 
+                    : '<span style="font-size:13px; color:var(--muted-sage);">None. Clean mastery!</span>'}
+                </div>
+              </div>
+            </div>
+
+            ${q.learning_summary ? `
+              <div style="background:#FEFBF0; border-left:4px solid var(--saffron-gold); padding:14px; border-radius:4px; font-size:14px; margin-top:8px;">
+                <strong>AI Learning Summary:</strong> ${q.learning_summary}
+              </div>
+            ` : ''}
+          </div>
+
+          <!-- Oral Quiz Breakdown -->
+          <div class="card">
+            <h2 class="card-title">Oral Quiz Breakdown (${q.questions.length} Questions)</h2>
+            <div style="display:flex; flex-direction:column; gap:14px;">
+              ${q.questions.map(item => {
+                let statusTag = 'tag-incorrect';
+                let statusLabel = 'Incorrect (0 Pts)';
+                if (item.evaluation_status === 'correct') {
+                  statusTag = 'tag-correct';
+                  statusLabel = 'Correct (+100 Pts)';
+                } else if (item.evaluation_status === 'partially_correct') {
+                  statusTag = 'tag-partial';
+                  statusLabel = 'Partially Correct (+50 Pts)';
+                }
+
+                return `
+                  <div class="q-item">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                      <div style="display:flex; gap:8px; align-items:center;">
+                        <span class="tag tag-basic">Q${item.question_number} &bull; ${item.question_type}</span>
+                        <span style="font-size:13px; font-weight:700; color:var(--forest-ink);">${item.concept}</span>
+                      </div>
+                      <span class="tag ${statusTag}">${statusLabel}</span>
+                    </div>
+                    <div style="font-weight:600; font-size:15px; margin-top:4px;">${item.question_text}</div>
+                    <div style="font-size:13px; color:var(--muted-sage); background:white; padding:10px; border-radius:6px; border:1px solid var(--parchment-border);">
+                      <strong>Your Spoken Response:</strong> "${item.student_transcript || 'No voice transcript recorded'}"
+                    </div>
+                    <div style="font-size:13px; color:var(--forest-ink); line-height:1.4;">
+                      <strong>Tutor Feedback:</strong> ${item.feedback || 'Answer evaluated.'}
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+
+          <!-- Doubt Interruption History -->
+          <div class="card">
+            <h2 class="card-title">Doubt Interruption History (${data.doubts.length} Questions Asked)</h2>
+            ${data.doubts.length === 0 ? `
+              <p style="color:var(--muted-sage); font-size:14px;">No doubts were asked during this podcast lesson. Clean playback!</p>
+            ` : `
+              <div style="display:flex; flex-direction:column; gap:12px;">
+                ${data.doubts.map(d => `
+                  <div class="doubt-item">
+                    <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--muted-sage);">
+                      <span style="font-weight:700; color:var(--terracotta);">${d.concept} &bull; Escalated to Hint Level ${d.hint_level}</span>
+                      <span>${d.created_at}</span>
+                    </div>
+                    <div><strong>You Asked:</strong> "${d.query}"</div>
+                    <div style="color:var(--forest-ink);"><strong>Host A Answer:</strong> ${d.answer}</div>
+                  </div>
+                `).join('')}
+              </div>
+            `}
+          </div>
+        `;
+      } catch (err) {
+        container.innerHTML = `
+          <div class="card" style="text-align:center; padding:48px;">
+            <h2 class="card-title" style="color:var(--terracotta);">Could Not Load Report</h2>
+            <p style="color:var(--muted-sage); margin:12px 0 24px;">${err.message}</p>
+            <div><a href="/" class="btn btn-primary">&larr; Go to Student Studio</a></div>
+          </div>
+        `;
+      }
+    }
+
+    function downloadCsv() {
+      if (sessionId) {
+        window.location.href = `/api/student/${sessionId}/export/csv`;
+      }
+    }
+
+    loadReport();
+  </script>
+</body>
+</html>

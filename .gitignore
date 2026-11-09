@@ -1,0 +1,21 @@
+# Environment configuration and secrets
+.env
+*.env
+
+# SQLite Databases & backups
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+backups/
+
+# Binaries and caches
+bin/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Audio / Temp buffers
+*.wav
+*.mp3
+tmp/

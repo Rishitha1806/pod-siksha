@@ -1,0 +1,19 @@
+# Chapter 4: Photosynthesis and Cellular Energetics
+
+## 1. Introduction and Overview
+Photosynthesis is the fundamental biological process through which autotrophic organisms convert solar light energy into stable chemical energy stored in glucose molecules. This essential transformation occurs inside specialized double-membrane organelles called chloroplasts, predominantly located within the mesophyll cells of green leaves. The overall balanced chemical equation governing oxygenic photosynthesis is represented as:
+6CO2 + 6H2O + Light Energy -> C6H12O6 + 6O2
+
+## 2. Chloroplast Structure and Pigments
+Chloroplasts contain a fluid-filled interior called the stroma, enclosed by outer and inner phospholipid membranes. Suspended within the stroma is an intricate network of disc-like flattened membrane sacs termed thylakoids, stacked in columns known as grana. Embedded within the thylakoid membranes are light-absorbing pigment molecules, primarily chlorophyll-a and chlorophyll-b, accompanied by accessory carotenoids. Chlorophyll strongly absorbs blue-violet and red wavelengths of visible light while reflecting green light, giving plant foliage its characteristic emerald hue.
+
+## 3. Light-Dependent Reactions (Thylakoid Membrane)
+Photosynthesis proceeds through two coordinated stages: the light-dependent reactions and the Calvin cycle. The light reactions take place exclusively across the thylakoid membranes when solar photons strike photosystems II and I. Photon absorption excites electrons to high-energy states. These electrons travel down an electron transport chain, driving the photolysis of water molecules:
+2H2O -> 4H+ + 4e- + O2
+This splitting of water replenishes lost electrons and releases vital oxygen gas into the atmosphere. The accompanying flow of protons across the membrane powers ATP synthase, synthesizing ATP and reducing NADP+ to NADPH.
+
+## 4. Light-Independent Reactions: The Calvin Cycle (Stroma)
+The ATP and NADPH molecules synthesized during the light reactions diffuse into the surrounding stroma to drive the light-independent reactions, known as the Calvin cycle. In the first phase, carbon fixation, the enzyme RuBisCO catalyzes the attachment of carbon dioxide to ribulose-1,5-bisphosphate (RuBP). Through subsequent reduction reactions utilizing ATP and NADPH, high-energy three-carbon sugars (G3P) are produced, which combine to form glucose and regenerate RuBP for subsequent cycles.
+
+## 5. Gas Exchange and Stomatal Regulation
+Carbon dioxide enters the leaf while oxygen and water vapor exit through microscopic epidermal pores called stomata. Stomatal aperture is actively controlled by pairs of specialized guard cells that swell with water (turgid) to open during daylight and shrink (flaccid) to close during water stress, preventing excessive transpiration while sustaining photosynthetic gas exchange.
