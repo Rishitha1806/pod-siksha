@@ -46,7 +46,17 @@ GNANI_STT_MODEL = os.getenv("GNANI_STT_MODEL", "prisma-v3.0").strip()
 GNANI_TTS_MODEL = os.getenv("GNANI_TTS_MODEL", "timbre-v3.0").strip()
 GNANI_STT_FILE_FIELD = os.getenv("GNANI_STT_FILE_FIELD", "audio_file").strip()
 GNANI_STT_LANG_FIELD = os.getenv("GNANI_STT_LANG_FIELD", "language_code").strip()
-DB_PATH = os.path.join(os.path.dirname(__file__), "pod_siksha.db")
+if os.getenv("VERCEL"):
+    import shutil
+    DB_PATH = os.path.join("/tmp", "pod_siksha.db")
+    bundled_db = os.path.join(os.path.dirname(__file__), "pod_siksha.db")
+    if os.path.exists(bundled_db) and not os.path.exists(DB_PATH):
+        try:
+            shutil.copy2(bundled_db, DB_PATH)
+        except Exception as e:
+            log.warning("Could not copy bundled DB to /tmp: %s", e)
+else:
+    DB_PATH = os.path.join(os.path.dirname(__file__), "pod_siksha.db")
 
 # Setup Google GenAI Client
 from google import genai
