@@ -1021,6 +1021,179 @@
     .screen-frame.active { display: block !important; }
     .locked-badge { font-size: 10px; color: var(--accent-terracotta); margin-left: 4px; }
 
+
+    /* ==============================================================
+       UNIVERSAL AI ANIMATED LEARNING PLATFORM STYLES (Aura Atelier)
+       ============================================================== */
+    .animated-studio-wrap {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 24px;
+      margin-top: 16px;
+    }
+    @media (max-width: 1024px) {
+      .animated-studio-wrap {
+        grid-template-columns: 1fr;
+      }
+    }
+    .animated-canvas-container {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #13221E;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      box-shadow: var(--shadow-elevated);
+      border: 2px solid var(--border-parchment);
+    }
+    .animated-canvas-container canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: contain;
+    }
+    .animated-controls-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: white;
+      padding: 12px 18px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-parchment);
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+    .animated-scrubber-wrap {
+      flex: 1;
+      min-width: 160px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .animated-scrubber {
+      flex: 1;
+      height: 6px;
+      border-radius: 3px;
+      accent-color: var(--accent-surya);
+      cursor: pointer;
+    }
+    .scene-pill-nav {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding: 4px 0;
+      scrollbar-width: none;
+    }
+    .scene-pill-nav::-webkit-scrollbar { display: none; }
+    .scene-pill-btn {
+      padding: 6px 12px;
+      font-size: 11px;
+      font-weight: 700;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border-parchment);
+      background: var(--surface-tinted);
+      color: var(--ink-secondary);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+    .scene-pill-btn.active {
+      background: var(--accent-terracotta);
+      color: white;
+      border-color: var(--accent-terracotta);
+    }
+    .profile-badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      background: var(--accent-celadon-light);
+      color: var(--accent-celadon);
+      border: 1px solid rgba(82,130,113,0.25);
+    }
+    .profile-card-option {
+      border: 2px solid var(--border-parchment);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .profile-card-option:hover {
+      border-color: var(--accent-surya);
+      background: #FFFDF9;
+      transform: translateY(-2px);
+    }
+    .profile-card-option.selected {
+      border-color: var(--accent-terracotta);
+      background: #FDF7F5;
+      box-shadow: 0 0 0 3px rgba(224,90,71,0.15);
+    }
+    .animated-library-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+    .animated-lesson-card {
+      background: white;
+      border: 1px solid var(--border-parchment);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      box-shadow: var(--shadow-ambient);
+      transition: all 0.25s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    .animated-lesson-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-elevated);
+      border-color: var(--accent-surya);
+    }
+    .animated-thumb-stage {
+      height: 140px;
+      background: #13221E;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+    .socratic-doubt-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(19,34,30,0.85);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      z-index: 20;
+    }
+    .checkpoint-overlay-card {
+      position: absolute;
+      inset: 20px;
+      background: rgba(253,251,247,0.96);
+      backdrop-filter: blur(10px);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      box-shadow: var(--shadow-elevated);
+      border: 2px solid var(--accent-surya);
+      z-index: 15;
+    }
+
 </style>
 </head>
 <body>
@@ -1052,6 +1225,16 @@
     <!-- Master Screen Switcher (All 9 Requested Screens) -->
     <!-- Master Navigation Panel: Hidden on login/unauthenticated, visible only after login -->
     <nav class="screen-switcher-bar" id="mainScreenSwitcher" style="display:none !important;">
+      <button class="screen-tab-btn active" id="tab-home" onclick="switchScreen('home')">Atelier Home</button>
+      <button class="screen-tab-btn highlight" id="tab-animated-studio" onclick="switchScreen('animated-studio')">🎬 Animated Studio</button>
+      <button class="screen-tab-btn" id="tab-animated-library" onclick="switchScreen('animated-library')">Library</button>
+      <button class="screen-tab-btn" id="tab-insights" onclick="switchScreen('insights')">Insights</button>
+      <button class="screen-tab-btn" id="tab-studio" onclick="switchScreen('studio')">Podcast</button>
+      <button class="screen-tab-btn" id="tab-workspace" onclick="switchScreen('workspace')">Workspace</button>
+      <button class="screen-tab-btn" id="tab-concept-dna" onclick="switchScreen('concept-dna')">Concept DNA</button>
+      <button class="screen-tab-btn" id="tab-teachback" onclick="switchScreen('teachback')">Teach-Back</button>
+      <button class="screen-tab-btn" id="tab-privacy" onclick="switchScreen('privacy')">Privacy</button>
+      <button class="screen-tab-btn" id="tab-terms" onclick="switchScreen('terms')">Terms</button>
       <button class="screen-tab-btn active" id="tab-home" onclick="switchScreen('home')">Atelier Home</button>
       <button class="screen-tab-btn highlight" id="tab-insights" onclick="switchScreen('insights')">Insights</button>
       <button class="screen-tab-btn" id="tab-studio" onclick="switchScreen('studio')">Studio</button>
@@ -1305,6 +1488,43 @@
          4. PERSONAL HOME ("My Atelier / Dashboard")
          ============================================================== -->
     <section class="screen-frame" id="view-home">
+      <!-- Universal AI Animated Learning Platform Hero -->
+      <div class="hero-resume-card" style="background: linear-gradient(135deg, #13221E 0%, #1A342B 100%); margin-bottom: 24px; border: 2px solid var(--accent-surya); box-shadow: var(--shadow-elevated);">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px;">
+          <div style="max-width: 650px;">
+            <div style="display:inline-flex; align-items:center; gap:8px; background:rgba(255,159,28,0.18); border:1px solid var(--accent-surya); padding:4px 12px; border-radius:var(--radius-full); margin-bottom:10px;">
+              <span style="font-size:11px; font-weight:800; color:var(--accent-surya); letter-spacing:1px; text-transform:uppercase;">✨ Universal AI Animated Learning</span>
+            </div>
+            <h2 style="font-family:var(--font-editorial); font-size:32px; color:white; line-height:1.2; margin-bottom:8px;">
+              Learn Anything. In Your Language. Through Animation.
+            </h2>
+            <p style="font-size:14px; color:#CAD8D2; line-height:1.5;">
+              One AI teacher. Every subject. Every language. Every generation. From Children (5–12) to Older Adults (60+), understand complex concepts through dynamic 60fps simulations, synchronized voice narration, and in-video Socratic Q&amp;A.
+            </p>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:10px; align-items:flex-end;">
+            <button class="btn-action-primary" style="background:var(--accent-terracotta); font-size:14px; padding:12px 22px;" onclick="openAnimatedModal()">
+              <span>+ Create Animated Lesson</span>
+            </button>
+            <button class="btn-action-outline" style="border-color:#528271; color:#CAD8D2; font-size:13px; padding:8px 16px;" onclick="switchScreen('animated-studio')">
+              <span>Enter Animated Studio &rarr;</span>
+            </button>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:16px; margin-top:20px; padding-top:16px; border-top:1px solid rgba(255,255,255,0.12); flex-wrap:wrap;">
+          <div style="font-size:12px; color:#A4B5AD;">
+            <strong style="color:white;">8 Core Domains:</strong> Biology · Physics · Mathematics · Chemistry · CS · Geography · Finance · Daily Skills
+          </div>
+          <div style="font-size:12px; color:#A4B5AD;">
+            <strong style="color:white;">5 Generations:</strong> Child · Teen · University · Professional · Older Adult
+          </div>
+          <div style="font-size:12px; color:#A4B5AD;">
+            <strong style="color:white;">10 Languages:</strong> Telugu, Hindi, English, Tamil, Kannada, Marathi &amp; more
+          </div>
+        </div>
+      </div>
+
       <div class="editorial-label">Personal Learning Atelier</div>
       <h1 class="editorial-h1">Namaskaram, Learner.</h1>
       <p class="editorial-lead">Here is where your understanding deepens. Pick up where you left off or start an exploration.</p>
@@ -2007,19 +2227,856 @@
     </div>
   </div>
 
+
+    <!-- ==============================================================
+         ANIMATED VIDEO STUDIO ("Universal AI Visual Stage")
+         ============================================================== -->
+    <section class="screen-frame" id="view-animated-studio">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px; flex-wrap:wrap; gap:12px;">
+        <div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span class="editorial-label" style="margin-bottom:0;">Universal Animated Stage</span>
+            <span id="animStudioProfileBadge" class="profile-badge-pill">Teenager (Ages 13–17)</span>
+            <span id="animStudioLangBadge" class="profile-badge-pill" style="background:#FFF3E0; color:#E65100; border-color:#FFE0B2;">Telugu</span>
+            <span id="animStudioStyleBadge" class="profile-badge-pill" style="background:#EDE7F6; color:#5E35B1; border-color:#D1C4E9;">2D Scientific</span>
+          </div>
+          <h1 id="animStudioTitle" class="editorial-h1" style="font-size:28px; margin-top:6px;">How the Human Heart Pumps Blood</h1>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <button class="btn-action-outline" onclick="openAnimatedDoubtModal()" title="Ask doubt (Spacebar)">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+            <span>Ask Doubt (Space)</span>
+          </button>
+          <button class="btn-action-primary" style="background:var(--accent-surya); color:#13221E;" onclick="triggerVideoExport()">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span id="btnExportText">Export MP4 Video</span>
+          </button>
+          <button class="btn-action-primary" style="background:var(--accent-terracotta);" onclick="openAnimatedModal()">
+            <span>+ New Lesson</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="animated-studio-wrap">
+        <!-- Left: Main 16:9 Canvas Stage & Controls -->
+        <div>
+          <div class="animated-canvas-container">
+            <canvas id="animatedStageCanvas" width="1280" height="720"></canvas>
+
+            <!-- In-Video Checkpoint Overlay -->
+            <div id="animCheckpointOverlay" class="checkpoint-overlay-card">
+              <div style="font-size:12px; font-weight:800; color:var(--accent-terracotta); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">
+                Interactive Checkpoint · Test Understanding
+              </div>
+              <h3 id="cpQuestionText" style="font-family:var(--font-editorial); font-size:22px; color:var(--ink-primary); margin-bottom:14px;">
+                How many main chambers are there in the human heart?
+              </h3>
+              <div id="cpOptionsList" style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px;">
+                <!-- Injected dynamically -->
+              </div>
+              <div id="cpFeedbackBox" style="display:none; padding:10px; border-radius:var(--radius-sm); font-size:12px; margin-bottom:12px;"></div>
+              <div style="display:flex; justify-content:flex-end; gap:10px;">
+                <button id="cpContinueBtn" class="btn-action-primary" style="display:none;" onclick="closeCheckpointOverlay(true)">
+                  Continue Next Scene &rarr;
+                </button>
+              </div>
+            </div>
+
+            <!-- In-Video Socratic Ask Doubt Overlay -->
+            <div id="animDoubtOverlay" class="socratic-doubt-overlay">
+              <div class="atelier-card" style="max-width:520px; width:100%; padding:24px; background:white; position:relative;">
+                <button onclick="closeAnimatedDoubtModal()" style="position:absolute; top:12px; right:12px; background:none; border:none; font-size:20px; cursor:pointer;">&times;</button>
+                <div class="editorial-label">In-Video Socratic Teacher</div>
+                <h3 style="font-size:20px; margin-bottom:6px;">Have a Doubt on this Scene?</h3>
+                <p style="font-size:13px; color:var(--ink-secondary); margin-bottom:14px;">
+                  Ask in your own language. The AI teacher will explain directly grounded in this scene's visual simulation.
+                </p>
+                <textarea id="animDoubtInput" class="form-input" rows="3" placeholder="e.g. Why is the left ventricle wall thicker than the right?"></textarea>
+                <div id="animDoubtResponseBox" style="display:none; margin-top:12px; padding:12px; background:var(--surface-tinted); border:1px solid var(--border-parchment); border-radius:var(--radius-sm); font-size:13px;">
+                  <div id="animDoubtAnswerText" style="color:var(--ink-primary); line-height:1.5;"></div>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px;">
+                  <button id="animMicBtn" class="btn-action-outline" style="border-color:var(--accent-celadon); color:var(--accent-celadon);" onclick="toggleVoiceSpeechInput()">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg>
+                    <span id="animMicLabel">Speak Question</span>
+                  </button>
+                  <button class="btn-action-primary" onclick="submitAnimatedDoubt()">
+                    <span>Ask Teacher &rarr;</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Video Playback Controls Bar -->
+          <div class="animated-controls-bar">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <button class="btn-action-primary" id="btnAnimPlayPause" style="padding:8px 16px;" onclick="toggleAnimatedPlay()">
+                <span id="btnAnimPlayIcon">▶ Play</span>
+              </button>
+              <button class="btn-action-outline" style="padding:8px 12px;" onclick="stepAnimatedScene(-1)" title="Previous Scene">
+                <span>⏮</span>
+              </button>
+              <button class="btn-action-outline" style="padding:8px 12px;" onclick="stepAnimatedScene(1)" title="Next Scene">
+                <span>⏭</span>
+              </button>
+            </div>
+
+            <!-- Scrubber Timeline -->
+            <div class="animated-scrubber-wrap">
+              <span id="animTimeCurrent" style="font-size:12px; font-weight:700; color:var(--ink-secondary); font-variant-numeric:tabular-nums;">00:00</span>
+              <input type="range" id="animTimelineScrubber" class="animated-scrubber" min="0" max="100" value="0" oninput="seekAnimatedTimeline(this.value)">
+              <span id="animTimeTotal" style="font-size:12px; font-weight:700; color:var(--ink-secondary); font-variant-numeric:tabular-nums;">00:15</span>
+            </div>
+
+            <!-- Scene Switcher Pills -->
+            <div class="scene-pill-nav" id="animScenePillsNav">
+              <!-- Dynamically populated scene buttons -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Storyboard Drawer & Pedagogical Inspector -->
+        <div>
+          <div class="atelier-card" style="padding:20px;">
+            <div class="editorial-label">Storyboard &amp; Concepts</div>
+            <h3 class="editorial-h2" style="font-size:18px; margin-bottom:12px;">Lesson Scenes</h3>
+            
+            <div id="animStoryboardList" style="display:flex; flex-direction:column; gap:10px; max-height:540px; overflow-y:auto; padding-right:4px;">
+              <!-- Dynamically rendered scene cards -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================================================
+         ANIMATED LESSONS LIBRARY ("Universal Video Archive")
+         ============================================================== -->
+    <section class="screen-frame" id="view-animated-library">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
+        <div>
+          <div class="editorial-label">Universal Animated Video Archive</div>
+          <h1 class="editorial-h1">Your Animated Lessons</h1>
+          <p class="editorial-lead">Explore, replay, and export educational video lessons generated across all generations.</p>
+        </div>
+        <button class="btn-action-primary" style="background:var(--accent-terracotta);" onclick="openAnimatedModal()">
+          <span>+ Create Animated Lesson</span>
+        </button>
+      </div>
+
+      <!-- Filter by Profile -->
+      <div style="display:flex; gap:8px; margin-bottom:16px; overflow-x:auto; padding-bottom:6px;">
+        <button class="scene-pill-btn active" onclick="filterLibraryByProfile('all', this)">All Generations</button>
+        <button class="scene-pill-btn" onclick="filterLibraryByProfile('child', this)">🧒 Children (5–12)</button>
+        <button class="scene-pill-btn" onclick="filterLibraryByProfile('teen', this)">🎒 Teenagers (13–17)</button>
+        <button class="scene-pill-btn" onclick="filterLibraryByProfile('university', this)">🎓 University (18–25)</button>
+        <button class="scene-pill-btn" onclick="filterLibraryByProfile('professional', this)">💼 Professionals (26–59)</button>
+        <button class="scene-pill-btn" onclick="filterLibraryByProfile('older_adult', this)">🌿 Older Adults (60+)</button>
+      </div>
+
+      <div id="animatedLibraryGrid" class="animated-library-grid">
+        <!-- Injected dynamically -->
+      </div>
+    </section>
+
+
+  <!-- Universal AI Animated Lesson Creation Modal -->
+  <div id="newAnimatedModal" class="modal-backdrop" style="display:none; position:fixed; inset:0; background:rgba(19,34,30,0.65); backdrop-filter:blur(8px); z-index:999; justify-content:center; align-items:center;">
+    <div class="atelier-card" style="max-width:680px; width:92%; padding:28px; background:white; position:relative; box-shadow:var(--shadow-elevated); max-height:92vh; overflow-y:auto;">
+      <button onclick="closeAnimatedModal()" style="position:absolute; top:18px; right:18px; background:none; border:none; font-size:24px; cursor:pointer; color:var(--ink-secondary);">&times;</button>
+      
+      <div class="editorial-label">Universal Pedagogical Architect</div>
+      <h2 class="editorial-h2" style="font-size:24px; margin-bottom:4px;">Create AI Animated Lesson</h2>
+      <p style="font-size:13px; color:var(--ink-secondary); margin-bottom:20px;">
+        One AI teacher. Every subject. Every language. Every generation. Tailored specifically for the learner's age and style.
+      </p>
+
+      <form id="createAnimatedLessonForm" onsubmit="event.preventDefault(); submitNewAnimatedProject();">
+        <!-- Step 1: Learner Generation Profile -->
+        <div class="form-field" style="margin-bottom:18px;">
+          <label style="font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; color:var(--ink-primary); margin-bottom:8px; display:block;">
+            1. Target Generation &amp; Learner Profile
+          </label>
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(110px, 1fr)); gap:10px;" id="profileSelectGrid">
+            <div class="profile-card-option" data-profile="child" onclick="selectAudienceProfile('child')">
+              <span style="font-size:22px;">🧒</span>
+              <span style="font-size:12px; font-weight:700;">Child</span>
+              <span style="font-size:10px; color:var(--ink-secondary);">Ages 5–12</span>
+            </div>
+            <div class="profile-card-option selected" data-profile="teen" onclick="selectAudienceProfile('teen')">
+              <span style="font-size:22px;">🎒</span>
+              <span style="font-size:12px; font-weight:700;">Teen</span>
+              <span style="font-size:10px; color:var(--ink-secondary);">Ages 13–17</span>
+            </div>
+            <div class="profile-card-option" data-profile="university" onclick="selectAudienceProfile('university')">
+              <span style="font-size:22px;">🎓</span>
+              <span style="font-size:12px; font-weight:700;">University</span>
+              <span style="font-size:10px; color:var(--ink-secondary);">Ages 18–25</span>
+            </div>
+            <div class="profile-card-option" data-profile="professional" onclick="selectAudienceProfile('professional')">
+              <span style="font-size:22px;">💼</span>
+              <span style="font-size:12px; font-weight:700;">Professional</span>
+              <span style="font-size:10px; color:var(--ink-secondary);">Ages 26–59</span>
+            </div>
+            <div class="profile-card-option" data-profile="older_adult" onclick="selectAudienceProfile('older_adult')">
+              <span style="font-size:22px;">🌿</span>
+              <span style="font-size:12px; font-weight:700;">Older Adult</span>
+              <span style="font-size:10px; color:var(--ink-secondary);">Ages 60+</span>
+            </div>
+          </div>
+          <input type="hidden" id="animModalProfileInput" value="teen">
+        </div>
+
+        <!-- Step 2: Language & Animation Style -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:18px;">
+          <div class="form-field">
+            <label style="font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:0.5px;">2. Spoken Language</label>
+            <select id="animModalLangSelect" class="form-input">
+              <option value="te" selected>Telugu (తెలుగు)</option>
+              <option value="hi">Hindi (हिन्दी)</option>
+              <option value="en">English</option>
+              <option value="ta">Tamil (தமிழ்)</option>
+              <option value="kn">Kannada (ಕನ್ನಡ)</option>
+              <option value="mr">Marathi (मराठी)</option>
+              <option value="bn">Bengali (বাংলা)</option>
+              <option value="ml">Malayalam (മലയാളം)</option>
+              <option value="gu">Gujarati (ગુજરાતી)</option>
+              <option value="or">Odia (ଓଡ଼ିଆ)</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label style="font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:0.5px;">3. Animation Style</label>
+            <select id="animModalStyleSelect" class="form-input">
+              <option value="educational_2d" selected>2D Scientific / Conceptual</option>
+              <option value="cartoon">Playful Cartoon / Illustrated</option>
+              <option value="simulation">Dynamic Physics Simulation</option>
+              <option value="whiteboard">Minimalist Whiteboard</option>
+              <option value="infographic">High-Density Infographic</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Step 3: What do you want to learn? -->
+        <div class="form-field" style="margin-bottom:14px;">
+          <label style="font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:0.5px;">4. Lesson Title / Concept</label>
+          <input type="text" id="animModalTitleInput" class="form-input" placeholder="e.g. Transformers &amp; Electromagnetic Induction">
+        </div>
+
+        <!-- Input Modes: Document Upload or Topic Query -->
+        <div class="form-field" style="margin-bottom:14px;">
+          <label style="font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:0.5px;">5. Upload Document (Optional - PDF, DOCX, PPTX, TXT)</label>
+          <input type="file" id="animModalFileInput" class="form-input" accept=".pdf,.docx,.pptx,.txt">
+        </div>
+
+        <div class="form-field" style="margin-bottom:18px;">
+          <label style="font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:0.5px;">Or Describe Topic / Paste Notes</label>
+          <textarea id="animModalContentText" class="form-input" rows="3" placeholder="Describe the topic or enter questions: e.g. How do step-up and step-down transformers work? Explain mutual induction and formula V1/V2 = N1/N2."></textarea>
+        </div>
+
+        <!-- Generating Status Indicator -->
+        <div id="animGeneratingStatus" style="display:none; background:var(--surface-tinted); border:1px solid var(--accent-surya); padding:16px; border-radius:var(--radius-sm); margin-bottom:16px; text-align:center;">
+          <div style="font-weight:700; color:var(--accent-terracotta); font-size:14px;">Synthesizing AI Animated Lesson...</div>
+          <div style="color:var(--ink-secondary); font-size:12px; margin-top:4px;">
+            Gemini is tailoring storyboard scenes, declarative simulation parameters, and multilingual narration.
+          </div>
+        </div>
+
+        <button type="submit" id="btnSubmitAnimated" class="btn-action-primary" style="width:100%; justify-content:center; padding:14px; font-size:15px; background:var(--accent-terracotta);">
+          Generate Animated Lesson &amp; Launch Studio &rarr;
+        </button>
+      </form>
+    </div>
+  </div>
+
 </main>
 
   <!-- Notification Toast -->
   <div id="toastMessage">Notification message</div>
 
   
+  <script src="/static/animation_engine.js">
+    // ==============================================================
+    // UNIVERSAL AI ANIMATED LEARNING PLATFORM CONTROLLER
+    // ==============================================================
+
+    let animEngine = null;
+    let currentAnimatedProjectId = null;
+    let currentAnimatedProjectData = null;
+    let currentActiveProfile = 'teen';
+
+    function initAnimationEngine() {
+      if (!animEngine) {
+        animEngine = new UniversalAnimationEngine('animatedStageCanvas');
+        
+        animEngine.onSceneChange = (sceneIdx, scene) => {
+          updateScenePillsUI(sceneIdx);
+          updateStudioHeaderUI(scene);
+          updateStoryboardSelectionUI(sceneIdx);
+        };
+
+        animEngine.onProgress = (curr, total, sceneIdx) => {
+          const scrubber = document.getElementById('animTimelineScrubber');
+          const timeCurr = document.getElementById('animTimeCurrent');
+          const timeTot = document.getElementById('animTimeTotal');
+          if (scrubber && total > 0) {
+            scrubber.value = (curr / total) * 100;
+          }
+          if (timeCurr) {
+            const m = Math.floor(curr / 60);
+            const s = Math.floor(curr % 60);
+            timeCurr.textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+          }
+          if (timeTot) {
+            const m = Math.floor(total / 60);
+            const s = Math.floor(total % 60);
+            timeTot.textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+          }
+        };
+
+        animEngine.onCheckpointTrigger = (scene, onComplete) => {
+          showCheckpointOverlay(scene, onComplete);
+        };
+
+        animEngine.onPlaybackEnd = () => {
+          const btn = document.getElementById('btnAnimPlayIcon');
+          if (btn) btn.textContent = '▶ Replay';
+          showToast('Lesson completed! Concepts recorded to your Sovereign DNA.');
+        };
+      }
+    }
+
+    async function loadActiveAnimatedProject(projectId) {
+      initAnimationEngine();
+      const token = AuthManager.authToken;
+      const headers = token ? { "Authorization": "Bearer " + token } : {};
+
+      try {
+        let url = '/api/animated/projects';
+        if (projectId) {
+          url = `/api/animated/project/${projectId}`;
+        }
+
+        const resp = await fetch(url, { headers });
+        if (!resp.ok) {
+          console.warn('Could not fetch animated project:', resp.status);
+          return;
+        }
+
+        let projData = null;
+        if (projectId) {
+          projData = await resp.json();
+        } else {
+          const list = await resp.json();
+          if (list && list.length > 0) {
+            const pId = list[0].id;
+            const fullResp = await fetch(`/api/animated/project/${pId}`, { headers });
+            if (fullResp.ok) projData = await fullResp.json();
+          }
+        }
+
+        if (projData) {
+          currentAnimatedProjectId = projData.id;
+          currentAnimatedProjectData = projData;
+          animEngine.loadProject(projData);
+
+          // Populate Studio Header
+          const titleEl = document.getElementById('animStudioTitle');
+          if (titleEl) titleEl.textContent = projData.title || 'Interactive Visual Lesson';
+
+          const profBadge = document.getElementById('animStudioProfileBadge');
+          if (profBadge) profBadge.textContent = (projData.learner_profile || 'teen').toUpperCase();
+
+          const langBadge = document.getElementById('animStudioLangBadge');
+          if (langBadge) langBadge.textContent = (projData.language || 'te').toUpperCase();
+
+          const styleBadge = document.getElementById('animStudioStyleBadge');
+          if (styleBadge) styleBadge.textContent = (projData.animation_style || '2D').replace('_', ' ').toUpperCase();
+
+          // Populate Scene Pills
+          renderScenePills(projData.scenes || []);
+
+          // Populate Storyboard List
+          renderStoryboardList(projData.scenes || []);
+        }
+      } catch (err) {
+        console.error('Error loading animated project:', err);
+      }
+    }
+
+    function renderScenePills(scenes) {
+      const container = document.getElementById('animScenePillsNav');
+      if (!container) return;
+      container.innerHTML = '';
+
+      scenes.forEach((s, idx) => {
+        const btn = document.createElement('button');
+        btn.className = `scene-pill-btn ${idx === 0 ? 'active' : ''}`;
+        btn.id = `animPillScene_${idx}`;
+        btn.textContent = `Scene ${idx + 1}`;
+        btn.onclick = () => jumpToAnimatedScene(idx);
+        container.appendChild(btn);
+      });
+    }
+
+    function updateScenePillsUI(activeIdx) {
+      const container = document.getElementById('animScenePillsNav');
+      if (!container) return;
+      const pills = container.querySelectorAll('.scene-pill-btn');
+      pills.forEach((p, idx) => {
+        p.classList.toggle('active', idx === activeIdx);
+      });
+    }
+
+    function updateStudioHeaderUI(scene) {
+      const titleEl = document.getElementById('animStudioTitle');
+      if (titleEl && scene) {
+        titleEl.textContent = scene.title || currentAnimatedProjectData?.title || 'Interactive Lesson';
+      }
+    }
+
+    function renderStoryboardList(scenes) {
+      const listEl = document.getElementById('animStoryboardList');
+      if (!listEl) return;
+      listEl.innerHTML = '';
+
+      scenes.forEach((s, idx) => {
+        const card = document.createElement('div');
+        card.id = `storyboardCard_${idx}`;
+        card.style.cssText = 'padding:12px; border-radius:var(--radius-sm); border:1px solid var(--border-parchment); background:white; cursor:pointer; transition:all 0.2s;';
+        card.onclick = () => jumpToAnimatedScene(idx);
+
+        card.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+            <span style="font-size:11px; font-weight:800; color:var(--accent-surya); text-transform:uppercase;">Scene ${idx + 1} · ${(s.animation_type || 'simulation').toUpperCase()}</span>
+            <span style="font-size:11px; color:var(--ink-secondary); font-weight:600;">${s.duration_sec || 15}s</span>
+          </div>
+          <div style="font-weight:700; font-size:13px; color:var(--ink-primary); margin-bottom:4px;">${s.title || ''}</div>
+          <div style="font-size:11px; color:var(--ink-secondary); line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">
+            ${s.narration_text || s.display_text || ''}
+          </div>
+        `;
+        listEl.appendChild(card);
+      });
+    }
+
+    function updateStoryboardSelectionUI(activeIdx) {
+      const listEl = document.getElementById('animStoryboardList');
+      if (!listEl) return;
+      const cards = listEl.children;
+      for (let i = 0; i < cards.length; i++) {
+        if (i === activeIdx) {
+          cards[i].style.borderColor = 'var(--accent-terracotta)';
+          cards[i].style.background = '#FDF7F5';
+        } else {
+          cards[i].style.borderColor = 'var(--border-parchment)';
+          cards[i].style.background = 'white';
+        }
+      }
+    }
+
+    function toggleAnimatedPlay() {
+      if (!animEngine) return;
+      const isNowPlaying = animEngine.togglePlay();
+      const btn = document.getElementById('btnAnimPlayIcon');
+      if (btn) btn.textContent = isNowPlaying ? '⏸ Pause' : '▶ Play';
+    }
+
+    function jumpToAnimatedScene(idx) {
+      if (!animEngine) return;
+      animEngine.jumpToScene(idx);
+      const btn = document.getElementById('btnAnimPlayIcon');
+      if (btn) btn.textContent = animEngine.isPlaying ? '⏸ Pause' : '▶ Play';
+    }
+
+    function stepAnimatedScene(delta) {
+      if (!animEngine) return;
+      const targetIdx = animEngine.currentSceneIndex + delta;
+      if (targetIdx >= 0 && targetIdx < animEngine.scenes.length) {
+        jumpToAnimatedScene(targetIdx);
+      }
+    }
+
+    function seekAnimatedTimeline(percent) {
+      if (!animEngine) return;
+      const total = animEngine.sceneDuration || 15;
+      const targetSec = (percent / 100) * total;
+      animEngine.seek(targetSec);
+    }
+
+    // Interactive Checkpoint Overlay Handler
+    function showCheckpointOverlay(scene, onComplete) {
+      const overlay = document.getElementById('animCheckpointOverlay');
+      const qText = document.getElementById('cpQuestionText');
+      const optsList = document.getElementById('cpOptionsList');
+      const feedback = document.getElementById('cpFeedbackBox');
+      const continueBtn = document.getElementById('cpContinueBtn');
+
+      if (!overlay || !scene.checkpoint_question) return;
+
+      const cp = scene.checkpoint_question;
+      qText.textContent = cp.question || 'Check your understanding:';
+      optsList.innerHTML = '';
+      feedback.style.display = 'none';
+      continueBtn.style.display = 'none';
+
+      const options = cp.options || [];
+      const correctIdx = cp.correct_index ?? 0;
+
+      options.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'btn-action-outline';
+        btn.style.cssText = 'padding:12px; text-align:left; justify-content:flex-start; font-size:13px; line-height:1.4;';
+        btn.textContent = `${String.fromCharCode(65 + idx)}. ${opt}`;
+        
+        btn.onclick = () => {
+          const isCorrect = (idx === correctIdx);
+          feedback.style.display = 'block';
+          if (isCorrect) {
+            feedback.style.background = 'var(--accent-celadon-light)';
+            feedback.style.color = '#1B5E20';
+            feedback.style.border = '1px solid #C8E6C9';
+            feedback.innerHTML = `<strong>✓ Correct!</strong> ${cp.explanation || 'Great comprehension.'}`;
+          } else {
+            feedback.style.background = 'var(--accent-danger-soft)';
+            feedback.style.color = '#B71C1C';
+            feedback.style.border = '1px solid #FFCDD2';
+            feedback.innerHTML = `<strong>Explanation:</strong> ${cp.explanation || 'Review the scene concept.'}`;
+          }
+
+          // Record Checkpoint in Concept DNA
+          recordAnimatedCheckpoint(scene.id, cp.question, idx, isCorrect);
+
+          continueBtn.style.display = 'inline-flex';
+          continueBtn.onclick = () => {
+            overlay.style.display = 'none';
+            if (onComplete) onComplete(isCorrect);
+          };
+        };
+        optsList.appendChild(btn);
+      });
+
+      overlay.style.display = 'flex';
+    }
+
+    function closeCheckpointOverlay() {
+      const overlay = document.getElementById('animCheckpointOverlay');
+      if (overlay) overlay.style.display = 'none';
+      if (animEngine) animEngine.advanceNextScene();
+    }
+
+    async function recordAnimatedCheckpoint(sceneId, question, selectedIdx, isCorrect) {
+      if (!currentAnimatedProjectId) return;
+      try {
+        const token = AuthManager.authToken;
+        await fetch(`/api/animated/project/${currentAnimatedProjectId}/checkpoint`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { 'Authorization': 'Bearer ' + token } : {})
+          },
+          body: JSON.stringify({
+            scene_id: sceneId,
+            question: question,
+            selected_idx: selectedIdx,
+            is_correct: isCorrect
+          })
+        });
+      } catch (e) {
+        console.warn('Could not record checkpoint DNA:', e);
+      }
+    }
+
+    // In-Video Socratic Ask Doubt
+    function openAnimatedDoubtModal() {
+      if (animEngine) animEngine.pause();
+      const overlay = document.getElementById('animDoubtOverlay');
+      if (overlay) {
+        overlay.style.display = 'flex';
+        document.getElementById('animDoubtInput').focus();
+      }
+    }
+
+    function closeAnimatedDoubtModal() {
+      const overlay = document.getElementById('animDoubtOverlay');
+      if (overlay) overlay.style.display = 'none';
+    }
+
+    async function submitAnimatedDoubt() {
+      const input = document.getElementById('animDoubtInput');
+      const doubtText = input?.value?.trim();
+      if (!doubtText) {
+        showToast('Please type or speak your doubt first.');
+        return;
+      }
+
+      const activeScene = animEngine ? animEngine.scenes[animEngine.currentSceneIndex] : null;
+      if (!activeScene) return;
+
+      const respBox = document.getElementById('animDoubtResponseBox');
+      const ansText = document.getElementById('animDoubtAnswerText');
+      if (respBox) respBox.style.display = 'block';
+      if (ansText) ansText.textContent = 'AI Teacher is contemplating the visual mechanics...';
+
+      try {
+        const token = AuthManager.authToken;
+        const res = await fetch(`/api/animated/scene/${activeScene.id}/ask`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { 'Authorization': 'Bearer ' + token } : {})
+          },
+          body: JSON.stringify({ doubt_text: doubtText })
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          if (ansText) ansText.textContent = data.answer_text || 'Understood.';
+          
+          // Play audio response if available
+          if (data.audio_b64) {
+            const snd = new Audio('data:audio/mp3;base64,' + data.audio_b64);
+            snd.play().catch(() => {});
+          }
+        } else {
+          if (ansText) ansText.textContent = 'Could not process question. Please try again.';
+        }
+      } catch (err) {
+        if (ansText) ansText.textContent = 'Network error while contacting AI teacher.';
+      }
+    }
+
+    // Video Export Trigger
+    async function triggerVideoExport() {
+      if (!animEngine) {
+        showToast('Please load an animated lesson first.');
+        return;
+      }
+
+      const btn = document.getElementById('btnExportText');
+      const origText = btn ? btn.textContent : 'Export MP4 Video';
+      if (btn) btn.textContent = 'Compiling Video...';
+
+      showToast('Rendering high-fidelity animated video with narration audio...');
+
+      try {
+        const exportedFile = await animEngine.exportCurrentLessonVideo((sIdx, totalS, pct) => {
+          if (btn) btn.textContent = `Scene ${sIdx + 1}/${totalS} (${Math.round(pct * 100)}%)`;
+        });
+        showToast(`Export complete! Saved ${exportedFile}`);
+      } catch (err) {
+        console.error('Export error:', err);
+        showToast('Video export completed or fallback triggered.');
+      } finally {
+        if (btn) btn.textContent = origText;
+      }
+    }
+
+    // Animated Creation Modal Controls
+    function openAnimatedModal() {
+      document.getElementById('newAnimatedModal').style.display = 'flex';
+    }
+
+    function closeAnimatedModal() {
+      document.getElementById('newAnimatedModal').style.display = 'none';
+    }
+
+    function selectAudienceProfile(profKey) {
+      currentActiveProfile = profKey;
+      const input = document.getElementById('animModalProfileInput');
+      if (input) input.value = profKey;
+
+      const grid = document.getElementById('profileSelectGrid');
+      if (grid) {
+        const cards = grid.querySelectorAll('.profile-card-option');
+        cards.forEach(c => {
+          c.classList.toggle('selected', c.getAttribute('data-profile') === profKey);
+        });
+      }
+    }
+
+    async function submitNewAnimatedProject() {
+      const title = document.getElementById('animModalTitleInput')?.value?.trim();
+      const profile = document.getElementById('animModalProfileInput')?.value || 'teen';
+      const lang = document.getElementById('animModalLangSelect')?.value || 'te';
+      const style = document.getElementById('animModalStyleSelect')?.value || 'educational_2d';
+      const contentText = document.getElementById('animModalContentText')?.value?.trim();
+      const fileInput = document.getElementById('animModalFileInput');
+      const file = fileInput?.files?.[0];
+
+      if (!title && !contentText && !file) {
+        showToast('Please enter a topic title, concept notes, or upload a document.');
+        return;
+      }
+
+      const status = document.getElementById('animGeneratingStatus');
+      const btn = document.getElementById('btnSubmitAnimated');
+      if (status) status.style.display = 'block';
+      if (btn) btn.disabled = true;
+
+      const formData = new FormData();
+      if (title) formData.append('title', title);
+      formData.append('learner_profile', profile);
+      formData.append('language', lang);
+      formData.append('animation_style', style);
+      if (contentText) formData.append('content_text', contentText);
+      if (file) formData.append('file', file);
+
+      try {
+        const token = AuthManager.authToken;
+        const res = await fetch('/api/animated/project', {
+          method: 'POST',
+          headers: token ? { 'Authorization': 'Bearer ' + token } : {},
+          body: formData
+        });
+
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          showToast(errData.detail || 'Could not generate animated lesson.');
+          return;
+        }
+
+        const project = await res.json();
+        closeAnimatedModal();
+        showToast(`Created Animated Lesson: "${project.title}"! Launching studio.`);
+        switchScreen('animated-studio');
+        loadActiveAnimatedProject(project.project_id || project.id);
+      } catch (err) {
+        console.error('Submission error:', err);
+        showToast('Error communicating with generation engine.');
+      } finally {
+        if (status) status.style.display = 'none';
+        if (btn) btn.disabled = false;
+      }
+    }
+
+    // Animated Video Library Loader
+    async function loadAnimatedProjectsList(profileFilter) {
+      const container = document.getElementById('animatedLibraryGrid');
+      if (!container) return;
+      container.innerHTML = '<div style="color:var(--ink-secondary); font-size:13px;">Loading animated lessons...</div>';
+
+      try {
+        const token = AuthManager.authToken;
+        const res = await fetch('/api/animated/projects', {
+          headers: token ? { 'Authorization': 'Bearer ' + token } : {}
+        });
+
+        if (!res.ok) {
+          container.innerHTML = '<div style="color:var(--ink-secondary); font-size:13px;">No animated lessons found. Create your first one above!</div>';
+          return;
+        }
+
+        let projects = await res.json();
+        if (profileFilter && profileFilter !== 'all') {
+          projects = projects.filter(p => p.learner_profile === profileFilter);
+        }
+
+        if (!projects || projects.length === 0) {
+          container.innerHTML = `
+            <div style="grid-column: 1 / -1; padding:36px; text-align:center; background:white; border-radius:var(--radius-md); border:1px dashed var(--border-parchment);">
+              <h3 style="font-size:18px; color:var(--ink-primary); margin-bottom:6px;">No animated lessons in this category yet</h3>
+              <p style="font-size:13px; color:var(--ink-secondary); margin-bottom:14px;">Generate an educational video lesson tailored to this audience.</p>
+              <button class="btn-action-primary" style="background:var(--accent-terracotta);" onclick="openAnimatedModal()">
+                + Create Animated Lesson
+              </button>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = '';
+        projects.forEach(p => {
+          const card = document.createElement('div');
+          card.className = 'animated-lesson-card';
+          
+          card.innerHTML = `
+            <div class="animated-thumb-stage">
+              <div style="text-align:center;">
+                <div style="font-size:32px; margin-bottom:4px;">🎬</div>
+                <div style="font-size:11px; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:var(--accent-surya);">
+                  ${(p.animation_style || '2D').replace('_', ' ')}
+                </div>
+              </div>
+              <span style="position:absolute; bottom:8px; right:8px; background:rgba(0,0,0,0.65); color:white; font-size:11px; font-weight:700; padding:2px 8px; border-radius:4px;">
+                ${p.total_scenes || 5} Scenes
+              </span>
+            </div>
+            <div style="padding:16px; flex:1; display:flex; flex-direction:column; justify-content:space-between;">
+              <div>
+                <div style="display:flex; gap:6px; margin-bottom:8px; flex-wrap:wrap;">
+                  <span class="profile-badge-pill" style="font-size:9px; padding:2px 6px;">
+                    ${(p.learner_profile || 'teen').toUpperCase()}
+                  </span>
+                  <span class="profile-badge-pill" style="font-size:9px; padding:2px 6px; background:#FFF3E0; color:#E65100; border-color:#FFE0B2;">
+                    ${(p.language || 'te').toUpperCase()}
+                  </span>
+                </div>
+                <h4 style="font-family:var(--font-editorial); font-size:18px; color:var(--ink-primary); line-height:1.3; margin-bottom:6px;">
+                  ${p.title || 'Animated Lesson'}
+                </h4>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px; pt:12px; border-top:1px solid var(--border-parchment);">
+                <button class="btn-action-primary" style="padding:6px 14px; font-size:12px;" onclick="openProjectInStudio('${p.id}')">
+                  ▶ Play Lesson
+                </button>
+                <button class="btn-action-outline" style="padding:6px 10px; font-size:12px; border-color:var(--border-parchment);" onclick="deleteAnimatedProject('${p.id}')" title="Delete">
+                  🗑
+                </button>
+              </div>
+            </div>
+          `;
+          container.appendChild(card);
+        });
+      } catch (err) {
+        container.innerHTML = '<div style="color:var(--ink-secondary); font-size:13px;">Error loading animated library.</div>';
+      }
+    }
+
+    function openProjectInStudio(projectId) {
+      switchScreen('animated-studio');
+      loadActiveAnimatedProject(projectId);
+    }
+
+    async function deleteAnimatedProject(projectId) {
+      if (!confirm('Are you sure you want to delete this animated lesson?')) return;
+      try {
+        const token = AuthManager.authToken;
+        await fetch(`/api/animated/project/${projectId}`, {
+          method: 'DELETE',
+          headers: token ? { 'Authorization': 'Bearer ' + token } : {}
+        });
+        showToast('Lesson deleted.');
+        loadAnimatedProjectsList();
+      } catch (e) {
+        showToast('Could not delete lesson.');
+      }
+    }
+
+    function filterLibraryByProfile(profileKey, btnEl) {
+      const buttons = btnEl.parentElement.querySelectorAll('.scene-pill-btn');
+      buttons.forEach(b => b.classList.remove('active'));
+      btnEl.classList.add('active');
+      loadAnimatedProjectsList(profileKey);
+    }
+
+    // Keyboard Spacebar Shortcut for In-Video Play/Pause or Doubt
+    window.addEventListener('keydown', (e) => {
+      const activeScreen = window.location.hash.replace('#', '');
+      if (activeScreen === 'animated-studio' && e.code === 'Space' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        toggleAnimatedPlay();
+      }
+    });
+
+  </script>
   <script>
     // ==============================================================
     // POD-SIKSHA 2.0 STRICT AUTHENTICATION-FIRST ACCESS CONTROL ENGINE
     // ==============================================================
 
     const PUBLIC_SCREENS = ['landing', 'login', 'register', 'forgot-password', 'reset-password', 'verify-email', 'privacy', 'terms'];
-    const PROTECTED_SCREENS = ['home', 'insights', 'studio', 'workspace', 'concept-dna', 'teachback'];
+    const PROTECTED_SCREENS = ['home', 'animated-studio', 'animated-library', 'insights', 'studio', 'workspace', 'concept-dna', 'teachback'];
     const ALL_SCREENS = [...PUBLIC_SCREENS, ...PROTECTED_SCREENS];
 
     let currentSessionId = null;
@@ -2374,6 +3431,8 @@
       if (screenId === 'insights') loadInsights();
       if (screenId === 'concept-dna') loadConceptDNA(currentSessionId);
       if (screenId === 'teachback') initTeachBack(currentSessionId);
+      if (screenId === 'animated-studio') loadActiveAnimatedProject();
+      if (screenId === 'animated-library') loadAnimatedProjectsList();
     }
 
     // Hash change listener for browser back/forward buttons

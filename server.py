@@ -73,6 +73,9 @@ LANG_CONFIGS = {
     "kn": {"name": "Kannada", "stt_lang": "kn-IN,en-IN", "tts_lang": "kn-IN", "fmt": "codemix"},
     "mr": {"name": "Marathi", "stt_lang": "mr-IN,en-IN", "tts_lang": "mr-IN", "fmt": "codemix"},
     "bn": {"name": "Bengali", "stt_lang": "bn-IN,en-IN", "tts_lang": "bn-IN", "fmt": "codemix"},
+    "ml": {"name": "Malayalam", "stt_lang": "ml-IN,en-IN", "tts_lang": "ml-IN", "fmt": "codemix"},
+    "gu": {"name": "Gujarati", "stt_lang": "gu-IN,en-IN", "tts_lang": "gu-IN", "fmt": "codemix"},
+    "pa": {"name": "Punjabi", "stt_lang": "pa-IN,en-IN", "tts_lang": "pa-IN", "fmt": "codemix"},
     "en": {"name": "English", "stt_lang": "en-IN", "tts_lang": "en-IN", "fmt": "transcribe"},
 }
 
@@ -2806,6 +2809,9 @@ def serve_redesign():
     if os.path.exists(redesign_file):
         return FileResponse(redesign_file)
     return {"message": "Pod-Siksha 2.0 Aura Atelier Master Prototype"}
+
+from animated_router import router as animated_router
+app.include_router(animated_router)
 
 app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
