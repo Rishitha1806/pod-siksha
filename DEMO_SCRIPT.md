@@ -1,88 +1,125 @@
 # Pod-Siksha 3.0 — Universal AI Educator
-## 3–5 Minute Evaluation Demonstration Script
+## 4-Minute Video Demonstration Script & Evaluation Guide
 
-**Platform URL:** [https://pod-siksha-2.vercel.app](https://pod-siksha-2.vercel.app)  
-**Demo Account:** `scholar@podsiksha.edu` / `TestPassword@123` (or register a fresh student account)  
-**Target Audience:** Technical evaluators, product architects, and pedagogy specialists  
-**Total Running Time:** 3 minutes 45 seconds  
+**Platform Production URL:** [https://pod-siksha-2.vercel.app](https://pod-siksha-2.vercel.app)  
+**Demo Account:** `scholar@podsiksha.edu` / `TestPassword@123` (or register a fresh learner account)  
+**Target Audience:** Evaluation committee, technical assessors, and product judges  
+**Total Target Duration:** 3 minutes 45 seconds to 4 minutes 15 seconds  
 
 ---
 
-## Act I: Entry & Authentication (0:00 – 0:45)
+## Act I: Product Identity, Universal Navigation & Honest Empty State (0:00 – 0:45)
 
 1. **Open the Platform:**
    - Navigate to `https://pod-siksha-2.vercel.app`.
-   - *Observation:* The application enforces **login-first security**. Unauthenticated visitors cannot access studio workspaces or student records.
-   - *Visual Aesthetics:* Notice the Aura Atelier design language—warm terracotta accents, muted parchment cards, and editorial typography.
+   - *Observation:* Clean, login-first authentication protecting learner privacy and isolated data.
+   - Click **Sign In** (or register a brand-new test learner to demonstrate the fresh experience).
 
-2. **Authenticate:**
-   - Click **Enter Learning Atelier**.
-   - The user lands on the **Atelier Dashboard**, displaying recent journeys, mastery analytics, and active visual projects.
+2. **Demonstrate Universal 6-Item Navigation:**
+   - Point out the unified, uncluttered navigation header:
+     - **Home**
+     - **Learn**
+     - **Library**
+     - **Concept DNA**
+     - **Insights**
+     - **Profile**
+   - *Key Message:* *"We eliminated all legacy age-segmented sub-menus. Learners can now customize their explanation complexity directly across Beginner, Intermediate, and Advanced."*
+
+3. **Demonstrate Honest Empty State (Zero Dummy Data):**
+   - Show the newly registered learner dashboard.
+   - Point out that there are **no hardcoded lessons, no fake 78% mastery metrics, and no mock Chloroplast trees**.
+   - Instead, the learner sees an honest, encouraging prompt: *"No learning journeys yet. Upload your first document or enter a topic to begin."*
 
 ---
 
-## Act II: Universal Dual-Entry Ingestion (0:45 – 1:30)
+## Act II: Learning Initiation & Multi-Modal Ingestion (0:45 – 1:30)
 
-1. **Trigger Ingestion Modal:**
-   - Click the prominent **+ New Learning Journey** button in the dashboard header.
-   - The **Curriculum Ingestion Modal** opens with two clear entry point tabs:
+1. **Trigger Learning Modal:**
+   - Click **+ New Learning Journey** in the header.
+   - Show the dual-entry tabs:
      - **Tab 1: Upload Document (PDF / PPTX / DOCX / TXT)**
      - **Tab 2: Enter Topic Manually**
 
-2. **Demonstrate Optional Paragraph Text:**
+2. **Demonstrate Standalone Topic-Only Learning:**
    - Switch to **Enter Topic Manually**.
-   - In **Topic Title**, type: `Binary Search Trees in C++`.
-   - Highlight the **Concept Notes / Syllabus Text** field: **It is completely optional**. Leave it blank!
-   - Explain to the evaluators:
-     > *"Unlike traditional wrappers that force students to copy-paste paragraphs, Pod-Siksha's AI Educator can construct a complete visual curriculum from a standalone topic title, or extract it from complex multimodal documents."*
-   - Select destination **AI Animated Visual Stage**.
+   - Enter Topic: `Photosynthesis and Cellular Respiration`.
+   - Note that **Concept Notes / Syllabus Text is 100% optional**.
+   - Select Explanation Complexity: `Intermediate`.
+   - Click **Generate Animated Lesson**.
+   - The AI Educator compiles the storyboard, extracts atomic concepts, and transitions straight into the visual stage.
 
 ---
 
-## Act III: Multimodal Document Intelligence & Concept DAG (1:30 – 2:30)
+## Act III: The Single AI Visual Educator Experience (1:30 – 2:40)
 
-1. **Upload Document Demonstration:**
-   - Upload any academic textbook or paper (e.g. `01_python_programming.pdf` or `05_biology_cell_energetics.pdf`).
-   - The document is parsed through the asynchronous processing pipeline:
-     - OCR processes rasterized pages with Gemini Multimodal Vision.
-     - Code block extraction identifies syntax, algorithms, and preserves 4-space indentation.
-     - Mathematical expressions are parsed into KaTeX-ready LaTeX formulas.
-     - Pedagogical Concept Extractor constructs an open Directed Acyclic Graph (DAG) of prerequisites.
-     - Teaching Strategy Engine selects the optimal cognitive method (`code_walkthrough`, `process_animation`, or `interactive_derivation`).
+1. **One AI Educator (No Podcast Banter):**
+   - The learner enters the **Universal AI Visual Stage**.
+   - One educator explains the topic continuously and methodically with Indian-accented speech (Gnani TTS) and synchronized English subtitles.
+   - The interactive canvas renders dynamic visual mechanisms (e.g. chloroplast light-harvesting, photon photolysis of water, electron flows).
 
-2. **Inspect the Document Intelligence Dossier:**
-   - Open the **Document Intelligence Dossier Modal**.
-   - Show the 5 structured tabs:
-     - **Concepts & Graph:** Displays atomic concepts, Bloom's level, and diagnosed misconceptions.
-     - **Teaching Strategies:** Explains why a specific visual method was recommended.
-     - **Code Snippets:** Displays clean code blocks with syntax highlighting and algorithmic purpose.
-     - **Formulas (LaTeX):** Displays formatted mathematical equations.
-     - **Multimodal Diagrams:** Displays diagram callouts and structural explanations.
+2. **Contextual In-Scene Doubt Resolution ("Ask This Scene"):**
+   - While the video is playing, click **Ask This Scene**.
+   - Type or speak: *"Why is oxygen released during the light reaction?"*
+   - The AI Educator responds with a direct, contextual answer focused on the active scene, synthesized with voice and subtitles without losing the learner's place.
 
----
+3. **Adaptive Re-Explanation ("Explain It Again"):**
+   - Click **Explain It Again**.
+   - Select **Analogy** or **Step-by-Step**.
+   - The educator re-explains the current scene's concept using a vivid real-world metaphor (e.g. water as the solar battery recharge) without restarting the entire lesson.
 
-## Act IV: Adaptive Visual Stage Playback (2:30 – 3:15)
-
-1. **Launch Animated Visual Lesson:**
-   - Click **Learn with AI Educator** on the top concept (e.g., *"Recursive Functions"* or *"Photolysis of Water"*).
-   - The platform transitions directly into the **Universal AI Visual Stage**.
-
-2. **Verify Interactive Playback:**
-   - Click **Play**.
-   - *Observation:* The canvas renders real 2D animated educational objects (nodes, arrows, code terminals, callout badges, chemical molecules).
-   - *Narration & Subtitles:* Synchronized multilingual audio plays in authentic Telugu (or English/Hindi) accompanied by timed subtitle banners.
-   - *Checkpoint Questions:* The video automatically pauses at interactive checkpoints, asking the learner a conceptual question to assess understanding before proceeding.
-   - *In-Video Doubt Resolution:* Pause the video and submit a spoken or typed question to receive immediate grounded explanations from the AI educator.
+4. **Interactive Checkpoint Quiz:**
+   - Complete the checkpoint question displayed below the visual canvas.
+   - Click the correct option.
+   - Point out that answering the checkpoint updates the concept's status from `learning` to `understood` directly in the database.
 
 ---
 
-## Act V: Socratic Broadcast Studio & Teacher Observatory (3:15 – 3:45)
+## Act IV: Concept DNA Knowledge Tree (2:40 – 3:35)
 
-1. **Socratic Audio Podcast Studio:**
-   - Switch to the **Socratic Broadcast Studio** view.
-   - Show the 14-turn dialogue between Host A (Explainer) and Host B (Questioner).
-   - Click play on any turn to verify instantaneous streaming audio with authenticated query tokens.
+1. **Navigate to Concept DNA:**
+   - Click **Concept DNA** in the top navigation bar.
+   - Show the interactive SVG knowledge tree:
+     - **Root Node:** Main lesson topic (*Photosynthesis and Plant Metabolism*).
+     - **Branch Nodes:** Extracted concepts (*Foundation*, *Thylakoid Photolysis*, *Calvin Cycle*, *Cellular Respiration*).
+     - **Prerequisite Links:** Directed curved arrows indicating learning order.
+     - **Status Badges:** Color-coded for `learning` (blue), `understood` (emerald), and `needs_revision` (terracotta).
 
-2. **Conclusion & Wrap-Up:**
-   - Highlight the production stability: Neon PostgreSQL with 28 tables, zero data loss, strict tenant isolation, and live deployment on Vercel.
-   - Thank the evaluation committee.
+2. **Inspect Concept Detail Drawer:**
+   - Click on any concept node in the tree.
+   - The sliding **Concept Detail Drawer** opens on the right, providing 6 actionable pathways:
+     1. **Explain Concept:** Dynamic explanations powered by Gemini in 4 modes (*Simpler*, *Step-by-Step*, *Analogy*, *Real-World*).
+     2. **Watch Scene:** Jumps directly to the lesson scene covering this concept.
+     3. **Prerequisites & Related Concepts:** Displays dependencies in the curriculum.
+     4. **Practice Checkpoint:** Retakes the checkpoint question to reinforce retention.
+     5. **Mark for Revision:** Flags the concept for revision and schedules it in the spaced retrieval loop.
+
+3. **Demonstrate Side-by-Side Compare Concepts:**
+   - Click **Compare Concepts** in the tree toolbar.
+   - Select Concept A (*Photosynthesis*) and Concept B (*Cellular Respiration*).
+   - Click **Analyze Comparison**.
+   - View the generated structured comparison: similarities, key differences, side-by-side comparison matrix, and a discriminator test question.
+
+---
+
+## Act V: Understanding Tracker & Real Teach-Back Mode (3:35 – 4:15)
+
+1. **Navigate to Insights:**
+   - Click **Insights** in the top navigation bar.
+   - Show the **Understanding Tracker**:
+     - All metrics (Mastery Score, Concepts Understood, In Progress, In Revision) are strictly computed from persisted DB records in `user_concept_progress`.
+
+2. **Demonstrate Authentic Teach-Back Evaluation:**
+   - Select **Teach-Back Mode**.
+   - The dropdown lists **only concepts the learner has actually studied**.
+   - Select *Photolysis of Water*.
+   - Provide an explanation: *"Water is split by photons in the thylakoid to release oxygen and provide electrons."*
+   - Click **Evaluate Explanation**.
+   - Gemini evaluates the explanation against textbook ground truth:
+     - **Understood Points:** Correctly recognized that photolysis splits water into oxygen and electrons.
+     - **Misconceptions:** Identifies any false cause-and-effect relationships.
+     - **Missing Knowledge:** Points out missing nuances (e.g. Photosystem II).
+     - **Next Step:** Recommends reviewing the relevant scene.
+     - **Mastery Delta:** Updates the concept's status and mastery score in the database.
+
+3. **Conclusion:**
+   - *"Pod-Siksha 3.0 delivers a genuine Universal AI Educator: Upload anything, learn everything, backed by real pedagogical intelligence and zero fabricated data."*
