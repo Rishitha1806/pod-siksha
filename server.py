@@ -741,7 +741,7 @@ def call_gemini(prompt: str, json_mode: bool = True) -> str:
     if json_mode:
         config["response_mime_type"] = "application/json"
     
-    models_to_try = [LLM_MODEL, "gemini-2.5-flash", "gemini-2.0-flash"]
+    models_to_try = [LLM_MODEL, "gemini-3.8-flash", "gemini-3.5-flash", "gemini-2.5-flash-lite"]
     # De-duplicate while preserving order
     seen = set()
     models = [m for m in models_to_try if m and not (m in seen or seen.add(m))]

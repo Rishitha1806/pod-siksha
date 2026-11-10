@@ -28,9 +28,14 @@ class ExtractionResult:
     has_tables: bool = False
     full_text: str = ""
     extractor_used: str = "base"
+    document_id: Optional[str] = ""
+    filename: Optional[str] = ""
+    metadata: Dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> Dict[str, Any]:
         return {
+            "document_id": self.document_id,
+            "filename": self.filename,
             "total_pages": self.total_pages,
             "section_count": len(self.sections),
             "subject_detected": self.subject_detected,
@@ -40,7 +45,8 @@ class ExtractionResult:
             "has_code": self.has_code,
             "has_tables": self.has_tables,
             "full_text_chars": len(self.full_text),
-            "extractor_used": self.extractor_used
+            "extractor_used": self.extractor_used,
+            "metadata": self.metadata
         }
 
 class BaseExtractor(ABC):

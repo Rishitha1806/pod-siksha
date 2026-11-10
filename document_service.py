@@ -173,19 +173,17 @@ class DocumentService:
 
         try:
             # Stage 1: Download from persistent storage
-            update_stage("downloading_storage", 25)
+            update_stage("downloading_storage", 15)
             storage = get_storage_provider()
             file_bytes = storage.download(f"{user_id}/{storage_key}")
 
             # Stage 2: Extract text and structure
-            update_stage("extracting_structure", 50)
+            update_stage("extracting_structure", 35)
             extractor = get_extractor(filename)
-            result: ExtractionResult = extractor.extract(file_bytes, filename)
+            result: ExtractionResult = extractor.extract(file_bytes, filename, document_id=doc_id)
 
-            # Stage 3: Save sections to Neon
-            update_stage("saving_sections", 75)
+            # Save sections to Neon
             with get_db() as conn:
-                # Remove prior sections if this is an idempotent re-run
                 conn.execute("DELETE FROM document_sections WHERE document_id = ?", (doc_id,))
                 for sec in result.sections:
                     sec_id = str(uuid.uuid4())
@@ -200,7 +198,55 @@ class DocumentService:
                         len(sec.content), json.dumps(sec.metadata)
                     ))
 
-                # Update document record
+            # Stage 3: Multimodal Analysis (Diagrams, Code, Math)
+            update_stage("analyzing_multimodal", 55)
+            from extractors.multimodal_extractor import MultimodalDocumentExtractor
+            from extractors.code_extractor import ProgrammingCodeExtractor
+            from extractors.math_extractor import MathematicalIntelligenceExtractor
+
+            figures = []
+            if filename.lower().endswith(".pdf"):
+                try:
+                    multi_ext = MultimodalDocumentExtractor()
+                    multi_res = multi_ext.extract(file_bytes, filename, document_id=doc_id)
+                    figures = [s.metadata for s in multi_res.sections if s.content_type == "figure"]
+                except Exception as m_err:
+                    log.warning("Multimodal analysis note: %s", m_err)
+
+            code_extractor = ProgrammingCodeExtractor()
+            code_blocks = code_extractor.process_document(result.sections, document_id=doc_id)
+
+            math_extractor = MathematicalIntelligenceExtractor()
+            math_exprs = math_extractor.process_document(result.sections, document_id=doc_id)
+
+            # Stage 4: Pedagogical Concept Extraction & Dependency Graph
+            update_stage("extracting_pedagogy", 75)
+            from pedagogy.concept_extractor import PedagogicalConceptExtractor
+            concept_ext = PedagogicalConceptExtractor()
+            concept_graph = concept_ext.extract_concepts_and_graph(
+                document_id=doc_id,
+                filename=filename,
+                sections=result.sections,
+                code_blocks=code_blocks,
+                math_expressions=math_exprs,
+                figures=figures
+            )
+
+            # Stage 5: Adaptive Teaching Strategies
+            update_stage("generating_teaching_strategies", 90)
+            from pedagogy.teaching_strategy_engine import AdaptiveTeachingStrategyEngine
+            strategy_engine = AdaptiveTeachingStrategyEngine()
+            strategies = strategy_engine.recommend_strategies(
+                document_id=doc_id,
+                subject=concept_graph.subject,
+                concepts=concept_graph.concepts,
+                has_code=len(code_blocks) > 0,
+                has_math=len(math_exprs) > 0,
+                has_figures=len(figures) > 0
+            )
+
+            # Stage 6: Update Document Metadata & Mark Completed
+            with get_db() as conn:
                 conn.execute("""
                     UPDATE documents SET
                         page_count = ?,
@@ -208,10 +254,23 @@ class DocumentService:
                         status = 'completed',
                         updated_at = CURRENT_TIMESTAMP
                     WHERE id = ?
-                """, (result.total_pages, result.subject_detected, doc_id))
+                """, (result.total_pages, concept_graph.subject, doc_id))
 
-            # Stage 4: Mark job completed
-            summary_dict = result.to_dict()
+            summary_dict = {
+                "document_id": doc_id,
+                "filename": filename,
+                "total_pages": result.total_pages,
+                "subject": concept_graph.subject,
+                "topic": concept_graph.topic,
+                "chapter_title": concept_graph.chapter_title,
+                "section_count": len(result.sections),
+                "concept_count": len(concept_graph.concepts),
+                "relationship_count": len(concept_graph.relationships),
+                "code_blocks_count": len(code_blocks),
+                "math_expressions_count": len(math_exprs),
+                "figures_count": len(figures),
+                "strategies_count": len(strategies)
+            }
             update_stage("completed", 100, status="completed", summary=json.dumps(summary_dict))
 
             return {
@@ -219,8 +278,8 @@ class DocumentService:
                 "document_id": doc_id,
                 "job_id": job_id,
                 "total_pages": result.total_pages,
-                "subject_detected": result.subject_detected,
-                "section_count": len(result.sections)
+                "subject_detected": concept_graph.subject,
+                "summary": summary_dict
             }
 
         except Exception as e:

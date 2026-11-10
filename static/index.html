@@ -2333,7 +2333,64 @@
     </div>
   </div>
 
-  <!-- ==============================================================
+  
+  <!-- Universal Document Intelligence & Knowledge Dossier Modal -->
+  <div id="docIntelligenceModal" class="modal-backdrop" style="display:none; position:fixed; inset:0; background:rgba(19,34,30,0.65); backdrop-filter:blur(8px); z-index:1001; justify-content:center; align-items:center;">
+    <div class="atelier-card" style="max-width:880px; width:94%; max-height:90vh; overflow-y:auto; padding:32px; background:white; position:relative; box-shadow:var(--shadow-elevated);">
+      <button type="button" onclick="closeDocIntelligenceModal()" style="position:absolute; top:20px; right:20px; background:none; border:none; font-size:24px; cursor:pointer; color:var(--ink-secondary); line-height:1;">&times;</button>
+      
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+        <span class="editorial-label" style="margin-bottom:0;">AI Universal Educator &middot; Document Intelligence</span>
+        <span id="docIntelSubjectBadge" class="profile-badge-pill" style="background:#E0F2F1; color:#00695C; border-color:#B2DFDB;">Universal</span>
+      </div>
+      <h2 id="docIntelTitle" class="editorial-h2" style="font-size:24px; margin-bottom:8px;">Document Knowledge Overview</h2>
+      <p id="docIntelSummary" style="font-size:13px; color:var(--ink-secondary); margin-bottom:20px;">Deep pedagogical decomposition, multimodal figures, and concept dependency graph.</p>
+
+      <!-- Dossier Tabs -->
+      <div style="display:flex; border-bottom:1px solid var(--border-parchment); gap:8px; margin-bottom:18px; flex-wrap:wrap;">
+        <button type="button" id="tabDocConcepts" onclick="switchDocIntelTab('concepts')" style="padding:8px 14px; background:none; border:none; border-bottom:2px solid var(--accent-terracotta); font-weight:700; font-size:13px; color:var(--accent-terracotta); cursor:pointer;">
+          Concepts &amp; Graph (<span id="countConceptsBadge">0</span>)
+        </button>
+        <button type="button" id="tabDocStrategies" onclick="switchDocIntelTab('strategies')" style="padding:8px 14px; background:none; border:none; border-bottom:2px solid transparent; font-weight:600; font-size:13px; color:var(--ink-secondary); cursor:pointer;">
+          Teaching Strategies (<span id="countStrategiesBadge">0</span>)
+        </button>
+        <button type="button" id="tabDocFigures" onclick="switchDocIntelTab('figures')" style="padding:8px 14px; background:none; border:none; border-bottom:2px solid transparent; font-weight:600; font-size:13px; color:var(--ink-secondary); cursor:pointer;">
+          Multimodal Diagrams (<span id="countFiguresBadge">0</span>)
+        </button>
+        <button type="button" id="tabDocCode" onclick="switchDocIntelTab('code')" style="padding:8px 14px; background:none; border:none; border-bottom:2px solid transparent; font-weight:600; font-size:13px; color:var(--ink-secondary); cursor:pointer;">
+          Code Snippets (<span id="countCodeBadge">0</span>)
+        </button>
+        <button type="button" id="tabDocMath" onclick="switchDocIntelTab('math')" style="padding:8px 14px; background:none; border:none; border-bottom:2px solid transparent; font-weight:600; font-size:13px; color:var(--ink-secondary); cursor:pointer;">
+          Formulas (LaTeX) (<span id="countMathBadge">0</span>)
+        </button>
+      </div>
+
+      <!-- Tab Content Panels -->
+      <div id="panelDocConcepts" style="display:block;">
+        <div id="docConceptsList" style="display:flex; flex-direction:column; gap:12px;"></div>
+      </div>
+
+      <div id="panelDocStrategies" style="display:none;">
+        <div id="docStrategiesList" style="display:flex; flex-direction:column; gap:12px;"></div>
+      </div>
+
+      <div id="panelDocFigures" style="display:none;">
+        <div id="docFiguresList" style="display:grid; grid-template-columns:1fr; gap:14px;"></div>
+      </div>
+
+      <div id="panelDocCode" style="display:none;">
+        <div id="docCodeList" style="display:flex; flex-direction:column; gap:14px;"></div>
+      </div>
+
+      <div id="panelDocMath" style="display:none;">
+        <div id="docMathList" style="display:flex; flex-direction:column; gap:12px;"></div>
+      </div>
+
+    </div>
+  </div>
+
+
+    <!-- ==============================================================
          ANIMATED VIDEO STUDIO ("Universal AI Visual Stage")
          ============================================================== -->
     <section class="screen-frame" id="view-animated-studio">
@@ -4625,7 +4682,10 @@
                 </div>
               </div>
               <div style="display:flex; gap:6px; align-items:center;">
-                ${isComp ? `<button class="btn-action-primary" style="font-size:11px; padding:4px 10px; background:var(--accent-terracotta);" onclick="createLessonFromUniversalDoc('${doc.id}', '${encodeURIComponent(doc.filename)}')">+ Lesson</button>` : ''}
+                ${isComp ? `
+                  <button class="btn-action-primary" style="font-size:11px; padding:4px 10px; background:var(--accent-surya); color:#13221E; font-weight:700;" onclick="exploreDocumentIntelligence('${doc.id}', '${encodeURIComponent(doc.filename)}')">🧠 Explore &amp; Learn</button>
+                  <button class="btn-action-primary" style="font-size:11px; padding:4px 10px; background:var(--accent-terracotta);" onclick="createLessonFromUniversalDoc('${doc.id}', '${encodeURIComponent(doc.filename)}')">+ Lesson</button>
+                ` : ''}
                 ${isFail && doc.latest_job_id ? `<button class="btn-action-outline" style="font-size:11px; padding:4px 8px; color:var(--accent-terracotta);" onclick="retryUniversalDocJob('${doc.latest_job_id}')">Retry</button>` : ''}
                 <button class="btn-action-outline" style="font-size:11px; padding:4px 8px; border-color:#DDD; color:#888;" title="Delete Document" onclick="deleteUniversalDoc('${doc.id}')">&times;</button>
               </div>
@@ -4699,6 +4759,225 @@
         }
       } catch (e) {
         console.warn('Could not fetch doc sections for modal:', e);
+      }
+    }
+
+  
+    // ==============================================================
+    // DOCUMENT INTELLIGENCE DOSSIER CONTROLLERS (PHASE 2)
+    // ==============================================================
+    let activeIntelligenceDocId = null;
+
+    function openDocIntelligenceModal() {
+      document.getElementById('docIntelligenceModal').style.display = 'flex';
+    }
+
+    function closeDocIntelligenceModal() {
+      document.getElementById('docIntelligenceModal').style.display = 'none';
+    }
+
+    function switchDocIntelTab(tabName) {
+      const tabs = ['concepts', 'strategies', 'figures', 'code', 'math'];
+      tabs.forEach(t => {
+        const btn = document.getElementById('tabDoc' + t.charAt(0).toUpperCase() + t.slice(1));
+        const panel = document.getElementById('panelDoc' + t.charAt(0).toUpperCase() + t.slice(1));
+        if (btn) {
+          btn.style.borderBottom = (t === tabName) ? '2px solid var(--accent-terracotta)' : '2px solid transparent';
+          btn.style.color = (t === tabName) ? 'var(--accent-terracotta)' : 'var(--ink-secondary)';
+          btn.style.fontWeight = (t === tabName) ? '700' : '600';
+        }
+        if (panel) panel.style.display = (t === tabName) ? 'block' : 'none';
+      });
+    }
+
+    async function exploreDocumentIntelligence(docId, filename) {
+      activeIntelligenceDocId = docId;
+      openDocIntelligenceModal();
+
+      const titleEl = document.getElementById('docIntelTitle');
+      const subjBadge = document.getElementById('docIntelSubjectBadge');
+      if (titleEl) titleEl.textContent = filename || 'Document Knowledge Dossier';
+
+      const token = AuthManager.authToken;
+      const headers = token ? { 'Authorization': 'Bearer ' + token } : {};
+
+      try {
+        // Parallel fetch for intelligence
+        const [cRes, fRes, codRes, mRes, sRes] = await Promise.all([
+          fetch(`/api/documents/${docId}/concepts`, { headers }),
+          fetch(`/api/documents/${docId}/figures`, { headers }),
+          fetch(`/api/documents/${docId}/code`, { headers }),
+          fetch(`/api/documents/${docId}/math`, { headers }),
+          fetch(`/api/documents/${docId}/teaching-strategies`, { headers })
+        ]);
+
+        const cData = cRes.ok ? await cRes.json() : { concepts: [] };
+        const fData = fRes.ok ? await fRes.json() : { figures: [] };
+        const codData = codRes.ok ? await codRes.json() : { code_blocks: [] };
+        const mData = mRes.ok ? await mRes.json() : { math_expressions: [] };
+        const sData = sRes.ok ? await sRes.json() : { teaching_strategies: [] };
+
+        if (subjBadge) subjBadge.textContent = cData.subject || 'Universal Learning';
+
+        document.getElementById('countConceptsBadge').textContent = cData.concepts.length;
+        document.getElementById('countFiguresBadge').textContent = fData.figures.length;
+        document.getElementById('countCodeBadge').textContent = codData.code_blocks.length;
+        document.getElementById('countMathBadge').textContent = mData.math_expressions.length;
+        document.getElementById('countStrategiesBadge').textContent = sData.teaching_strategies.length;
+
+        // Render Concepts
+        renderDossierConcepts(cData.concepts, docId);
+        renderDossierStrategies(sData.teaching_strategies, docId);
+        renderDossierFigures(fData.figures);
+        renderDossierCode(codData.code_blocks);
+        renderDossierMath(mData.math_expressions);
+
+      } catch (err) {
+        console.error('Error fetching document intelligence:', err);
+        showToast('Could not load complete document intelligence: ' + err.message);
+      }
+    }
+
+    function renderDossierConcepts(concepts, docId) {
+      const container = document.getElementById('docConceptsList');
+      if (!container) return;
+      if (!concepts || concepts.length === 0) {
+        container.innerHTML = '<div style="color:var(--ink-secondary); font-size:13px; padding:12px;">No concepts extracted yet. Processing pipeline may be running.</div>';
+        return;
+      }
+
+      container.innerHTML = concepts.map(c => `
+        <div style="border:1px solid var(--border-parchment); border-radius:var(--radius-sm); padding:16px; background:var(--surface-tinted);">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px; flex-wrap:wrap; gap:8px;">
+            <div>
+              <span style="font-size:11px; font-weight:800; color:var(--accent-terracotta); text-transform:uppercase; letter-spacing:0.5px;">${c.type.toUpperCase()} &middot; PAGE ${c.source_page}</span>
+              <h4 style="font-size:17px; font-weight:700; color:var(--ink-primary); margin:2px 0;">${c.name}</h4>
+            </div>
+            <button class="btn-action-primary" style="padding:6px 14px; font-size:12px; background:var(--accent-terracotta);" onclick="launchConceptLesson('${docId}', '${encodeURIComponent(c.name)}')">
+              🚀 Learn with AI Educator &rarr;
+            </button>
+          </div>
+          <div style="font-size:13px; color:var(--ink-primary); line-height:1.4; margin-bottom:8px;"><strong>Definition:</strong> ${c.definition}</div>
+          ${c.summary ? `<div style="font-size:12px; color:var(--ink-secondary); margin-bottom:8px;"><em>Summary:</em> ${c.summary}</div>` : ''}
+          ${c.prerequisites && c.prerequisites.length > 0 ? `<div style="font-size:12px; color:var(--ink-secondary);"><strong>Prerequisites:</strong> ${c.prerequisites.join(', ')}</div>` : ''}
+          ${c.learning_objectives && c.learning_objectives.length > 0 ? `<div style="font-size:12px; color:var(--ink-primary); margin-top:4px;"><strong>Objective:</strong> ${c.learning_objectives.join('; ')}</div>` : ''}
+        </div>
+      `).join('');
+    }
+
+    function renderDossierStrategies(strategies, docId) {
+      const container = document.getElementById('docStrategiesList');
+      if (!container) return;
+      if (!strategies || strategies.length === 0) {
+        container.innerHTML = '<div style="color:var(--ink-secondary); font-size:13px; padding:12px;">No teaching strategies generated yet.</div>';
+        return;
+      }
+
+      container.innerHTML = strategies.map(s => `
+        <div style="border:1px solid var(--border-parchment); border-radius:var(--radius-sm); padding:16px; background:white;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <span style="font-weight:700; font-size:15px; color:var(--ink-primary);">${s.concept_name}</span>
+            <span style="font-size:11px; font-weight:700; background:#FFF3E0; color:#E65100; padding:2px 8px; border-radius:var(--radius-full);">${s.method.replace('_', ' ').toUpperCase()}</span>
+          </div>
+          <div style="font-size:13px; color:var(--ink-secondary); margin-bottom:10px;"><strong>Cognitive Rationale:</strong> ${s.rationale}</div>
+          <div style="font-size:12px; color:var(--ink-primary); font-weight:600; margin-bottom:4px;">Teaching Stages:</div>
+          <ol style="margin:0; padding-left:20px; font-size:12px; color:var(--ink-secondary);">
+            ${(s.step_plan || []).map(st => `<li style="margin-bottom:3px;">${st}</li>`).join('')}
+          </ol>
+        </div>
+      `).join('');
+    }
+
+    function renderDossierFigures(figures) {
+      const container = document.getElementById('docFiguresList');
+      if (!container) return;
+      if (!figures || figures.length === 0) {
+        container.innerHTML = '<div style="color:var(--ink-secondary); font-size:13px; padding:12px;">No visual figures detected in this document.</div>';
+        return;
+      }
+
+      container.innerHTML = figures.map(f => `
+        <div style="border:1px solid var(--border-parchment); border-radius:var(--radius-sm); padding:16px; background:var(--surface-tinted);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <span style="font-size:11px; font-weight:800; color:var(--accent-surya); text-transform:uppercase;">Page ${f.page_number} &middot; ${f.type.toUpperCase()}</span>
+            <span style="font-size:11px; color:var(--ink-secondary);">${f.caption}</span>
+          </div>
+          <div style="font-weight:700; font-size:14px; margin-bottom:6px;">${f.summary}</div>
+          <div style="font-size:12px; color:var(--ink-secondary); line-height:1.4; margin-bottom:8px;">${f.detailed_explanation}</div>
+          ${f.labels && f.labels.length > 0 ? `<div style="font-size:11px; color:var(--ink-primary);"><strong>Visual Callouts:</strong> ${f.labels.join(' &bull; ')}</div>` : ''}
+        </div>
+      `).join('');
+    }
+
+    function renderDossierCode(codeBlocks) {
+      const container = document.getElementById('docCodeList');
+      if (!container) return;
+      if (!codeBlocks || codeBlocks.length === 0) {
+        container.innerHTML = '<div style="color:var(--ink-secondary); font-size:13px; padding:12px;">No programming code blocks extracted from this document.</div>';
+        return;
+      }
+
+      container.innerHTML = codeBlocks.map(b => `
+        <div style="border:1px solid var(--border-parchment); border-radius:var(--radius-sm); padding:14px; background:#1A2320; color:#E8EAE9;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span style="font-size:11px; font-weight:700; color:var(--accent-surya); text-transform:uppercase;">${b.language} &middot; Page ${b.page_number}</span>
+            <span style="font-size:11px; color:#A0ABA6;">${b.algorithm_name || b.purpose}</span>
+          </div>
+          <pre style="margin:0; font-family:monospace; font-size:12px; line-height:1.5; overflow-x:auto; white-space:pre;">${b.code_text.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>
+        </div>
+      `).join('');
+    }
+
+    function renderDossierMath(mathItems) {
+      const container = document.getElementById('docMathList');
+      if (!container) return;
+      if (!mathItems || mathItems.length === 0) {
+        container.innerHTML = '<div style="color:var(--ink-secondary); font-size:13px; padding:12px;">No mathematical expressions detected in this document.</div>';
+        return;
+      }
+
+      container.innerHTML = mathItems.map(m => `
+        <div style="border:1px solid var(--border-parchment); border-radius:var(--radius-sm); padding:14px; background:white;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <span style="font-size:11px; font-weight:800; color:var(--accent-terracotta); text-transform:uppercase;">Page ${m.page_number} &middot; ${m.type.toUpperCase()}</span>
+          </div>
+          <div style="font-size:16px; font-family:serif; color:var(--ink-primary); margin:8px 0; padding:8px; background:var(--surface-tinted); border-radius:var(--radius-sm); text-align:center;">
+            ${m.latex}
+          </div>
+          ${m.context ? `<div style="font-size:12px; color:var(--ink-secondary); font-style:italic;">Context: "${m.context}"</div>` : ''}
+        </div>
+      `).join('');
+    }
+
+    async function launchConceptLesson(docId, encConceptName) {
+      const conceptName = decodeURIComponent(encConceptName);
+      showToast(`AI Educator is weaving visual lesson for "${conceptName}"...`);
+      closeDocIntelligenceModal();
+
+      const token = AuthManager.authToken;
+      const headers = token ? { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' } : { 'Content-Type': 'application/json' };
+
+      try {
+        const res = await fetch(`/api/documents/${docId}/learn-concept`, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({ concept_name: conceptName, learner_profile: 'teen', language: 'te' })
+        });
+
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          showToast(err.detail || 'Could not launch lesson.');
+          return;
+        }
+
+        const data = await res.json();
+        const project = data.project;
+        showToast(`Ready! Launching: "${project.title}"`);
+        switchScreen('animated-studio');
+        loadActiveAnimatedProject(project.id || project.project_id);
+
+      } catch (err) {
+        showToast('Error generating concept lesson: ' + err.message);
       }
     }
 

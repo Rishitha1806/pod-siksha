@@ -1,15 +1,16 @@
 """
-Text-based PDF Extractor with Structural Analysis for Universal AI Educator.
-Preserves page numbers, identifies headings, extracts code blocks (Python, Java, C++, SQL),
-detects mathematical formulas, tables, and subject classifications.
+Universal PDF Extractor with Structural Analysis & Automatic OCR for Universal AI Educator.
+Preserves page numbers, identifies headings/subheadings, extracts code blocks (Python, Java, C, C++, JS, SQL),
+preserves mathematical expressions in LaTeX format, parses markdown tables, and automatically triggers
+Gemini Multimodal OCR on scanned/image-only pages (< 50 characters).
 """
 
 import io
 import re
 import logging
-from typing import List, Tuple, Set
-from pypdf import PdfReader
+from typing import List, Tuple, Set, Optional, Dict, Any
 from extractors.base import BaseExtractor, ExtractedSection, ExtractionResult
+from extractors.ocr_extractor import OcrPdfExtractor
 
 log = logging.getLogger("pod_siksha.extractors.pdf")
 
@@ -25,128 +26,201 @@ CODE_PATTERNS = {
 
 # Regex patterns for math detection
 MATH_PATTERNS = [
-    re.compile(r"(\\[a-zA-Z]+|\b(sum|int|lim|frac|sqrt|partial)\b|[∑∫∂√∞πθλσ])"),
-    re.compile(r"([a-zA-Z0-9]\s*=\s*[-+]?[a-zA-Z0-9\(\)\/\*\^]+(?:\s*[-+*\/]\s*[a-zA-Z0-9\(\)\/\*\^]+)+)"),
-    re.compile(r"\b(Theorem|Lemma|Corollary|Proof|Q\.E\.D\.|dx\/dt|dy\/dx)\b", re.IGNORECASE),
+    re.compile(r"(\$\$[^\$]+\$\$|\$[^\$\n]+\$)"),  # LaTeX
+    re.compile(r"([a-zA-Z]\([a-zA-Z0-9,\s]+\)\s*=\s*[^;\n]{3,60})"),  # f(x) = ...
+    re.compile(r"(\b[a-zA-Z]\^\{?[0-9a-zA-Z\+\-\*\/]+\}?)"),  # Exponents x^2, e^{i\pi}
+    re.compile(r"(\\int|\\sum|\\frac|\\sqrt|\\alpha|\\beta|\\gamma|\\theta|\\pi|\\infty)"),  # LaTeX symbols
+    re.compile(r"([A-Z]\s*=\s*mc\^2|[a-z]\s*=\s*[-+]?\d+)"),  # Simple formulas
 ]
 
-# Subject classification keywords
-SUBJECT_KEYWORDS = {
-    "Computer Science": ["algorithm", "data structure", "recursion", "binary tree", "graph", "hash map", "time complexity", "pointer", "array", "linked list", "sorting", "dynamic programming", "sql", "database"],
-    "Mathematics": ["derivative", "integral", "matrix", "eigenvalue", "vector space", "probability", "theorem", "equation", "calculus", "linear algebra", "polynomial", "geometry", "trigonometry"],
-    "Physics": ["mechanics", "thermodynamics", "quantum", "gravity", "velocity", "acceleration", "force", "electromagnetism", "kinetic", "energy", "newton", "optics"],
-    "Chemistry": ["molecule", "atom", "reaction", "bond", "acid", "base", "solution", "organic chemistry", "equilibrium", "periodic table", "electron"],
-    "Biology": ["cell", "dna", "rna", "protein", "photosynthesis", "genetics", "organism", "mitochondria", "enzyme", "ecosystem"],
-    "Economics & Finance": ["gdp", "inflation", "market", "demand", "supply", "microeconomics", "macroeconomics", "interest rate", "revenue", "fiscal"],
-    "Humanities & History": ["civilization", "empire", "revolution", "constitution", "governance", "treaty", "historical", "archaeology", "philosophy"],
-}
+TABLE_ROW_PATTERN = re.compile(r"^\s*\|?.+\|.+\|?\s*$")
+HEADING_PATTERN = re.compile(r"^(?:#{1,4}\s+|[0-9]{1,2}(?:\.[0-9]{1,2})*\s+[A-Z]|[A-Z\s]{4,60}$)")
 
 class TextPdfExtractor(BaseExtractor):
+    """Universal PDF Extractor supporting native text extraction and automated OCR."""
+
+    def __init__(self):
+        self.ocr_extractor = OcrPdfExtractor()
+
     def get_extractor_name(self) -> str:
-        return "text_pdf_extractor"
+        return "universal_pdf_extractor"
 
-    def extract(self, file_bytes: bytes, filename: str) -> ExtractionResult:
-        try:
-            reader = PdfReader(io.BytesIO(file_bytes))
-        except Exception as e:
-            raise ValueError(f"Invalid PDF file or corrupt structure: {e}")
+    def detect_subject(self, full_text: str) -> str:
+        """Determines genuine educational subject using lexical taxonomy."""
+        t = full_text.lower()
+        if any(w in t for w in ["def ", "class ", "python", "numpy", "pandas", "algorithm", "variable"]):
+            if "java" in t or "public class" in t:
+                return "Java Object-Oriented Programming"
+            if "vector" in t or "#include" in t or "cout" in t:
+                return "C++ & Data Structures"
+            return "Python Programming & Computing"
+        if any(w in t for w in ["select ", "insert into", "database", "relational", "sql", "table"]):
+            return "Databases & SQL"
+        if any(w in t for w in ["integral", "derivative", "calculus", "matrix", "eigenvalue", "polynomial", "theorem", "equation"]):
+            return "Mathematics & Calculus"
+        if any(w in t for w in ["cell", "mitochondria", "photosynthesis", "dna", "chloroplast", "protein", "organism"]):
+            return "Biological Sciences"
+        if any(w in t for w in ["reaction", "molecule", "acid", "base", "stoichiometry", "bond", "orbital"]):
+            return "Chemical Sciences"
+        if any(w in t for w in ["force", "velocity", "acceleration", "quantum", "gravity", "wave", "electromagnetic", "frequency"]):
+            return "Physics & Mechanics"
+        if any(w in t for w in ["revolution", "war", "century", "empire", "treaty", "dynasty", "civilization"]):
+            return "History & World Studies"
+        if any(w in t for w in ["climate", "river", "plateau", "atmosphere", "lithosphere", "monsoon", "topography"]):
+            return "Earth Science & Geography"
+        if any(w in t for w in ["abstract", "methodology", "citation", "participants", "doi", "results and discussion"]):
+            return "Academic Research Paper"
+        return "Universal Educational Studies"
 
-        total_pages = len(reader.pages)
+    def is_code_line(self, line: str) -> Tuple[bool, Optional[str]]:
+        for lang, pat in CODE_PATTERNS.items():
+            if pat.search(line):
+                return True, lang
+        return False, None
+
+    def is_math_line(self, line: str) -> bool:
+        for pat in MATH_PATTERNS:
+            if pat.search(line):
+                return True
+        return False
+
+    def extract(self, file_bytes: bytes, filename: str, document_id: Optional[str] = None) -> ExtractionResult:
         sections: List[ExtractedSection] = []
+        full_text_list: List[str] = []
+        total_pages = 0
         detected_languages: Set[str] = set()
-        has_math = False
-        has_code = False
-        has_tables = False
-        all_text_parts: List[str] = []
 
-        subject_scores = {k: 0 for k in SUBJECT_KEYWORDS}
+        # Try fitz (PyMuPDF) first for superior accuracy and OCR trigger
+        try:
+            import fitz
+            doc = fitz.open(stream=file_bytes, filetype="pdf")
+            total_pages = len(doc)
 
-        for page_idx, page in enumerate(reader.pages, start=1):
-            try:
-                page_text = page.extract_text() or ""
-            except Exception as e:
-                log.warning("Could not extract text from page %d of %s: %s", page_idx, filename, e)
-                page_text = ""
+            for p_idx in range(total_pages):
+                page_num = p_idx + 1
+                page = doc[p_idx]
+                page_text = page.get_text() or ""
 
-            clean_text = page_text.strip()
-            if not clean_text:
-                continue
+                # Check if page is image-only or scanned
+                if self.ocr_extractor.is_scanned_page(page_text, page):
+                    log.info("Page %d of %s is scanned; triggering OCR", page_num, filename)
+                    pix = page.get_pixmap(dpi=150)
+                    img_bytes = pix.tobytes("png")
+                    ocr_res = self.ocr_extractor.ocr_page_image(img_bytes, page_num)
+                    page_text = ocr_res.get("full_text", "")
+                    sec_title = f"Page {page_num} (OCR Scanned)"
+                    sections.append(ExtractedSection(
+                        page_number=page_num,
+                        section_index=len(sections) + 1,
+                        section_title=sec_title,
+                        content_type="text",
+                        content=page_text,
+                        metadata={"ocr": True, "confidence": ocr_res.get("confidence", 0.9)}
+                    ))
+                    full_text_list.append(page_text)
+                    continue
 
-            all_text_parts.append(f"[Page {page_idx}]\n{clean_text}")
+                full_text_list.append(page_text)
+                lines = page_text.splitlines()
+                current_block_lines = []
+                current_type = "text"
+                current_title = f"Page {page_num} Overview"
 
-            # Check for subject keywords
-            lower_text = clean_text.lower()
-            for subject, keywords in SUBJECT_KEYWORDS.items():
-                for kw in keywords:
-                    if kw in lower_text:
-                        subject_scores[subject] += 1
+                def flush_block():
+                    nonlocal current_block_lines, current_type, current_title
+                    if current_block_lines:
+                        content = "\n".join(current_block_lines).strip()
+                        if content:
+                            sections.append(ExtractedSection(
+                                page_number=page_num,
+                                section_index=len(sections) + 1,
+                                section_title=current_title,
+                                content_type=current_type,
+                                content=content,
+                                metadata={"languages": list(detected_languages)} if current_type == "code" else {}
+                            ))
+                        current_block_lines = []
+                        current_type = "text"
 
-            # Identify content type and sections on this page
-            # Split page into logical paragraphs
-            paragraphs = [p.strip() for p in re.split(r"\n\s*\n", clean_text) if p.strip()]
+                for line in lines:
+                    stripped = line.strip()
+                    if not stripped:
+                        continue
 
-            for sec_idx, para in enumerate(paragraphs, start=1):
-                content_type = "text"
-                para_meta = {"page": page_idx}
+                    # Heading Check
+                    if HEADING_PATTERN.match(stripped) and len(stripped) < 70:
+                        flush_block()
+                        current_title = stripped.lstrip("#").strip()
+                        current_type = "heading"
+                        current_block_lines.append(stripped)
+                        flush_block()
+                        current_title = f"Page {page_num} - {current_title}"
+                        continue
 
-                # Check code
-                for lang, pat in CODE_PATTERNS.items():
-                    if pat.search(para):
-                        content_type = "code"
-                        has_code = True
-                        detected_languages.add(lang)
-                        para_meta["code_language"] = lang
-                        break
+                    # Code Check
+                    is_code, lang = self.is_code_line(line)
+                    if is_code:
+                        if lang:
+                            detected_languages.add(lang)
+                        if current_type != "code":
+                            flush_block()
+                            current_type = "code"
+                        current_block_lines.append(line)
+                        continue
 
-                # Check math
-                if content_type == "text":
-                    for m_pat in MATH_PATTERNS:
-                        if m_pat.search(para):
-                            has_math = True
-                            if "\\[" in para or "\\begin" in para or "∑" in para or "∫" in para:
-                                content_type = "math"
-                            para_meta["has_math_notation"] = True
-                            break
+                    # Math Check
+                    if self.is_math_line(line):
+                        if current_type != "math" and current_type != "code":
+                            flush_block()
+                            current_type = "math"
+                        current_block_lines.append(line)
+                        continue
 
-                # Check table structure (lines with multiple delimiters or tab alignments)
-                lines = para.splitlines()
-                if len(lines) >= 3 and any(("|" in l or "\t" in l or "   " in l) for l in lines):
-                    if lines[0].count("|") >= 2 or lines[0].count("\t") >= 2:
-                        content_type = "table"
-                        has_tables = True
+                    # Table Check
+                    if TABLE_ROW_PATTERN.match(stripped):
+                        if current_type != "table":
+                            flush_block()
+                            current_type = "table"
+                        current_block_lines.append(line)
+                        continue
 
-                # Determine section title (first line if short, or generic)
-                first_line = lines[0] if lines else f"Page {page_idx} Section {sec_idx}"
-                section_title = first_line[:80].strip("# ").strip() if len(first_line) < 100 else f"Page {page_idx} Section {sec_idx}"
+                    # Regular Text
+                    if current_type in ("code", "table") and (len(line) - len(line.lstrip())) == 0:
+                        flush_block()
+                    current_block_lines.append(line)
 
+                flush_block()
+            doc.close()
+
+        except Exception as e:
+            log.warning("fitz extraction failed, falling back to pypdf: %s", e)
+            from pypdf import PdfReader
+            reader = PdfReader(io.BytesIO(file_bytes))
+            total_pages = len(reader.pages)
+            for p_idx, page in enumerate(reader.pages):
+                page_num = p_idx + 1
+                txt = page.extract_text() or ""
+                full_text_list.append(txt)
                 sections.append(ExtractedSection(
-                    page_number=page_idx,
-                    section_index=sec_idx,
-                    section_title=section_title,
-                    content_type=content_type,
-                    content=para,
-                    metadata=para_meta
+                    page_number=page_num,
+                    section_index=len(sections) + 1,
+                    section_title=f"Page {page_num} Text",
+                    content_type="text",
+                    content=txt.strip()
                 ))
 
-        # Best detected subject
-        top_subject = "General Education"
-        max_score = 0
-        for subj, score in subject_scores.items():
-            if score > max_score and score >= 2:
-                max_score = score
-                top_subject = subj
-
-        full_text = "\n\n".join(all_text_parts)
+        combined_text = "\n\n".join(full_text_list)
+        subject = self.detect_subject(combined_text)
 
         return ExtractionResult(
+            document_id=document_id or "",
+            filename=filename,
             total_pages=total_pages,
             sections=sections,
-            subject_detected=top_subject,
-            language_detected="en",
-            code_languages=sorted(list(detected_languages)),
-            has_math=has_math,
-            has_code=has_code,
-            has_tables=has_tables,
-            full_text=full_text,
-            extractor_used="text_pdf_extractor"
+            subject_detected=subject,
+            full_text=combined_text,
+            metadata={
+                "detected_languages": list(detected_languages),
+                "extractor": self.get_extractor_name()
+            }
         )
