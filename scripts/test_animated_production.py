@@ -60,7 +60,7 @@ def test_root_login_first():
             raise ValueError("HTML structure missing login or animated-studio views.")
         return "Root serves login-first container with animated studio views mounted."
 
-# 4. Animated Profiles Endpoint
+# 4. Universal Learner Profiles (5 Generations)
 def test_animated_profiles():
     req = urllib.request.Request(f"{BASE_URL}/api/animated/profiles", headers={"User-Agent": "TestSuite/1.0"})
     with urllib.request.urlopen(req, timeout=15) as resp:
@@ -72,7 +72,7 @@ def test_animated_profiles():
                 raise ValueError(f"Profile {r} missing from profiles: {list(profiles.keys())}")
         return f"All 5 universal generational profiles present: {list(profiles.keys())}"
 
-# 5. Animated Styles Endpoint
+# 5. Visual Animation Styles (5 Themes)
 def test_animated_styles():
     req = urllib.request.Request(f"{BASE_URL}/api/animated/styles", headers={"User-Agent": "TestSuite/1.0"})
     with urllib.request.urlopen(req, timeout=15) as resp:
@@ -125,8 +125,10 @@ def test_list_projects():
 
 # 8. Create New Universal Animated Lesson (Child Profile: Water Cycle / Rain in Hindi)
 created_project = None
+project_id_global = None
+
 def test_create_child_animated_lesson():
-    global created_project
+    global created_project, project_id_global
     boundary = "----WebKitFormBoundaryAnimTest7MA4YWxkTrZu0gW"
     fields = {
         "title": "Why Does It Rain? The Magical Water Cycle",
@@ -154,13 +156,13 @@ def test_create_child_animated_lesson():
     
     with urllib.request.urlopen(req, timeout=60) as resp:
         create_res = json.loads(resp.read().decode())
-        project_id = create_res.get("project_id")
-        if not project_id:
+        project_id_global = create_res.get("project_id") or create_res.get("id")
+        if not project_id_global:
             raise ValueError(f"Project creation failed: {create_res}")
         
     # Fetch full project details including ordered scenes
     detail_req = urllib.request.Request(
-        f"{BASE_URL}/api/animated/project/{project_id}",
+        f"{BASE_URL}/api/animated/project/{project_id_global}",
         headers={"Authorization": f"Bearer {auth_token}", "User-Agent": "TestSuite/1.0"}
     )
     with urllib.request.urlopen(detail_req, timeout=20) as resp:
@@ -168,8 +170,9 @@ def test_create_child_animated_lesson():
         scenes = created_project.get("scenes", [])
         if not scenes:
             raise ValueError("Created project has no scenes.")
+        title = created_project.get("title") or create_res.get("title")
         return (
-            f"Created Child Lesson '{created_project.get('title')}' (ID: {created_project.get('id')}) "
+            f"Created Child Lesson '{title}' (ID: {project_id_global}) "
             f"with {len(scenes)} scenes in Hindi cartoon style. Scene 1 visual_type: {scenes[0].get('animation_type')} "
             f"('{scenes[0].get('title')}')"
         )
@@ -180,7 +183,7 @@ def test_socratic_doubt():
         raise ValueError("No created project scene available to test doubt.")
     
     scene = created_project["scenes"][0]
-    payload = json.dumps({"doubt_text": "Why do clouds become gray and dark before it rains?"}).encode()
+    payload = json.dumps({"doubt_text": "Can you explain evaporation with a hot tea cup analogy?"}).encode()
     req = urllib.request.Request(
         f"{BASE_URL}/api/animated/scene/{scene['id']}/ask",
         data=payload,
@@ -192,15 +195,15 @@ def test_socratic_doubt():
     )
     with urllib.request.urlopen(req, timeout=40) as resp:
         data = json.loads(resp.read().decode())
-        ans = data.get("answer_text", "")
+        ans = data.get("spoken_answer") or data.get("display_answer") or data.get("answer_text") or ""
         if not ans:
             raise ValueError(f"Socratic doubt returned empty answer: {data}")
-        has_audio = bool(data.get("audio_b64"))
-        return f"Socratic response received ({len(ans)} chars). Voice synthesized: {has_audio}. Answer preview: '{ans[:75]}...'"
+        has_audio = bool(data.get("audio_base64") or data.get("audio_b64"))
+        return f"Socratic response received ({len(ans)} chars). Voice synthesized: {has_audio}. Answer: '{ans[:80]}...'"
 
 # 10. Checkpoint Concept DNA Logging
 def test_checkpoint_dna():
-    if not created_project or not created_project.get("scenes"):
+    if not created_project or not created_project.get("scenes") or not project_id_global:
         raise ValueError("No created project scene available.")
     
     scene = created_project["scenes"][0]
@@ -210,12 +213,13 @@ def test_checkpoint_dna():
     payload = json.dumps({
         "scene_id": scene["id"],
         "question": q,
+        "selected_option_index": cp.get("correct_index", 0),
         "selected_idx": cp.get("correct_index", 0),
         "is_correct": True
     }).encode()
     
     req = urllib.request.Request(
-        f"{BASE_URL}/api/animated/project/{created_project['id']}/checkpoint",
+        f"{BASE_URL}/api/animated/project/{project_id_global}/checkpoint",
         data=payload,
         headers={
             "Authorization": f"Bearer {auth_token}",
@@ -231,11 +235,11 @@ def test_checkpoint_dna():
 
 # 11. Video Export Manifest
 def test_export_manifest():
-    if not created_project:
+    if not project_id_global:
         raise ValueError("No created project.")
     
     req = urllib.request.Request(
-        f"{BASE_URL}/api/animated/project/{created_project['id']}/export/manifest",
+        f"{BASE_URL}/api/animated/project/{project_id_global}/export/manifest",
         headers={"Authorization": f"Bearer {auth_token}", "User-Agent": "TestSuite/1.0"}
     )
     with urllib.request.urlopen(req, timeout=15) as resp:

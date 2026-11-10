@@ -2777,8 +2777,9 @@
           },
           body: JSON.stringify({
             scene_id: sceneId,
-            question: question,
+            selected_option_index: selectedIdx,
             selected_idx: selectedIdx,
+            question: question,
             is_correct: isCorrect
           })
         });

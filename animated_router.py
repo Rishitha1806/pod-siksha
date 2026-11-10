@@ -54,7 +54,10 @@ class SceneRegenerateRequest(BaseModel):
 
 class CheckpointAnswerRequest(BaseModel):
     scene_id: str
-    selected_option_index: int
+    selected_option_index: Optional[int] = None
+    selected_idx: Optional[int] = None
+    question: Optional[str] = None
+    is_correct: Optional[bool] = None
 
 
 @router.get("/profiles")
@@ -528,8 +531,9 @@ def submit_checkpoint_answer(
             except Exception:
                 chk = {}
 
+        sel_idx = payload.selected_option_index if payload.selected_option_index is not None else (payload.selected_idx or 0)
         correct_idx = chk.get("correct_index", 0)
-        is_correct = (payload.selected_option_index == correct_idx)
+        is_correct = (sel_idx == correct_idx)
         score = 1.0 if is_correct else 0.3
         concept_tag = row["concept_tag"]
 
