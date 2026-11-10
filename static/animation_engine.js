@@ -96,7 +96,9 @@ class UniversalAnimationEngine {
     this.activeSubtitleText = scene.narration_text || '';
 
     // Load scene narration audio
-    const audioUrl = `/api/animated/scene/${scene.id}/audio`;
+    const token = (typeof AuthManager !== 'undefined' && AuthManager.authToken) ? AuthManager.authToken : localStorage.getItem('ps_token');
+    const tokenParam = token ? `?token=${encodeURIComponent(token)}` : '';
+    const audioUrl = `/api/animated/scene/${scene.id}/audio${tokenParam}`;
     if (this.audioPlayer.src !== window.location.origin + audioUrl) {
       this.audioPlayer.src = audioUrl;
       this.audioPlayer.load();
@@ -107,7 +109,7 @@ class UniversalAnimationEngine {
       const nextId = this.scenes[index + 1].id;
       if (!this.audioPreloadCache[nextId]) {
         const preImg = new Audio();
-        preImg.src = `/api/animated/scene/${nextId}/audio`;
+        preImg.src = `/api/animated/scene/${nextId}/audio${tokenParam}`;
         this.audioPreloadCache[nextId] = preImg;
       }
     }

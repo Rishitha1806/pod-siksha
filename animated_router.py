@@ -31,7 +31,8 @@ def get_auth_user(req: Request) -> dict:
     from server import get_current_user
     auth = req.headers.get("Authorization")
     cookie = req.cookies.get("auth_token")
-    return get_current_user(authorization=auth, auth_token=cookie)
+    token = req.query_params.get("token")
+    return get_current_user(authorization=auth, auth_token=cookie, token=token)
 
 def verify_project_ownership(project_id: str, user: dict) -> dict:
     """Verifies that the requested animated project belongs to the authenticated user."""

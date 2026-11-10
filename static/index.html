@@ -2687,28 +2687,39 @@
         }
 
         if (projData) {
-          currentAnimatedProjectId = projData.id;
-          currentAnimatedProjectData = projData;
-          animEngine.loadProject(projData);
+          const actualProj = projData.project || projData;
+          const actualScenes = projData.scenes || actualProj.scenes || [];
+          const unifiedData = {
+            ...actualProj,
+            id: actualProj.id || projData.id || projectId,
+            title: actualProj.title || projData.title || 'Interactive Visual Lesson',
+            learner_profile: actualProj.learner_profile || projData.learner_profile || 'teen',
+            language: actualProj.language || projData.language || 'te',
+            animation_style: actualProj.animation_style || projData.animation_style || 'educational_2d',
+            scenes: actualScenes
+          };
+          currentAnimatedProjectId = unifiedData.id;
+          currentAnimatedProjectData = unifiedData;
+          animEngine.loadProject(unifiedData);
 
           // Populate Studio Header
           const titleEl = document.getElementById('animStudioTitle');
-          if (titleEl) titleEl.textContent = projData.title || 'Interactive Visual Lesson';
+          if (titleEl) titleEl.textContent = unifiedData.title;
 
           const profBadge = document.getElementById('animStudioProfileBadge');
-          if (profBadge) profBadge.textContent = (projData.learner_profile || 'teen').toUpperCase();
+          if (profBadge) profBadge.textContent = unifiedData.learner_profile.toUpperCase();
 
           const langBadge = document.getElementById('animStudioLangBadge');
-          if (langBadge) langBadge.textContent = (projData.language || 'te').toUpperCase();
+          if (langBadge) langBadge.textContent = unifiedData.language.toUpperCase();
 
           const styleBadge = document.getElementById('animStudioStyleBadge');
-          if (styleBadge) styleBadge.textContent = (projData.animation_style || '2D').replace('_', ' ').toUpperCase();
+          if (styleBadge) styleBadge.textContent = unifiedData.animation_style.replace('_', ' ').toUpperCase();
 
           // Populate Scene Pills
-          renderScenePills(projData.scenes || []);
+          renderScenePills(actualScenes);
 
           // Populate Storyboard List
-          renderStoryboardList(projData.scenes || []);
+          renderStoryboardList(actualScenes);
         }
       } catch (err) {
         console.error('Error loading animated project:', err);
