@@ -1,3 +1,6 @@
+import sys, os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from db_adapter import get_db
 """Pod-Siksha 2.0: Aura Atelier Feature & Security Test Suite
 Verifies:
 1. Sovereign User Authentication (Register, Login, Invalidation, Password Reset).
@@ -87,7 +90,7 @@ def test_03_logout_invalidation(client):
     assert logout_res.status_code == 200
 
     # Token should be expired/removed in user_sessions
-    with sqlite3.connect(DB_PATH) as conn:
+    with get_db() as conn:
         active_sess = conn.execute(
             "SELECT COUNT(*) FROM user_sessions WHERE token = ? AND expires_at > datetime('now')",
             (token,)
@@ -146,7 +149,7 @@ def test_05_user_data_isolation(client):
 def test_06_concept_dna_extraction_and_caching(client):
     """Verifies /api/concept-dna/{session_id} returns structured nodes with dependencies and mastery."""
     headers = {"Authorization": "Bearer session_demo_learner_001"}
-    with sqlite3.connect(DB_PATH) as conn:
+    with get_db() as conn:
         conn.row_factory = sqlite3.Row
         sess = conn.execute("SELECT id FROM sessions WHERE user_id = 'user_demo_001' OR user_id IS NULL ORDER BY created_at DESC LIMIT 1").fetchone()
     assert sess is not None, "Need at least 1 session in database"
@@ -168,7 +171,7 @@ def test_06_concept_dna_extraction_and_caching(client):
 def test_07_teachback_prompt_generation(client):
     """Verifies that Host B (Priya) generates a grounded Socratic prompt for teach-back."""
     headers = {"Authorization": "Bearer session_demo_learner_001"}
-    with sqlite3.connect(DB_PATH) as conn:
+    with get_db() as conn:
         sess = conn.execute("SELECT id FROM sessions WHERE user_id = 'user_demo_001' OR user_id IS NULL ORDER BY created_at DESC LIMIT 1").fetchone()
     session_id = sess[0]
 
@@ -185,7 +188,7 @@ def test_07_teachback_prompt_generation(client):
 def test_08_teachback_semantic_evaluation_and_misconception_logging(client):
     """Verifies semantic evaluation of student explanation and logging in SQLite."""
     headers = {"Authorization": "Bearer session_demo_learner_001"}
-    with sqlite3.connect(DB_PATH) as conn:
+    with get_db() as conn:
         sess = conn.execute("SELECT id FROM sessions WHERE user_id = 'user_demo_001' OR user_id IS NULL ORDER BY created_at DESC LIMIT 1").fetchone()
     session_id = sess[0]
 
@@ -206,7 +209,7 @@ def test_08_teachback_semantic_evaluation_and_misconception_logging(client):
     assert isinstance(data["mastery_score"], (int, float))
 
     # Verify recorded in teachback_sessions
-    with sqlite3.connect(DB_PATH) as conn:
+    with get_db() as conn:
         cnt = conn.execute("SELECT COUNT(*) FROM teachback_sessions WHERE session_id = ?", (session_id,)).fetchone()[0]
         assert cnt >= 1
 
@@ -251,7 +254,7 @@ def test_11_personal_insights_calculated_telemetry(client):
 def test_12_sanitized_wav_audio_headers(client):
     """Verifies that /api/tts returns valid linear PCM WAV with sanitized RIFF headers."""
     headers = {"Authorization": "Bearer session_demo_learner_001"}
-    with sqlite3.connect(DB_PATH) as conn:
+    with get_db() as conn:
         sess = conn.execute("SELECT id FROM sessions WHERE user_id = 'user_demo_001' OR user_id IS NULL ORDER BY created_at DESC LIMIT 1").fetchone()
     session_id = sess[0]
 

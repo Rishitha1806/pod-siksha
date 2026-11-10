@@ -7,6 +7,8 @@ from local pod_siksha.db into a Neon PostgreSQL database without data loss.
 import os
 import sqlite3
 import json
+import psycopg2
+import psycopg2.extras
 
 def get_pg_connection(pg_url: str):
     import psycopg2
@@ -29,8 +31,8 @@ def init_pg_schema(pg_conn):
                 verification_token TEXT,
                 reset_token TEXT,
                 reset_token_expires_at TIMESTAMP,
-                role TEXT DEFAULT 'student',
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                role TEXT DEFAULT 'student'
             );
         """)
 
@@ -39,6 +41,7 @@ def init_pg_schema(pg_conn):
             CREATE TABLE IF NOT EXISTS user_sessions (
                 token TEXT PRIMARY KEY,
                 user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 expires_at TIMESTAMP NOT NULL
             );
         """)
@@ -47,14 +50,14 @@ def init_pg_schema(pg_conn):
         cur.execute("""
             CREATE TABLE IF NOT EXISTS sessions (
                 id TEXT PRIMARY KEY,
-                user_id TEXT REFERENCES users(id) ON DELETE SET NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 title TEXT,
                 chapter_text TEXT,
                 language TEXT,
                 script_json TEXT,
                 quiz_json TEXT,
-                status TEXT DEFAULT 'active'
+                status TEXT DEFAULT 'active',
+                user_id TEXT REFERENCES users(id) ON DELETE SET NULL
             );
         """)
 
@@ -62,16 +65,17 @@ def init_pg_schema(pg_conn):
         cur.execute("""
             CREATE TABLE IF NOT EXISTS doubts (
                 id TEXT PRIMARY KEY,
-                user_id TEXT REFERENCES users(id) ON DELETE SET NULL,
                 session_id TEXT NOT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 turn_index INTEGER,
-                interruption_pos REAL,
-                doubt_text TEXT,
-                answer_text TEXT,
-                language TEXT,
+                playback_ms INTEGER,
+                transcribed_text TEXT,
+                detected_language TEXT,
+                concept_tag TEXT,
                 hint_level INTEGER DEFAULT 1,
-                concept_tag TEXT
+                answer_text TEXT,
+                spoken_answer TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                user_id TEXT REFERENCES users(id) ON DELETE SET NULL
             );
         """)
 
@@ -112,9 +116,10 @@ def init_pg_schema(pg_conn):
             CREATE TABLE IF NOT EXISTS misconceptions (
                 id TEXT PRIMARY KEY,
                 user_id TEXT REFERENCES users(id) ON DELETE SET NULL,
-                concept_tag TEXT NOT NULL,
                 session_id TEXT,
+                concept_tag TEXT NOT NULL,
                 misconception_text TEXT NOT NULL,
+                grounded_truth TEXT,
                 confidence REAL DEFAULT 0.85,
                 evidence_source TEXT DEFAULT 'teachback',
                 status TEXT DEFAULT 'active',
@@ -139,20 +144,24 @@ def init_pg_schema(pg_conn):
             );
         """)
 
-        # Quiz Sessions & Questions
+        # Quiz Sessions
         cur.execute("""
             CREATE TABLE IF NOT EXISTS quiz_sessions (
                 id TEXT PRIMARY KEY,
-                user_id TEXT REFERENCES users(id) ON DELETE SET NULL,
                 session_id TEXT NOT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                completed INTEGER DEFAULT 0,
+                language TEXT,
+                total_questions INTEGER DEFAULT 0,
                 total_score REAL DEFAULT 0.0,
-                max_score REAL DEFAULT 100.0,
                 percentage REAL DEFAULT 0.0,
-                learning_summary TEXT
+                completed INTEGER DEFAULT 0,
+                learning_summary TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                completed_at TIMESTAMP,
+                user_id TEXT REFERENCES users(id) ON DELETE SET NULL
             );
         """)
+
+        # Quiz Questions
         cur.execute("""
             CREATE TABLE IF NOT EXISTS quiz_questions (
                 id TEXT PRIMARY KEY,
@@ -167,6 +176,8 @@ def init_pg_schema(pg_conn):
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
         """)
+
+        # Quiz Answers
         cur.execute("""
             CREATE TABLE IF NOT EXISTS quiz_answers (
                 id TEXT PRIMARY KEY,
@@ -181,6 +192,32 @@ def init_pg_schema(pg_conn):
                 missing_points TEXT,
                 concept_tag TEXT,
                 ideal_answer TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+        """)
+        # Concept Events
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS concept_events (
+                id TEXT PRIMARY KEY,
+                session_id TEXT NOT NULL,
+                concept_tag TEXT,
+                normalized_tag TEXT,
+                event_type TEXT,
+                hint_level INTEGER DEFAULT 1,
+                quiz_status TEXT,
+                score REAL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                user_id TEXT REFERENCES users(id) ON DELETE SET NULL
+            );
+        """)
+
+        # Teacher Recommendations
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS teacher_recommendations (
+                id TEXT PRIMARY KEY,
+                chapter_filter TEXT,
+                recommendations_json TEXT,
+                evidence_summary TEXT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
         """)
@@ -199,48 +236,61 @@ def migrate_data(sqlite_path: str, pg_url: str):
     tables = [
         "users", "user_sessions", "sessions", "doubts", "concept_dna",
         "teachback_sessions", "misconceptions", "memory_loop",
-        "quiz_sessions", "quiz_questions", "quiz_answers"
+        "quiz_sessions", "quiz_questions", "quiz_answers",
+        "concept_events", "teacher_recommendations"
     ]
 
     total_rows = 0
+    stats = {}
     with p_conn.cursor() as p_cur:
         for tbl in tables:
-            rows = s_cur.execute(f"SELECT * FROM {tbl}").fetchall()
+            query = f"SELECT * FROM {tbl}"
+            if tbl == "user_sessions":
+                query = "SELECT * FROM user_sessions WHERE user_id IN (SELECT id FROM users)"
+            rows = s_cur.execute(query).fetchall()
             if not rows:
                 print(f"Table '{tbl}': 0 rows to migrate.")
+                stats[tbl] = {"sqlite": 0, "neon": 0}
                 continue
 
             cols = [desc[0] for desc in s_cur.description]
-            placeholders = ", ".join(["%s"] * len(cols))
             col_names = ", ".join(cols)
+            conflict_col = "token" if tbl == "user_sessions" else "id"
             insert_query = f"""
                 INSERT INTO {tbl} ({col_names})
-                VALUES ({placeholders})
-                ON CONFLICT DO NOTHING;
+                VALUES %s
+                ON CONFLICT ({conflict_col}) DO NOTHING;
             """
 
-            migrated = 0
-            for r in rows:
-                p_cur.execute(insert_query, tuple(r))
-                migrated += 1
-
+            # Batch insert using psycopg2.extras.execute_values
+            data = [tuple(r) for r in rows]
+            psycopg2.extras.execute_values(p_cur, insert_query, data, page_size=100)
             p_conn.commit()
-            print(f"Table '{tbl}': Successfully migrated {migrated} rows.")
-            total_rows += migrated
+
+            # Check Neon count
+            p_cur.execute(f"SELECT COUNT(*) FROM {tbl}")
+            neon_count = p_cur.fetchone()["count"]
+            print(f"Table '{tbl}': SQLite={len(rows)}, Neon Total={neon_count}", flush=True)
+            stats[tbl] = {"sqlite": len(rows), "neon": neon_count}
+            total_rows += len(rows)
 
     s_conn.close()
     p_conn.close()
-    print(f"\nMigration complete! Total {total_rows} rows transferred to Neon PostgreSQL.")
+    print(f"\nMigration complete! Total {total_rows} rows processed to Neon PostgreSQL.")
+    return stats
 
 if __name__ == "__main__":
     import sys
+    from dotenv import load_dotenv
+    load_dotenv(".env")
+    
     pg_url = os.getenv("DATABASE_URL")
     if len(sys.argv) > 1:
         pg_url = sys.argv[1]
 
     if not pg_url:
         print("Usage: python scripts/migrate_sqlite_to_neon.py <NEON_DATABASE_URL>")
-        print("Or set DATABASE_URL environment variable.")
+        print("Or set DATABASE_URL in .env.")
     else:
         sqlite_file = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "pod_siksha.db")
         migrate_data(sqlite_file, pg_url)

@@ -76,15 +76,7 @@ LANG_CONFIGS = {
     "en": {"name": "English", "stt_lang": "en-IN", "tts_lang": "en-IN", "fmt": "transcribe"},
 }
 
-def get_db():
-    conn = sqlite3.connect(DB_PATH, timeout=30.0)
-    conn.row_factory = sqlite3.Row
-    try:
-        conn.execute('PRAGMA journal_mode=WAL;')
-        conn.execute('PRAGMA busy_timeout=30000;')
-    except Exception:
-        pass
-    return conn
+from db_adapter import get_db, DB_PATH, DATABASE_URL
 
 def init_db():
     with get_db() as conn:
@@ -2365,7 +2357,10 @@ def get_teacher_recommendations(chapter: Optional[str] = None, refresh: bool = F
                 (cache_key,)
             ).fetchone()
             if cached:
-                cached_time = datetime.strptime(cached["created_at"], "%Y-%m-%d %H:%M:%S")
+                if isinstance(cached["created_at"], str):
+                    cached_time = datetime.strptime(cached["created_at"].split(".")[0], "%Y-%m-%d %H:%M:%S")
+                else:
+                    cached_time = cached["created_at"].replace(tzinfo=None) if hasattr(cached["created_at"], 'tzinfo') and cached["created_at"].tzinfo else cached["created_at"]
                 if datetime.utcnow() - cached_time < timedelta(minutes=15):
                     return json.loads(cached["recommendations_json"])
 

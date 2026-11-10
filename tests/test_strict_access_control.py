@@ -1,3 +1,6 @@
+import sys, os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from db_adapter import get_db
 """
 Strict Authentication & Access Control Verification Test Suite for Pod-Siksha 2.0.
 Verifies server-side rejection of unauthenticated, unverified, and unauthorized requests.
@@ -23,7 +26,7 @@ def client():
 @pytest.fixture(scope="module")
 def setup_test_users():
     """Create test fixtures for learner, teacher, and an unverified user in SQLite."""
-    conn = sqlite3.connect(DB_PATH, timeout=30.0)
+    conn = get_db()
     cur = conn.cursor()
 
     # User A: Verified Learner
@@ -78,7 +81,7 @@ def setup_test_users():
     yield
 
     # Clean up test records
-    conn = sqlite3.connect(DB_PATH, timeout=30.0)
+    conn = get_db()
     cur = conn.cursor()
     cur.execute("DELETE FROM user_sessions WHERE token LIKE 'session_audit_%'")
     cur.execute("DELETE FROM sessions WHERE id = 'sess_audit_b_001'")

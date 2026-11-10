@@ -25,3 +25,8 @@ node_modules/
 package-lock.json
 package.json
 
+.neon
+scratch*
+*.log
+scripts/b64_report.txt
+scripts/upload_cache.json
