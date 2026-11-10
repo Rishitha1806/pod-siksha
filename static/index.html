@@ -2225,24 +2225,69 @@
     </div>
   </div>
 
-  <!-- New Chapter Creation Modal -->
+  <!-- New Chapter Creation Modal: Universal Ingestion (Dual Entry Points) -->
   <div id="newChapterModal" class="modal-backdrop" style="display:none; position:fixed; inset:0; background:rgba(19,34,30,0.55); backdrop-filter:blur(6px); z-index:999; justify-content:center; align-items:center;">
-    <div class="atelier-card" style="max-width:540px; width:92%; padding:28px; background:white; position:relative; box-shadow:var(--shadow-elevated); max-height:90vh; overflow-y:auto;">
-      <button onclick="closeNewChapterModal()" style="position:absolute; top:16px; right:16px; background:none; border:none; font-size:20px; cursor:pointer; color:var(--ink-secondary);">&times;</button>
-      <div class="editorial-label">Curriculum Ingestion</div>
-      <h3 class="editorial-h2" style="font-size:22px; margin-bottom:6px;">Start a New Learning Journey</h3>
+    <div class="atelier-card" style="max-width:580px; width:92%; padding:28px; background:white; position:relative; box-shadow:var(--shadow-elevated); max-height:92vh; overflow-y:auto;">
+      <button type="button" onclick="closeNewChapterModal()" style="position:absolute; top:16px; right:16px; background:none; border:none; font-size:22px; cursor:pointer; color:var(--ink-secondary); line-height:1;">&times;</button>
+      
+      <div class="editorial-label">Aura Atelier &middot; Universal Ingestion</div>
+      <h3 class="editorial-h2" style="font-size:22px; margin-bottom:4px;">Start a New Learning Journey</h3>
       <p style="font-size:13px; color:var(--ink-secondary); margin-bottom:16px;">
-        Upload a textbook PDF or paste chapter content. Gemini will weave an authentic 14-turn two-host dialogue.
+        Choose your entry point: upload educational documents or enter any topic to master.
       </p>
 
-      <form id="createSessionForm" onsubmit="event.preventDefault(); submitNewSession();">
-        <div class="form-field">
-          <label>Journey / Chapter Title</label>
-          <input type="text" id="modalSessionTitle" class="form-input" placeholder="e.g. Chemical Bonding &amp; Molecular Structure">
-        </div>
+      <!-- Two Clear Entry Point Tabs -->
+      <div style="display:flex; border-bottom:1px solid var(--border-parchment); margin-bottom:18px; gap:8px;">
+        <button type="button" id="tabEntryDoc" onclick="switchModalEntryTab('doc')" style="flex:1; padding:10px 12px; background:none; border:none; border-bottom:2px solid var(--accent-terracotta); font-weight:700; font-size:13px; color:var(--accent-terracotta); cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+          <span>Upload Document (PDF/PPTX/DOCX)</span>
+        </button>
+        <button type="button" id="tabEntryTopic" onclick="switchModalEntryTab('topic')" style="flex:1; padding:10px 12px; background:none; border:none; border-bottom:2px solid transparent; font-weight:600; font-size:13px; color:var(--ink-secondary); cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+          <span>Enter Topic Manually</span>
+        </button>
+      </div>
+
+      <form id="createSessionForm" onsubmit="event.preventDefault(); submitUniversalLearningJourney();">
         
-        <div class="form-field">
-          <label>Voice Language</label>
+        <!-- Entry Point 1: Document Upload -->
+        <div id="entrySectionDoc">
+          <div class="form-field">
+            <label style="font-weight:700; font-size:12px; text-transform:uppercase; letter-spacing:0.5px;">Document File (PDF, PPTX, DOCX, TXT)</label>
+            <div id="modalDropZone" style="border:2px dashed var(--border-parchment); border-radius:var(--radius-sm); padding:18px; text-align:center; background:var(--surface-tinted); cursor:pointer; transition:all 0.2s;" onclick="document.getElementById('modalSessionFile').click()">
+              <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" style="color:var(--accent-terracotta); margin-bottom:4px;"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M12 18v-6M9 15l3-3 3 3"/></svg>
+              <div id="modalDropFileName" style="font-weight:600; font-size:13px; color:var(--ink-primary);">Choose document or drag &amp; drop here</div>
+              <div style="font-size:11px; color:var(--ink-secondary); margin-top:2px;">Supports PDF textbooks, slide decks (.pptx), Word notes (.docx)</div>
+            </div>
+            <input type="file" id="modalSessionFile" class="form-input" accept=".pdf,.docx,.pptx,.ppt,.txt,.md" style="display:none;" onchange="handleModalFileSelected(this)">
+          </div>
+
+          <div class="form-field">
+            <label>Journey Title (Optional, auto-extracted if empty)</label>
+            <input type="text" id="modalDocTitle" class="form-input" placeholder="e.g. Chapter 4: Chemical Bonding &amp; Molecular Structure">
+          </div>
+        </div>
+
+        <!-- Entry Point 2: Topic Manually -->
+        <div id="entrySectionTopic" style="display:none;">
+          <div class="form-field">
+            <label style="font-weight:700; font-size:12px; text-transform:uppercase; letter-spacing:0.5px;">Topic or Subject to Learn *</label>
+            <input type="text" id="modalTopicTitle" class="form-input" placeholder="e.g. Binary Search Trees in C++, Photosynthesis, Quantum Computing">
+          </div>
+
+          <div class="form-field">
+            <label>Concept Notes / Syllabus Text (Optional)</label>
+            <textarea id="modalTopicText" class="form-input" rows="3" placeholder="Optional: Paste paragraphs, code snippets, or notes. If left blank, Gemini generates the full curriculum from the title."></textarea>
+          </div>
+        </div>
+
+        <!-- Hidden input for backwards compatibility -->
+        <input type="hidden" id="modalSessionTitle" value="">
+        <textarea id="modalSessionText" style="display:none;"></textarea>
+
+        <!-- Shared Configuration: Language -->
+        <div class="form-field" style="margin-top:14px;">
+          <label style="font-weight:700; font-size:12px; text-transform:uppercase; letter-spacing:0.5px;">Instruction &amp; Voice Language</label>
           <select id="modalSessionLang" class="form-input">
             <option value="te" selected>Telugu (తెలుగు)</option>
             <option value="hi">Hindi (हिन्दी)</option>
@@ -2250,33 +2295,45 @@
             <option value="kn">Kannada (ಕನ್ನಡ)</option>
             <option value="mr">Marathi (मराठी)</option>
             <option value="bn">Bengali (বাংলা)</option>
+            <option value="en">English (Universal)</option>
           </select>
         </div>
 
-        <div class="form-field">
-          <label>Upload PDF File (Optional)</label>
-          <input type="file" id="modalSessionFile" class="form-input" accept=".pdf">
+        <!-- Learning Experience Mode Selector -->
+        <div class="form-field" style="margin-top:14px;">
+          <label style="font-weight:700; font-size:12px; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">Learning Destination</label>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <label class="destination-card" id="cardDestAnimated" style="border:2px solid var(--accent-terracotta); background:var(--surface-tinted); padding:10px 12px; border-radius:var(--radius-sm); cursor:pointer; display:flex; flex-direction:column; gap:2px;">
+              <div style="display:flex; align-items:center; gap:6px;">
+                <input type="radio" name="learningDestination" value="animated" checked onchange="updateDestinationSelection()">
+                <span style="font-weight:700; font-size:12px; color:var(--ink-primary);">Adaptive Visual Studio</span>
+              </div>
+              <span style="font-size:11px; color:var(--ink-secondary); margin-left:20px;">Interactive 2D animated scenes, checkpoints &amp; visual stage</span>
+            </label>
+            <label class="destination-card" id="cardDestPodcast" style="border:1px solid var(--border-parchment); background:white; padding:10px 12px; border-radius:var(--radius-sm); cursor:pointer; display:flex; flex-direction:column; gap:2px;">
+              <div style="display:flex; align-items:center; gap:6px;">
+                <input type="radio" name="learningDestination" value="podcast" onchange="updateDestinationSelection()">
+                <span style="font-weight:700; font-size:12px; color:var(--ink-primary);">Socratic Broadcast Studio</span>
+              </div>
+              <span style="font-size:11px; color:var(--ink-secondary); margin-left:20px;">14-turn 2-host audio dialogue, spoken TTS &amp; doubt clearance</span>
+            </label>
+          </div>
         </div>
 
-        <div class="form-field">
-          <label>Paste Chapter Text (Optional)</label>
-          <textarea id="modalSessionText" class="form-input" rows="4" placeholder="Optional: Paste textbook paragraphs or notes. If left blank, Gemini will generate the curriculum from the title."></textarea>
+        <!-- Progress Status Box -->
+        <div id="generatingStatus" style="display:none; background:var(--surface-tinted); border:1px solid var(--border-parchment); padding:12px; border-radius:var(--radius-sm); font-size:12px; color:var(--ink-primary); margin:14px 0 12px 0; text-align:center;">
+          <div id="generatingStatusTitle" style="font-weight:700; color:var(--accent-terracotta);">Generating Adaptive Learning Journey...</div>
+          <div id="generatingStatusDesc" style="color:var(--ink-secondary); margin-top:2px;">Processing curriculum and structuring lesson plan.</div>
         </div>
 
-        <div id="generatingStatus" style="display:none; background:var(--surface-tinted); border:1px solid var(--border-parchment); padding:12px; border-radius:var(--radius-sm); font-size:12px; color:var(--ink-primary); margin-bottom:12px; text-align:center;">
-          <div style="font-weight:700; color:var(--accent-terracotta);">Generating 14-Turn Socratic Podcast...</div>
-          <div style="color:var(--ink-secondary); margin-top:2px;">Gemini is crafting Host A &amp; Host B dialogue and extracting Concept DNA.</div>
-        </div>
-
-        <button type="submit" id="btnCreateSubmit" class="btn-action-primary" style="width:100%; justify-content:center; padding:12px;">
-          Generate Episode &amp; Enter Studio &rarr;
+        <button type="submit" id="btnCreateSubmit" class="btn-action-primary" style="width:100%; justify-content:center; padding:12px; margin-top:8px;">
+          <span id="btnCreateSubmitText">Begin Learning Journey &rarr;</span>
         </button>
       </form>
     </div>
   </div>
 
-
-    <!-- ==============================================================
+  <!-- ==============================================================
          ANIMATED VIDEO STUDIO ("Universal AI Visual Stage")
          ============================================================== -->
     <section class="screen-frame" id="view-animated-studio">
@@ -2543,7 +2600,8 @@
   <div id="toastMessage">Notification message</div>
 
   
-  <script src="/static/animation_engine.js">
+  <script src="/static/animation_engine.js"></script>
+  <script>
     // ==============================================================
     // UNIVERSAL AI ANIMATED LEARNING PLATFORM CONTROLLER
     // ==============================================================
@@ -3586,48 +3644,211 @@
     function openNewChapterModal() { document.getElementById("newChapterModal").style.display = "flex"; }
     function closeNewChapterModal() { document.getElementById("newChapterModal").style.display = "none"; }
 
-    async function submitNewSession() {
-      const title = document.getElementById("modalSessionTitle").value.trim();
-      const language = document.getElementById("modalSessionLang").value;
-      const fileInput = document.getElementById("modalSessionFile");
-      const text = document.getElementById("modalSessionText").value.trim();
-      const statusBox = document.getElementById("generatingStatus");
-      const submitBtn = document.getElementById("btnCreateSubmit");
+    
+    // Universal Ingestion Modal State & Controllers
+    let currentModalEntryTab = 'doc';
 
-      if (!title && !fileInput.files.length && !text) {
-        showToast("Please provide a journey title, upload a PDF, or paste text.");
+    function switchModalEntryTab(tab) {
+      currentModalEntryTab = tab;
+      const tabDoc = document.getElementById('tabEntryDoc');
+      const tabTopic = document.getElementById('tabEntryTopic');
+      const secDoc = document.getElementById('entrySectionDoc');
+      const secTopic = document.getElementById('entrySectionTopic');
+
+      if (tab === 'doc') {
+        if (tabDoc) {
+          tabDoc.style.borderBottom = '2px solid var(--accent-terracotta)';
+          tabDoc.style.color = 'var(--accent-terracotta)';
+          tabDoc.style.fontWeight = '700';
+        }
+        if (tabTopic) {
+          tabTopic.style.borderBottom = '2px solid transparent';
+          tabTopic.style.color = 'var(--ink-secondary)';
+          tabTopic.style.fontWeight = '600';
+        }
+        if (secDoc) secDoc.style.display = 'block';
+        if (secTopic) secTopic.style.display = 'none';
+      } else {
+        if (tabTopic) {
+          tabTopic.style.borderBottom = '2px solid var(--accent-terracotta)';
+          tabTopic.style.color = 'var(--accent-terracotta)';
+          tabTopic.style.fontWeight = '700';
+        }
+        if (tabDoc) {
+          tabDoc.style.borderBottom = '2px solid transparent';
+          tabDoc.style.color = 'var(--ink-secondary)';
+          tabDoc.style.fontWeight = '600';
+        }
+        if (secDoc) secDoc.style.display = 'none';
+        if (secTopic) secTopic.style.display = 'block';
+      }
+    }
+
+    function handleModalFileSelected(input) {
+      const file = input?.files?.[0];
+      const nameEl = document.getElementById('modalDropFileName');
+      const titleInput = document.getElementById('modalDocTitle');
+      if (file) {
+        if (nameEl) nameEl.textContent = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+        if (titleInput && !titleInput.value.trim()) {
+          const baseName = file.name.replace(/\.[^/.]+$/, "").replace(/[_-]+/g, " ");
+          titleInput.value = baseName.replace(/\b\w/g, c => c.toUpperCase());
+        }
+      } else {
+        if (nameEl) nameEl.textContent = 'Choose document or drag & drop here';
+      }
+    }
+
+    function updateDestinationSelection() {
+      const selected = document.querySelector('input[name="learningDestination"]:checked')?.value || 'animated';
+      const cardAnim = document.getElementById('cardDestAnimated');
+      const cardPod = document.getElementById('cardDestPodcast');
+      if (selected === 'animated') {
+        if (cardAnim) {
+          cardAnim.style.border = '2px solid var(--accent-terracotta)';
+          cardAnim.style.background = 'var(--surface-tinted)';
+        }
+        if (cardPod) {
+          cardPod.style.border = '1px solid var(--border-parchment)';
+          cardPod.style.background = 'white';
+        }
+      } else {
+        if (cardPod) {
+          cardPod.style.border = '2px solid var(--accent-terracotta)';
+          cardPod.style.background = 'var(--surface-tinted)';
+        }
+        if (cardAnim) {
+          cardAnim.style.border = '1px solid var(--border-parchment)';
+          cardAnim.style.background = 'white';
+        }
+      }
+    }
+
+    async function submitUniversalLearningJourney() {
+      const isDoc = (currentModalEntryTab === 'doc');
+      const fileInput = document.getElementById('modalSessionFile');
+      const file = fileInput?.files?.[0];
+      const docTitle = document.getElementById('modalDocTitle')?.value?.trim();
+      const topicTitle = document.getElementById('modalTopicTitle')?.value?.trim();
+      const topicText = document.getElementById('modalTopicText')?.value?.trim();
+      const language = document.getElementById('modalSessionLang')?.value || 'te';
+      const destination = document.querySelector('input[name="learningDestination"]:checked')?.value || 'animated';
+
+      const title = isDoc ? (docTitle || file?.name?.replace(/\.[^/.]+$/, '') || '') : topicTitle;
+      const contentText = isDoc ? '' : topicText;
+
+      if (isDoc && !file && !title) {
+        showToast('Please select a document or enter a journey title.');
+        return;
+      }
+      if (!isDoc && !title) {
+        showToast('Please enter a topic or subject title to learn.');
         return;
       }
 
-      const formData = new FormData();
-      if (title) formData.append("title", title);
-      formData.append("language", language);
-      if (fileInput.files.length) formData.append("file", fileInput.files[0]);
-      if (text) formData.append("chapter_text", text);
+      // Sync with legacy elements if present
+      const legTitle = document.getElementById('modalSessionTitle');
+      const legText = document.getElementById('modalSessionText');
+      if (legTitle) legTitle.value = title;
+      if (legText) legText.value = contentText;
 
-      statusBox.style.display = "block";
-      submitBtn.disabled = true;
+      const statusBox = document.getElementById('generatingStatus');
+      const statusTitle = document.getElementById('generatingStatusTitle');
+      const statusDesc = document.getElementById('generatingStatusDesc');
+      const submitBtn = document.getElementById('btnCreateSubmit');
+
+      if (statusBox) statusBox.style.display = 'block';
+      if (statusTitle) {
+        statusTitle.textContent = destination === 'animated' 
+          ? 'Generating Adaptive Animated Lesson...' 
+          : 'Generating 14-Turn Socratic Podcast...';
+      }
+      if (statusDesc) {
+        statusDesc.textContent = destination === 'animated'
+          ? 'Gemini is structuring visual scenes, checkpoints, and audio narration.'
+          : 'Gemini is crafting Host A & Host B dialogue and extracting Concept DNA.';
+      }
+      if (submitBtn) submitBtn.disabled = true;
+
+      const token = AuthManager.authToken || localStorage.getItem('ps_token');
+      const headers = token ? { 'Authorization': 'Bearer ' + token } : {};
 
       try {
-        const token = AuthManager.authToken || localStorage.getItem("ps_token");
-        const headers = token ? { "Authorization": "Bearer " + token } : {};
+        // If a file is uploaded, also persist it in the Universal Document pipeline in background
+        if (file && token) {
+          try {
+            const docFormData = new FormData();
+            docFormData.append('file', file);
+            fetch('/api/documents/upload', { method: 'POST', headers, body: docFormData })
+              .then(r => r.json())
+              .then(d => {
+                if (d.document_id) console.log('Universal Doc cataloged:', d.document_id);
+              })
+              .catch(err => console.warn('Background doc upload note:', err));
+          } catch (ign) {}
+        }
 
-        const res = await fetch("/api/session", { method: "POST", headers, body: formData });
-        const data = await res.json();
-        if (res.status === 401) { AuthManager.logout(false); switchScreen('login'); return; }
-        if (!res.ok) throw new Error(data.detail || "Episode generation failed.");
+        if (destination === 'animated') {
+          // Route to Animated Video Studio
+          const animFormData = new FormData();
+          if (title) animFormData.append('title', title);
+          animFormData.append('learner_profile', 'teen');
+          animFormData.append('language', language);
+          animFormData.append('animation_style', 'educational_2d');
+          if (contentText) animFormData.append('content_text', contentText);
+          if (file) animFormData.append('file', file);
 
-        showToast("Episode created! Launching Learning Studio...");
-        closeNewChapterModal();
-        currentSessionId = data.session_id;
-        loadStudioSession(currentSessionId);
-        switchScreen("studio");
+          const res = await fetch('/api/animated/project', {
+            method: 'POST',
+            headers,
+            body: animFormData
+          });
+
+          if (!res.ok) {
+            const errData = await res.json().catch(() => ({}));
+            throw new Error(errData.detail || 'Could not generate animated lesson.');
+          }
+
+          const project = await res.json();
+          showToast(`Lesson Created: "${project.title}"! Launching Animated Stage...`);
+          closeNewChapterModal();
+          switchScreen('animated-studio');
+          loadActiveAnimatedProject(project.project_id || project.id);
+        } else {
+          // Route to Socratic Audio Broadcast Studio
+          const sessFormData = new FormData();
+          if (title) sessFormData.append('title', title);
+          sessFormData.append('language', language);
+          if (file) sessFormData.append('file', file);
+          if (contentText) sessFormData.append('chapter_text', contentText);
+
+          const res = await fetch('/api/session', {
+            method: 'POST',
+            headers,
+            body: sessFormData
+          });
+
+          if (res.status === 401) { AuthManager.logout(false); switchScreen('login'); return; }
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.detail || 'Episode generation failed.');
+
+          showToast('Episode created! Launching Learning Studio...');
+          closeNewChapterModal();
+          currentSessionId = data.session_id;
+          await loadStudioSession(currentSessionId);
+          switchScreen('studio');
+        }
       } catch (err) {
-        showToast("Generation error: " + err.message);
+        showToast('Generation error: ' + err.message);
       } finally {
-        statusBox.style.display = "none";
-        submitBtn.disabled = false;
+        if (statusBox) statusBox.style.display = 'none';
+        if (submitBtn) submitBtn.disabled = false;
       }
+    }
+
+    async function submitNewSession() {
+      // Delegate to universal handler for full dual-entry compatibility
+      await submitUniversalLearningJourney();
     }
 
     // Journeys List
@@ -3708,6 +3929,7 @@
         const res = await fetch(`/api/session/${sessionId}`, { headers });
         if (res.status === 401) { AuthManager.logout(false); switchScreen('login'); return; }
         const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "Failed to load session");
         currentSessionData = data;
         currentTurns = data.turns || [];
         currentTurnIndex = 0;
@@ -3774,7 +3996,7 @@
       const nextTurn = currentTurns[nextIdx];
       const lang = currentSessionData ? currentSessionData.language : "te";
       const token = AuthManager.authToken || localStorage.getItem("ps_token");
-      const url = `/api/tts?session_id=${currentSessionId}&turn_index=${nextIdx + 1}&speaker=${nextTurn.speaker}&language=${lang}`;
+      const url = `/api/tts?session_id=${currentSessionId}&turn_index=${nextIdx + 1}&speaker=${nextTurn.speaker}&language=${lang}&token=${encodeURIComponent(token || '')}`;
       if (!audioPreloadCache[url]) {
         const audio = new Audio();
         audio.src = url;
@@ -3798,7 +4020,8 @@
       }
       const turn = currentTurns[currentTurnIndex];
       const lang = currentSessionData ? currentSessionData.language : "te";
-      const url = `/api/tts?session_id=${currentSessionId}&turn_index=${currentTurnIndex + 1}&speaker=${turn.speaker}&language=${lang}`;
+      const token = AuthManager.authToken || localStorage.getItem('ps_token');
+      const url = `/api/tts?session_id=${currentSessionId}&turn_index=${currentTurnIndex + 1}&speaker=${turn.speaker}&language=${lang}&token=${encodeURIComponent(token || '')}`;
 
       mainAudio.src = url;
       mainAudio.play().then(() => {
@@ -3935,7 +4158,8 @@
 
     function handleDoubtResponse(data) {
       showToast(`Answered by Host A: "${data.answer_display ? data.answer_display.slice(0, 60) + '...' : 'Answer ready.'}"`);
-      const doubtAudioUrl = `/api/tts?session_id=${currentSessionId}&turn_index=${currentTurnIndex + 1}&speaker=A&language=te`;
+      const token = AuthManager.authToken || localStorage.getItem('ps_token');
+      const doubtAudioUrl = `/api/tts?session_id=${currentSessionId}&turn_index=${currentTurnIndex + 1}&speaker=A&language=te&token=${encodeURIComponent(token || '')}`;
       doubtAudio.src = doubtAudioUrl;
       doubtAudio.play().then(() => {
         showToast("Playing Host A's Socratic explanation...");

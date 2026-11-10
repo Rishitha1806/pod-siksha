@@ -17,7 +17,7 @@ from typing import Any, Dict, List, Optional
 import secrets
 import hashlib
 from dotenv import load_dotenv
-from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile, Header, Depends, Cookie, Cookie
+from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile, Header, Depends, Cookie, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
@@ -352,22 +352,25 @@ def create_user_session(user_id: str, days: int = 30) -> str:
 
 def get_current_user(
     authorization: Optional[str] = Header(None),
-    auth_token: Optional[str] = Cookie(None)
+    auth_token: Optional[str] = Cookie(None),
+    token: Optional[str] = Query(None)
 ) -> dict:
-    """Strict Authentication Guard: Validates bearer token or session cookie.
+    """Strict Authentication Guard: Validates bearer token, session cookie, or query param.
     Rejects unauthenticated requests with HTTP 401.
     Rejects unverified email accounts with HTTP 403.
     """
-    token = None
+    auth_tok = None
     if authorization:
         if authorization.startswith("Bearer "):
-            token = authorization.replace("Bearer ", "").strip()
+            auth_tok = authorization.replace("Bearer ", "").strip()
         elif len(authorization.strip()) > 5:
-            token = authorization.strip()
+            auth_tok = authorization.strip()
     elif auth_token:
-        token = auth_token.strip()
+        auth_tok = auth_token.strip()
+    elif token:
+        auth_tok = token.strip()
 
-    if not token:
+    if not auth_tok:
         raise HTTPException(
             status_code=401,
             detail="Authentication required. Please sign in to access Pod-Siksha."
@@ -379,7 +382,7 @@ def get_current_user(
             FROM user_sessions s
             JOIN users u ON u.id = s.user_id
             WHERE s.token = ? AND s.expires_at > datetime('now')
-        """, (token,)).fetchone()
+        """, (auth_tok,)).fetchone()
         
         if not row:
             raise HTTPException(
@@ -934,10 +937,12 @@ async def create_session(
     """Creates a new podcast session by ingesting text or PDF, then generating a 14-turn script."""
     text_content = ""
     if file and file.filename:
-        pdf_bytes = await file.read()
-        text_content = extract_text_from_pdf(pdf_bytes)
+        file_bytes = await file.read()
+        from doc_parser import extract_document_content
+        text_content = extract_document_content(file.filename, file_bytes)
         if not title:
-            title = file.filename.replace(".pdf", "")
+            base_name = os.path.splitext(file.filename)[0]
+            title = base_name.replace("_", " ").replace("-", " ").title()
     elif chapter_text and chapter_text.strip():
         text_content = chapter_text.strip()
     elif title and title.strip():
