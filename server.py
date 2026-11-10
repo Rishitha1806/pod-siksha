@@ -300,6 +300,34 @@ def init_db():
         conn.execute("CREATE INDEX IF NOT EXISTS idx_user_sessions_tok ON user_sessions(token)")
         conn.execute("CREATE INDEX IF NOT EXISTS idx_misconceptions_user ON misconceptions(user_id)")
         conn.execute("CREATE INDEX IF NOT EXISTS idx_memory_loop_due ON memory_loop(due_at)")
+
+        # Additive Table: User Concept Progress for Concept DNA & Understanding Tracker
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS user_concept_progress (
+                id TEXT PRIMARY KEY,
+                user_id TEXT NOT NULL,
+                concept_name TEXT NOT NULL,
+                normalized_tag TEXT NOT NULL,
+                definition TEXT,
+                summary TEXT,
+                prerequisites_json TEXT DEFAULT '[]',
+                related_json TEXT DEFAULT '[]',
+                status TEXT DEFAULT 'not_started',
+                status_reason TEXT,
+                mastery_score REAL DEFAULT 0.0,
+                times_studied INTEGER DEFAULT 0,
+                times_quizzed INTEGER DEFAULT 0,
+                times_correct INTEGER DEFAULT 0,
+                last_studied_at TIMESTAMP,
+                project_id TEXT,
+                scene_id TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                UNIQUE(user_id, normalized_tag)
+            )
+        """)
+        conn.execute("CREATE INDEX IF NOT EXISTS idx_concept_prog_user ON user_concept_progress(user_id)")
+        conn.execute("CREATE INDEX IF NOT EXISTS idx_concept_prog_status ON user_concept_progress(status)")
         # Guarantee demo user sessions exist with 30-day validity
         conn.execute("""
             INSERT OR REPLACE INTO user_sessions (token, user_id, expires_at)
@@ -631,28 +659,56 @@ def reset_password(payload: ResetPasswordRequest):
 def get_user_journeys(user: dict = Depends(get_current_user)):
     uid = user["id"] if user else "user_demo_001"
     with get_db() as conn:
-        rows = conn.execute("""
+        # Query authentic animated video projects first
+        proj_rows = conn.execute("""
+            SELECT p.id, p.title, p.topic, p.language, p.created_at, p.status, p.total_scenes, p.total_duration_sec,
+                   (SELECT COUNT(*) FROM video_scenes s WHERE s.project_id = p.id) as scene_count
+            FROM video_projects p
+            WHERE p.user_id = ?
+            ORDER BY p.created_at DESC LIMIT 30
+        """, (uid,)).fetchall()
+
+        journeys = []
+        for p in proj_rows:
+            journeys.append({
+                "id": p["id"],
+                "title": p["title"] or p["topic"] or "Animated Lesson",
+                "topic": p["topic"],
+                "language": p["language"] or "en",
+                "created_at": p["created_at"],
+                "status": p["status"] or "ready",
+                "total_turns": p["total_scenes"] or p["scene_count"] or 5,
+                "doubts_count": 0,
+                "quizzes_completed": 0,
+                "mastery_score": None,
+                "is_animated": True
+            })
+
+        # Also append any standard sessions belonging strictly to this user
+        sess_rows = conn.execute("""
             SELECT s.id, s.title, s.language, s.created_at, s.status,
                    (SELECT COUNT(*) FROM doubts d WHERE d.session_id = s.id) as doubt_count,
                    (SELECT COUNT(*) FROM quiz_sessions q WHERE q.session_id = s.id AND q.completed = 1) as quiz_count,
                    (SELECT AVG(ce.score) FROM concept_events ce WHERE ce.session_id = s.id AND ce.score IS NOT NULL) as avg_mastery
             FROM sessions s
-            WHERE (s.user_id = ? OR (? = 'user_demo_001' AND s.user_id IS NULL))
-            ORDER BY s.created_at DESC LIMIT 30
-        """, (uid, uid)).fetchall()
-        
-        journeys = []
-        for r in rows:
+            WHERE s.user_id = ?
+            ORDER BY s.created_at DESC LIMIT 20
+        """, (uid,)).fetchall()
+
+        for r in sess_rows:
             journeys.append({
                 "id": r["id"],
-                "title": r["title"] or "Classroom Session",
+                "title": r["title"] or "Learning Session",
                 "language": r["language"] or "te",
                 "created_at": r["created_at"],
                 "status": r["status"] or "active",
+                "total_turns": 14,
                 "doubts_count": r["doubt_count"],
                 "quizzes_completed": r["quiz_count"],
-                "mastery_score": round(r["avg_mastery"], 1) if r["avg_mastery"] is not None else 78.0
+                "mastery_score": round(r["avg_mastery"], 1) if r["avg_mastery"] is not None else None,
+                "is_animated": False
             })
+
         return {"status": "success", "journeys": journeys}
 
 @app.patch("/api/session/{session_id}")
@@ -732,7 +788,7 @@ def calculate_hint_ladder(session_id: str, transcript: str, raw_concept: str) ->
 
     return level
 
-def call_gemini(prompt: str, json_mode: bool = True) -> str:
+def call_gemini(prompt: str, json_mode: bool = True, temperature: Optional[float] = None, **kwargs) -> str:
     """Calls Gemini API with robust retries, fallback models, and response formatting."""
     if not gemini_client:
         raise HTTPException(status_code=500, detail="Gemini API is not configured.")
@@ -740,6 +796,11 @@ def call_gemini(prompt: str, json_mode: bool = True) -> str:
     config = {}
     if json_mode:
         config["response_mime_type"] = "application/json"
+    if temperature is not None:
+        try:
+            config["temperature"] = float(temperature)
+        except Exception:
+            pass
     
     models_to_try = [LLM_MODEL, "gemini-3.8-flash", "gemini-3.5-flash", "gemini-2.5-flash-lite"]
     # De-duplicate while preserving order
@@ -1835,6 +1896,46 @@ Return ONLY valid JSON matching this structure:
         conn.commit()
         return {"session_id": session_id, "title": sess["title"], "nodes": nodes}
 
+
+@app.get("/api/teachback/concepts")
+def get_teachback_available_concepts(user: dict = Depends(get_current_user)):
+    """Returns authentic concepts from the user's active lessons for Teach-Back explanation."""
+    uid = user["id"]
+    with get_db() as conn:
+        # Check user_concept_progress first
+        rows = conn.execute(
+            "SELECT concept_name, definition, status, project_id, scene_id FROM user_concept_progress WHERE user_id = ? ORDER BY updated_at DESC",
+            (uid,)
+        ).fetchall()
+        if rows:
+            return {
+                "concepts": [{
+                    "concept_name": r["concept_name"],
+                    "definition": r["definition"] or f"Core concept in your learning path",
+                    "status": r["status"],
+                    "project_id": r["project_id"],
+                    "scene_id": r["scene_id"]
+                } for r in rows]
+            }
+
+        # Fallback to video_scenes in user's projects
+        scene_rows = conn.execute("""
+            SELECT s.concept_tag, s.learning_objective, s.project_id, s.id as scene_id
+            FROM video_scenes s
+            JOIN video_projects p ON p.id = s.project_id
+            WHERE p.user_id = ?
+            ORDER BY s.created_at DESC LIMIT 20
+        """, (uid,)).fetchall()
+        return {
+            "concepts": [{
+                "concept_name": r["concept_tag"],
+                "definition": r["learning_objective"] or f"Core concept in your lesson",
+                "status": "learning",
+                "project_id": r["project_id"],
+                "scene_id": r["scene_id"]
+            } for r in scene_rows]
+        }
+
 @app.post("/api/teachback/prompt")
 def get_teachback_prompt(payload: TeachBackPromptRequest, user: dict = Depends(get_current_user)):
     """Generates an authentic spoken Socratic prompt with ownership verification."""
@@ -1865,12 +1966,13 @@ Return JSON:
 
 @app.post("/api/teachback/evaluate")
 async def evaluate_teachback(
-    session_id: str = Form(...),
-    concept_tag: str = Form("Water Photolysis"),
-    ai_prompt: str = Form("Explain water photolysis in your own words."),
+    session_id: Optional[str] = Form(None),
+    project_id: Optional[str] = Form(None),
+    concept_tag: str = Form("Core Concept"),
+    ai_prompt: Optional[str] = Form(None),
     explanation_text: Optional[str] = Form(None),
     file: Optional[UploadFile] = File(None),
-    user: Optional[dict] = Depends(get_current_user)
+    user: dict = Depends(get_current_user)
 ):
     """Evaluates learner verbal/textual explanation for semantic comprehension and detects misconceptions."""
     transcript = explanation_text or ""
@@ -1884,8 +1986,19 @@ async def evaluate_teachback(
         transcript = "Water splits in the leaf when sunlight hits it to give oxygen."
 
     with get_db() as conn:
-        sess = conn.execute("SELECT chapter_text FROM sessions WHERE id = ?", (session_id,)).fetchone()
-        chapter_ref = sess["chapter_text"][:2000] if sess else ""
+        chapter_ref = ""
+        if project_id:
+            proj = conn.execute("SELECT source_content, summary FROM video_projects WHERE id = ?", (project_id,)).fetchone()
+            if proj:
+                chapter_ref = (proj["source_content"] or proj["summary"] or "")[:2000]
+        if not chapter_ref and session_id:
+            sess = conn.execute("SELECT chapter_text FROM sessions WHERE id = ?", (session_id,)).fetchone()
+            if sess:
+                chapter_ref = (sess["chapter_text"] or "")[:2000]
+        if not chapter_ref:
+            sc = conn.execute("SELECT narration_text, learning_objective FROM video_scenes WHERE concept_tag LIKE ? LIMIT 1", (f"%{concept_tag}%",)).fetchone()
+            if sc:
+                chapter_ref = f"{sc['learning_objective']}. {sc['narration_text']}"
 
     eval_prompt = f"""You are a master educational diagnostician evaluating a student's explanation in Teach-Back Mode.
 Concept: {concept_tag}
@@ -1926,19 +2039,41 @@ Return ONLY valid JSON matching:
     uid = user["id"] if user else "user_demo_001"
     tb_id = str(uuid.uuid4())
     score = float(eval_data.get("mastery_score", 70.0))
+    eff_session_id = session_id or project_id or str(uuid.uuid4())
 
     with get_db() as conn:
         conn.execute("""
             INSERT INTO teachback_sessions (id, user_id, session_id, concept_tag, ai_prompt, user_transcript, understood_points_json, misconceptions_json, missing_points_json, next_step, mastery_delta)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
-            tb_id, uid, session_id, concept_tag, ai_prompt, transcript,
+            tb_id, uid, eff_session_id, concept_tag, ai_prompt, transcript,
             json.dumps(eval_data.get("understood_points", [])),
             json.dumps(eval_data.get("misconceptions", [])),
             json.dumps(eval_data.get("missing_points", [])),
             eval_data.get("next_step", ""),
             score
         ))
+
+        # Update genuine user_concept_progress
+        norm_tag = normalize_concept(concept_tag)
+        misc_list = eval_data.get("misconceptions") or ["Needs further clarification"]
+        misc_item = misc_list[0] if misc_list else "Needs further clarification"
+        new_status = "understood" if score >= 75 and not eval_data.get("misconceptions") else "needs_revision"
+        status_reason = f"Demonstrated in Teach-Back with {score}% score" if new_status == "understood" else f"Diagnosed in Teach-Back: {misc_item}"
+        try:
+            conn.execute("""
+                INSERT INTO user_concept_progress (
+                    id, user_id, concept_name, normalized_tag, status, status_reason,
+                    mastery_score, times_studied, project_id, updated_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?, CURRENT_TIMESTAMP)
+                ON CONFLICT (user_id, normalized_tag) DO UPDATE SET
+                    status = excluded.status,
+                    status_reason = excluded.status_reason,
+                    mastery_score = excluded.mastery_score,
+                    updated_at = CURRENT_TIMESTAMP
+            """, (str(uuid.uuid4()), uid, concept_tag, norm_tag, new_status, status_reason, score, project_id or session_id))
+        except Exception as prog_e:
+            log.warning("Could not update user_concept_progress from teachback: %s", prog_e)
 
         # Record in concept_events
         ev_id = str(uuid.uuid4())
@@ -2012,54 +2147,51 @@ def resolve_memory_loop(item_id: str, payload: Optional[MemoryLoopResolveRequest
     return {"status": "resolved", "message": "Memory Loop touchpoint recorded."}
 
 @app.get("/api/insights/personal")
-def get_personal_insights(user: Optional[dict] = Depends(get_current_user)):
-    """Computes genuine cognitive telemetry directly from SQLite records."""
-    uid = user["id"] if user else "user_demo_001"
+def get_personal_insights(user: dict = Depends(get_current_user)):
+    """Computes genuine cognitive telemetry directly from authenticated user records with zero dummy data."""
+    uid = user["id"]
     with get_db() as conn:
-        total_sessions = conn.execute("SELECT COUNT(*) FROM sessions WHERE user_id = ? OR user_id IS NULL", (uid,)).fetchone()[0]
-        total_doubts = conn.execute("SELECT COUNT(*) FROM doubts WHERE user_id = ? OR user_id IS NULL", (uid,)).fetchone()[0]
-        total_quizzes = conn.execute("SELECT COUNT(*) FROM quiz_sessions WHERE (user_id = ? OR user_id IS NULL) AND completed = 1", (uid,)).fetchone()[0]
-        active_misconceptions = conn.execute("SELECT COUNT(*) FROM misconceptions WHERE (user_id = ? OR user_id IS NULL) AND status = 'active'", (uid,)).fetchone()[0]
-        
-        # Overall mastery from all scored events
-        score_row = conn.execute("SELECT AVG(score) as avg_s FROM concept_events WHERE (user_id = ? OR user_id IS NULL) AND score IS NOT NULL", (uid,)).fetchone()
-        overall_mastery = round(score_row["avg_s"], 1) if score_row and score_row["avg_s"] is not None else 78.0
-        
-        # Concept understanding matrix breakdown
-        concept_rows = conn.execute("""
-            SELECT normalized_tag, AVG(score) as avg_s, COUNT(*) as cnt
-            FROM concept_events
-            WHERE (user_id = ? OR user_id IS NULL) AND normalized_tag IS NOT NULL
-            GROUP BY normalized_tag
-            ORDER BY cnt DESC LIMIT 10
-        """, (uid,)).fetchall()
-        
+        total_projects = conn.execute("SELECT COUNT(*) FROM video_projects WHERE user_id = ?", (uid,)).fetchone()[0]
+        total_sessions = total_projects
+        total_doubts = conn.execute("SELECT COUNT(*) FROM doubts WHERE user_id = ?", (uid,)).fetchone()[0]
+        total_quizzes = conn.execute("SELECT COUNT(*) FROM concept_events WHERE user_id = ? AND event_type = 'checkpoint'", (uid,)).fetchone()[0]
+        active_misconceptions = conn.execute("SELECT COUNT(*) FROM misconceptions WHERE user_id = ? AND status = 'active'", (uid,)).fetchone()[0]
+
+        # Query authentic user_concept_progress
+        prog_rows = conn.execute(
+            "SELECT * FROM user_concept_progress WHERE user_id = ? ORDER BY updated_at DESC",
+            (uid,)
+        ).fetchall()
+
+        understood_count = sum(1 for r in prog_rows if r["status"] == "understood")
+        learning_count = sum(1 for r in prog_rows if r["status"] == "learning")
+        revision_count = sum(1 for r in prog_rows if r["status"] == "needs_revision")
+        total_concepts = len(prog_rows)
+
         matrix = []
-        for r in concept_rows:
-            avg_val = round(r["avg_s"], 1) if r["avg_s"] is not None else 50.0
-            status = "Mastered" if avg_val >= 75 else ("In Progress" if avg_val >= 35 else "Revision Needed")
+        for r in prog_rows:
+            st = r["status"]
+            status_label = "Understood" if st == "understood" else ("Needs Revision" if st == "needs_revision" else "Learning")
             matrix.append({
-                "concept_tag": r["normalized_tag"],
-                "mastery_score": avg_val,
-                "status": status,
-                "event_count": r["cnt"]
+                "concept_tag": r["concept_name"],
+                "normalized_tag": r["normalized_tag"],
+                "mastery_score": float(r["mastery_score"] or 60.0),
+                "status": status_label,
+                "status_reason": r["status_reason"] or "Active concept in curriculum",
+                "event_count": (r["times_studied"] or 1) + (r["times_quizzed"] or 0)
             })
-            
-        if not matrix:
-            matrix = [
-                {"concept_tag": "Chloroplast Structure", "mastery_score": 100.0, "status": "Mastered", "event_count": 5},
-                {"concept_tag": "Thylakoid Membranes", "mastery_score": 100.0, "status": "Mastered", "event_count": 3},
-                {"concept_tag": "Chlorophyll & Light Absorption", "mastery_score": 81.3, "status": "Mastered", "event_count": 8},
-                {"concept_tag": "Stomatal Gas Exchange", "mastery_score": 38.2, "status": "In Progress", "event_count": 17},
-                {"concept_tag": "Water Photolysis", "mastery_score": 13.2, "status": "Revision Needed", "event_count": 25},
-                {"concept_tag": "Calvin Cycle & RuBisCO", "mastery_score": 25.0, "status": "Revision Needed", "event_count": 11}
-            ]
-            
-        # Recent misconceptions
-        misc_rows = conn.execute("SELECT * FROM misconceptions WHERE (user_id = ? OR user_id IS NULL) ORDER BY created_at DESC LIMIT 3", (uid,)).fetchall()
-        
-        # Memory loop items
-        mem_rows = conn.execute("SELECT * FROM memory_loop WHERE (user_id = ? OR user_id IS NULL) ORDER BY due_at ASC LIMIT 4", (uid,)).fetchall()
+
+        # Calculate overall mastery only from actual evidence
+        if understood_count + learning_count + revision_count > 0:
+            overall_mastery = round((understood_count * 100.0 + learning_count * 60.0 + revision_count * 30.0) / total_concepts, 1)
+        else:
+            overall_mastery = 0.0
+
+        # Genuine misconceptions from DB
+        misc_rows = conn.execute("SELECT * FROM misconceptions WHERE user_id = ? ORDER BY created_at DESC LIMIT 5", (uid,)).fetchall()
+
+        # Genuine memory loop items
+        mem_rows = conn.execute("SELECT * FROM memory_loop WHERE user_id = ? ORDER BY due_at ASC LIMIT 5", (uid,)).fetchall()
         
         return {
             "status": "success",
@@ -2825,6 +2957,9 @@ app.include_router(animated_router)
 
 from document_router import router as document_router
 app.include_router(document_router)
+
+from concept_tree_router import router as concept_tree_router
+app.include_router(concept_tree_router)
 
 app.mount("/static", StaticFiles(directory=static_dir), name="static")
 

@@ -1194,6 +1194,217 @@
       z-index: 15;
     }
 
+
+    /* ==============================================================
+       CONCEPT DNA KNOWLEDGE TREE & INTERACTIVE TOPOLOGY
+       ============================================================== */
+    .concept-tree-toolbar {
+      background: white;
+      border: 1px solid var(--border-parchment);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      margin-bottom: 14px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      box-shadow: var(--shadow-ambient);
+    }
+    .status-filter-pill {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border-parchment);
+      background: white;
+      cursor: pointer;
+      color: var(--ink-secondary);
+      transition: all 0.2s;
+    }
+    .status-filter-pill:hover, .status-filter-pill.active {
+      background: var(--ink-primary);
+      color: white;
+      border-color: var(--ink-primary);
+    }
+    .status-filter-pill.pill-understood.active {
+      background: var(--accent-celadon);
+      border-color: var(--accent-celadon);
+      color: white;
+    }
+    .status-filter-pill.pill-learning.active {
+      background: var(--accent-surya);
+      border-color: var(--accent-surya);
+      color: #13221E;
+    }
+    .status-filter-pill.pill-revision.active {
+      background: var(--accent-terracotta);
+      border-color: var(--accent-terracotta);
+      color: white;
+    }
+    .tree-ctrl-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-parchment);
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 14px;
+      cursor: pointer;
+      color: var(--ink-primary);
+      transition: all 0.15s;
+    }
+    .tree-ctrl-btn:hover {
+      background: var(--surface-tinted);
+      border-color: var(--accent-terracotta);
+    }
+    .concept-tree-container {
+      position: relative;
+      height: 640px;
+      background: #FAF8F5;
+      border: 1px solid var(--border-parchment);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      box-shadow: inset 0 2px 6px rgba(19,34,30,0.03);
+    }
+    .concept-tree-svg {
+      width: 100%;
+      height: 100%;
+      cursor: grab;
+      user-select: none;
+    }
+    .concept-tree-svg:active {
+      cursor: grabbing;
+    }
+    .tree-link {
+      fill: none;
+      stroke: var(--border-parchment);
+      stroke-width: 2px;
+      transition: stroke 0.3s, stroke-width 0.3s;
+    }
+    .tree-link.prereq-link {
+      stroke: var(--accent-terracotta);
+      stroke-width: 2px;
+      stroke-dasharray: 4 2;
+    }
+    .tree-link.related-link {
+      stroke: var(--accent-surya);
+      stroke-width: 1.5px;
+    }
+    .tree-node-group {
+      cursor: pointer;
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .tree-node-group:hover {
+      filter: drop-shadow(0 6px 12px rgba(19,34,30,0.12));
+    }
+    .tree-legend-strip {
+      position: absolute;
+      bottom: 12px;
+      left: 14px;
+      display: flex;
+      gap: 12px;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(6px);
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border-parchment);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--ink-secondary);
+      box-shadow: var(--shadow-ambient);
+      z-index: 5;
+    }
+    .legend-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 4px;
+    }
+    .dot-root { background: var(--ink-primary); }
+    .dot-understood { background: var(--accent-celadon); }
+    .dot-learning { background: var(--accent-surya); }
+    .dot-revision { background: var(--accent-terracotta); }
+
+    /* Concept Detail Drawer */
+    .concept-detail-drawer {
+      position: fixed;
+      top: 0;
+      right: -480px;
+      width: 440px;
+      max-width: 90vw;
+      height: 100vh;
+      background: white;
+      box-shadow: -8px 0 24px rgba(19,34,30,0.18);
+      z-index: 1000;
+      transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      padding: 28px;
+      overflow-y: auto;
+    }
+    .concept-detail-drawer.open {
+      right: 0;
+    }
+    .drawer-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(19,34,30,0.4);
+      backdrop-filter: blur(3px);
+      z-index: 999;
+      display: none;
+    }
+    .drawer-backdrop.open {
+      display: block;
+    }
+
+    /* Honest Empty States */
+    .empty-state-atelier {
+      padding: 48px 24px;
+      text-align: center;
+      background: white;
+      border: 1px dashed var(--border-parchment);
+      border-radius: var(--radius-md);
+      margin: 16px 0;
+    }
+    .empty-glyph {
+      font-size: 38px;
+      margin-bottom: 8px;
+    }
+
+    /* Complexity Selector Pills */
+    .complexity-pill-btn {
+      flex: 1;
+      padding: 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-parchment);
+      background: white;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .complexity-pill-btn.selected {
+      border: 2px solid var(--accent-terracotta);
+      background: var(--surface-tinted);
+    }
+
+    /* Comparison Modal */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 16px 0;
+    }
+    .compare-col {
+      background: var(--surface-tinted);
+      border: 1px solid var(--border-parchment);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+    }
+
 </style>
 </head>
 <body>
@@ -1225,32 +1436,17 @@
     <!-- Master Screen Switcher (All 9 Requested Screens) -->
     <!-- Master Navigation Panel: Hidden on login/unauthenticated, visible only after login -->
     <nav class="screen-switcher-bar" id="mainScreenSwitcher" style="display:none !important;">
-      <button class="screen-tab-btn active" id="tab-home" onclick="switchScreen('home')">Atelier Home</button>
-      <button class="screen-tab-btn highlight" id="tab-animated-studio" onclick="switchScreen('animated-studio')">🎬 Animated Studio</button>
-      <button class="screen-tab-btn" id="tab-animated-library" onclick="switchScreen('animated-library')">Library</button>
+      <button class="screen-tab-btn active" id="tab-home" onclick="switchScreen('home')">Home</button>
+      <button class="screen-tab-btn highlight" id="tab-learn" onclick="switchScreen('animated-studio')">Learn</button>
+      <button class="screen-tab-btn" id="tab-library" onclick="switchScreen('animated-library')">Library</button>
+      <button class="screen-tab-btn" id="tab-concept-dna" onclick="switchScreen('concept-dna')">Concept DNA</button>
       <button class="screen-tab-btn" id="tab-insights" onclick="switchScreen('insights')">Insights</button>
-      <button class="screen-tab-btn" id="tab-studio" onclick="switchScreen('studio')">Podcast</button>
-      <button class="screen-tab-btn" id="tab-workspace" onclick="switchScreen('workspace')">Workspace</button>
-      <button class="screen-tab-btn" id="tab-concept-dna" onclick="switchScreen('concept-dna')">Concept DNA</button>
-      <button class="screen-tab-btn" id="tab-teachback" onclick="switchScreen('teachback')">Teach-Back</button>
-      <button class="screen-tab-btn" id="tab-privacy" onclick="switchScreen('privacy')">Privacy</button>
-      <button class="screen-tab-btn" id="tab-terms" onclick="switchScreen('terms')">Terms</button>
-      <button class="screen-tab-btn active" id="tab-home" onclick="switchScreen('home')">Atelier Home</button>
-      <button class="screen-tab-btn highlight" id="tab-insights" onclick="switchScreen('insights')">Insights</button>
-      <button class="screen-tab-btn" id="tab-studio" onclick="switchScreen('studio')">Studio</button>
-      <button class="screen-tab-btn" id="tab-workspace" onclick="switchScreen('workspace')">Workspace</button>
-      <button class="screen-tab-btn" id="tab-concept-dna" onclick="switchScreen('concept-dna')">Concept DNA</button>
-      <button class="screen-tab-btn" id="tab-teachback" onclick="switchScreen('teachback')">Teach-Back</button>
-      <button class="screen-tab-btn" id="tab-privacy" onclick="switchScreen('privacy')">Privacy</button>
-      <button class="screen-tab-btn" id="tab-terms" onclick="switchScreen('terms')">Terms</button>
+      <button class="screen-tab-btn" id="tab-profile" onclick="switchScreen('profile')">Profile</button>
     </nav>
 
     <!-- Global Sound & Action Controls -->
     <div class="header-ctrls" style="display:flex; align-items:center; gap:8px;">
-      <button class="btn-chime-test" onclick="triggerHarmonicChime()" title="Play 3-tone harmonic chime to verify laptop speakers">
-        <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
-        <span>Test Speakers</span>
-      </button>
+      
       <button class="btn-chime-test" id="btnHeaderNewJourney" onclick="openNewChapterModal()" style="display:none; border-color:var(--accent-terracotta); color:var(--accent-terracotta);">
         + New Journey
       </button>
@@ -1294,45 +1490,29 @@
           </div>
         </div>
 
-        <!-- Acoustic Resonator Live Preview -->
-        <div class="resonator-stage">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <span class="editorial-label" style="margin-bottom:0;">Live Acoustic Stage</span>
-            <span style="font-size:11px; font-weight:700; color:var(--ink-secondary);">Gnani Timbre 24kHz Linear PCM</span>
+                <!-- Universal AI Animated Stage Live Preview -->
+        <div class="resonator-stage" style="background:#13221E; border:2px solid var(--accent-surya); color:white; border-radius:var(--radius-md); padding:20px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:var(--accent-celadon); animation:pulse 1.5s infinite;"></span>
+              <span class="editorial-label" style="color:var(--accent-surya); margin-bottom:0;">Universal AI Visual Stage</span>
+            </div>
+            <span style="font-size:11px; font-weight:700; color:#CAD8D2;">Interactive Animated Explainer</span>
           </div>
 
-          <div class="stage-hosts-duo">
-            <!-- Host A -->
-            <div class="host-resonator-card active-voice" id="lHostA">
-              <div class="host-badge-row">
-                <div class="host-avatar-initial avatar-yash">Y</div>
-                <span style="font-size:10px; font-weight:800; text-transform:uppercase; color:var(--accent-terracotta);">Speaking Live</span>
-              </div>
-              <div style="font-weight:700; font-size:15px; margin-top:4px;">Host A • Yash</div>
-              <div style="font-size:11px; color:var(--ink-secondary);">Warm Explainer • Shivani Voice</div>
-              <div class="waveform-visualizer">
-                <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
-                <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
-              </div>
+          <div style="background:#1A342B; border:1px solid rgba(255,255,255,0.15); border-radius:var(--radius-sm); padding:18px; margin-bottom:12px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <span style="font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:var(--accent-surya);">Scene 1 &middot; Core Visual Simulation</span>
+              <span style="font-size:11px; color:#A4B5AD;">One AI Educator Narration</span>
             </div>
-
-            <!-- Host B -->
-            <div class="host-resonator-card host-priya" id="lHostB">
-              <div class="host-badge-row">
-                <div class="host-avatar-initial avatar-priya">P</div>
-                <span style="font-size:10px; font-weight:800; text-transform:uppercase; color:var(--ink-subtle);">Listening</span>
-              </div>
-              <div style="font-weight:700; font-size:15px; margin-top:4px;">Host B • Priya</div>
-              <div style="font-size:11px; color:var(--ink-secondary);">Inquisitive Co-Host • Yashraj Voice</div>
-              <div class="waveform-visualizer">
-                <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
-                <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
-              </div>
+            <div style="font-family:var(--font-editorial); font-size:16px; font-style:italic; line-height:1.45; color:white;">
+              "Let us observe how this principle operates in practice. Notice how each component transitions in sequence across the visual stage..."
             </div>
           </div>
 
-          <div style="background:var(--surface-tinted); border-radius:var(--radius-sm); padding:12px 16px; font-family:var(--font-editorial); font-size:15px; font-style:italic;">
-            "Pod-Siksha ki swagatam! Chettu leaf lo solar energy ela chemical energy ga marutundo asalu epudaina alochinchara?"
+          <div style="display:flex; justify-content:space-between; align-items:center; font-size:11px; color:#CAD8D2;">
+            <span>Synchronized Subtitles &amp; Audio</span>
+            <span style="color:var(--accent-celadon); font-weight:700;">&bull; Concept DNA Mapping Active</span>
           </div>
         </div>
       </div>
@@ -1352,8 +1532,8 @@
           </div>
           <div class="loop-node-box">
             <span class="loop-step-num">02 • Listen</span>
-            <div class="loop-node-title">Two-Host Dialogue</div>
-            <p class="loop-node-desc">Host A &amp; B unpack concepts with natural questions and vivid metaphors.</p>
+            <div class="loop-node-title">AI Animated Explainer</div>
+            <p class="loop-node-desc">One continuous AI educator unpacks concepts with dynamic animated simulations and vivid visual models.</p>
           </div>
           <div class="loop-node-box">
             <span class="loop-step-num">03 • Question</span>
@@ -1499,7 +1679,7 @@
               Learn Anything. In Your Language. Through Animation.
             </h2>
             <p style="font-size:14px; color:#CAD8D2; line-height:1.5;">
-              One AI teacher. Every subject. Every language. Every generation. From Children (5–12) to Older Adults (60+), understand complex concepts through dynamic 60fps simulations, synchronized voice narration, and in-video Socratic Q&amp;A.
+              One AI teacher. Every subject. Every language. Every generation. One continuous AI educator. Every subject. Every language. Understand complex concepts through dynamic simulations, synchronized voice narration, contextual doubt resolution, and a personal Concept DNA knowledge tree.
             </p>
           </div>
           <div style="display:flex; flex-direction:column; gap:10px; align-items:flex-end;">
@@ -1516,9 +1696,7 @@
           <div style="font-size:12px; color:#A4B5AD;">
             <strong style="color:white;">8 Core Domains:</strong> Biology · Physics · Mathematics · Chemistry · CS · Geography · Finance · Daily Skills
           </div>
-          <div style="font-size:12px; color:#A4B5AD;">
-            <strong style="color:white;">5 Generations:</strong> Child · Teen · University · Professional · Older Adult
-          </div>
+          
           <div style="font-size:12px; color:#A4B5AD;">
             <strong style="color:white;">10 Languages:</strong> Telugu, Hindi, English, Tamil, Kannada, Marathi &amp; more
           </div>
@@ -1557,32 +1735,17 @@
               <span id="journeysCountLabel" style="font-size:12px; font-weight:700; color:var(--ink-secondary);">Loading Sessions...</span>
             </div>
 
-            <div id="recentJourneysList"><div class="journey-tile" onclick="switchScreen('studio')">
-              <div>
-                <div style="font-weight:700; font-size:15px;">Photosynthesis and Cellular Energetics</div>
-                <div style="font-size:12px; color:var(--ink-secondary); margin-top:2px;">14 Turns • Telugu • 78% Concept Mastery • Active</div>
+                        <div id="recentJourneysList">
+              <div class="empty-state-atelier" style="margin:8px 0; padding:32px 20px;">
+                <div class="empty-glyph">🌱</div>
+                <h3 class="editorial-h2" style="font-size:20px; margin-bottom:6px;">Your learning journey starts here</h3>
+                <p style="font-size:13px; color:var(--ink-secondary); max-width:380px; margin:0 auto 14px auto;">
+                  Enter any topic or upload a study document to begin your interactive visual learning.
+                </p>
+                <button class="btn-action-primary" style="font-size:13px; padding:8px 16px;" onclick="openAnimatedModal()">+ Start First Learning Journey</button>
               </div>
-              <span style="font-size:13px; font-weight:700; color:var(--accent-terracotta);">Continue &rarr;</span>
             </div>
-
-            <div class="journey-tile" onclick="switchScreen('workspace')">
-              <div>
-                <div style="font-weight:700; font-size:15px;">Quadratic Equations Class 10</div>
-                <div style="font-size:12px; color:var(--ink-secondary); margin-top:2px;">14 Turns • Telugu-English • 92% Concept Mastery</div>
-              </div>
-              <span style="font-size:13px; font-weight:700; color:var(--ink-secondary);">Workspace &rarr;</span>
-            </div>
-
-            <div class="journey-tile" onclick="switchScreen('insights')">
-              <div>
-                <div style="font-weight:700; font-size:15px;">Science of Happiness &amp; Well-being</div>
-                <div style="font-size:12px; color:var(--ink-secondary); margin-top:2px;">14 Turns • Telugu • 4 Completed Quizzes</div>
-              </div>
-              <span style="font-size:13px; font-weight:700; color:var(--ink-secondary);">Insights &rarr;</span>
-            </div>
-          </div>
         </div>
-
         </div>
         <!-- Right: Daily Cognitive Pulse & Start New -->
         <div>
@@ -1661,7 +1824,7 @@
             <div style="border:2px dashed var(--border-parchment); border-radius:var(--radius-md); padding:24px; text-align:center; background:var(--surface-tinted); cursor:pointer;" onclick="openNewChapterModal()">
               <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" style="color:var(--accent-terracotta); margin-bottom:6px;"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M12 18v-6M9 15l3-3 3 3"/></svg>
               <div style="font-weight:700; font-size:13px;">Choose PDF or Drop Here</div>
-              <div style="font-size:11px; color:var(--ink-secondary);">Automatic text extraction &amp; 14-turn podcast generation</div>
+              <div style="font-size:11px; color:var(--ink-secondary);">Automatic multimodal concept extraction, dynamic visual animation, and personal knowledge tree synthesis</div>
             </div>
           </div>
         </div>
@@ -1689,72 +1852,21 @@
                 <circle class="ring-bg" cx="70" cy="70" r="60" />
                 <circle class="ring-progress-outer" cx="70" cy="70" r="60" />
               </svg>
-              <span id="insightsMasteryRingScore" class="ring-center-score">78%</span>
+              <span id="insightsMasteryRingScore" class="ring-center-score">--</span>
             </div>
           </div>
 
           <!-- Concepts Tracks from DB -->
-          <div id="conceptTracksContainer"><div class="concept-track-row">
-            <div class="track-meta-line">
-              <span class="track-name">Chloroplast Structure &amp; Double Membrane</span>
-              <span class="track-pill pill-mastered">100% • Mastered</span>
-            </div>
-            <div class="track-bar-container">
-              <div class="track-bar-fill" style="width: 100%; background:var(--accent-celadon);"></div>
-            </div>
-          </div>
-
-          <div class="concept-track-row">
-            <div class="track-meta-line">
-              <span class="track-name">Light Reactions &amp; Thylakoid Stacks</span>
-              <span class="track-pill pill-mastered">100% • Mastered</span>
-            </div>
-            <div class="track-bar-container">
-              <div class="track-bar-fill" style="width: 100%; background:var(--accent-celadon);"></div>
+                    <div id="conceptTracksContainer">
+            <div class="empty-state-atelier" style="margin:8px 0; padding:32px 20px;">
+              <div class="empty-glyph">📊</div>
+              <h3 class="editorial-h2" style="font-size:18px; margin-bottom:4px;">No Learning Telemetry Yet</h3>
+              <p style="font-size:12px; color:var(--ink-secondary); max-width:320px; margin:0 auto 12px auto;">
+                Complete your first animated lesson to see your mastery matrix and concept progress.
+              </p>
+              <button class="btn-action-primary" style="font-size:12px; padding:6px 14px;" onclick="openAnimatedModal()">+ Start First Lesson</button>
             </div>
           </div>
-
-          <div class="concept-track-row">
-            <div class="track-meta-line">
-              <span class="track-name">Chlorophyll Photon Absorption Spectrum</span>
-              <span class="track-pill pill-mastered">81% • Mastered</span>
-            </div>
-            <div class="track-bar-container">
-              <div class="track-bar-fill" style="width: 81%; background:var(--accent-celadon);"></div>
-            </div>
-          </div>
-
-          <div class="concept-track-row">
-            <div class="track-meta-line">
-              <span class="track-name">Stomatal Gas Exchange &amp; Transpiration</span>
-              <span class="track-pill pill-progress">38% • In Progress</span>
-            </div>
-            <div class="track-bar-container">
-              <div class="track-bar-fill" style="width: 38%; background:var(--accent-surya);"></div>
-            </div>
-          </div>
-
-          <div class="concept-track-row">
-            <div class="track-meta-line">
-              <span class="track-name">Water Photolysis &amp; Electron Replenishment</span>
-              <span class="track-pill pill-danger">13% • Revision Needed</span>
-            </div>
-            <div class="track-bar-container">
-              <div class="track-bar-fill" style="width: 13%; background:var(--accent-terracotta);"></div>
-            </div>
-          </div>
-
-          <div class="concept-track-row">
-            <div class="track-meta-line">
-              <span class="track-name">Calvin Cycle &amp; RuBisCO Carbon Fixation</span>
-              <span class="track-pill pill-danger">25% • Revision Needed</span>
-            </div>
-            <div class="track-bar-container">
-              <div class="track-bar-fill" style="width: 25%; background:var(--accent-terracotta);"></div>
-            </div>
-          </div>
-        </div>
-
         </div></div>
         <!-- Right: Misconception Radar & Memory Loop -->
         <div>
@@ -1762,42 +1874,20 @@
             <div class="editorial-label">Diagnosed Misconceptions</div>
             <h3 class="editorial-h2" style="font-size:22px;">Misconception Radar</h3>
 
-            <div id="misconceptionRadarContainer"><div class="misconception-radar-box">
-              <span class="misconception-kicker">Concept: Water Photolysis</span>
-              <p class="misconception-body">
-                <strong>Student mental model:</strong> "Water is split directly to synthesize glucose sugar."
-              </p>
-              <div class="misconception-citation">
-                <strong>Textbook truth:</strong> Water photolysis replenishes chlorophyll electrons in Photosystem II; oxygen is released as a byproduct while electrons power ATP synthase.
-              </div>
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px;">
-                <span style="font-size:11px; font-weight:800; color:var(--ink-secondary);">Confidence: 88%</span>
-                <button class="btn-chime-test" style="font-size:11px; padding:4px 10px;" onclick="switchScreen('teachback')">Test in Teach-Back &rarr;</button>
+                        <div id="misconceptionRadarContainer">
+              <div style="font-size:12px; color:var(--ink-secondary); padding:16px; background:var(--surface-tinted); border-radius:var(--radius-sm); text-align:center;">
+                No misconceptions diagnosed in your learning history. Excellent comprehension!
               </div>
             </div>
-          </div>
-
           </div>
           <!-- Memory Loop Queue -->
           <div class="atelier-card">
             <div class="editorial-label">Memory Loop Spaced Recall</div>
             <h3 class="editorial-h2" style="font-size:22px;">Scheduled Touchpoints</h3>
 
-            <div id="memoryLoopContainer" style="display:flex; flex-direction:column; gap:10px; margin-top:14px;">
-              <div class="journey-tile" style="margin-top:0; padding:14px;">
-                <div>
-                  <div style="font-weight:700; font-size:13px;">Water Photolysis Mechanism</div>
-                  <div style="font-size:11px; color:var(--ink-secondary);">Interval: 24h • Spoken quiz queued</div>
-                </div>
-                <button class="btn-action-primary" style="padding:5px 12px; font-size:11px;" onclick="showToast('Starting 60-second oral check...')">Recall Now</button>
-              </div>
-
-              <div class="journey-tile" style="margin-top:0; padding:14px;">
-                <div>
-                  <div style="font-weight:700; font-size:13px;">RuBisCO Enzyme Function</div>
-                  <div style="font-size:11px; color:var(--ink-secondary);">Interval: 72h • Teach-Back queued</div>
-                </div>
-                <span style="font-size:11px; font-weight:700; color:var(--ink-secondary);">Due Tomorrow</span>
+                        <div id="memoryLoopContainer" style="display:flex; flex-direction:column; gap:10px; margin-top:14px;">
+              <div style="font-size:12px; color:var(--ink-secondary); padding:16px; background:var(--surface-tinted); border-radius:var(--radius-sm); text-align:center;">
+                All concept recall touchpoints are clear. Check back after quizzes or lessons.
               </div>
             </div>
           </div>
@@ -1817,9 +1907,7 @@
             <h2 id="studioSessionTitle" class="editorial-h2" style="font-size:26px;">Photosynthesis &amp; Cellular Energetics</h2>
           </div>
           <div style="display:flex; gap:12px; align-items:center;">
-            <button class="btn-chime-test" onclick="triggerHarmonicChime()">
-              <span>Test Speakers</span>
-            </button>
+            
             <button class="btn-action-primary" id="studioPlayBtn" onclick="toggleStudioAudio()">
               <span id="studioPlayText">Pause</span>
             </button>
@@ -1911,17 +1999,10 @@
           <div class="editorial-label">Source Document Grounding</div>
           <h3 class="editorial-h2" style="font-size:22px;">Textbook Evidence</h3>
 
-          <div class="source-quote-block">
-            <span style="font-size:11px; font-weight:800; text-transform:uppercase; color:var(--accent-celadon);">Page 12 • Equation</span>
-            <p style="margin-top:4px;">
-              "6CO2 + 6H2O + Solar Photons &rarr; C6H12O6 + 6O2. The light reactions take place exclusively across thylakoid membranes."
-            </p>
-          </div>
-
-          <div class="source-quote-block" style="border-left-color:var(--accent-terracotta);">
-            <span style="font-size:11px; font-weight:800; text-transform:uppercase; color:var(--accent-terracotta);">Page 13 • Diagnostic Focus</span>
-            <p style="margin-top:4px;">
-              "Photolysis of water (2H2O &rarr; 4H+ + 4e- + O2) occurs within the thylakoid lumen to replenish electrons lost by excited chlorophyll."
+          <div class="source-quote-block" style="background:var(--surface-tinted); border-left-color:var(--accent-celadon);">
+            <span style="font-size:11px; font-weight:800; text-transform:uppercase; color:var(--accent-celadon);">Grounded Evidence</span>
+            <p style="margin-top:4px; font-size:13px; color:var(--ink-secondary);">
+              Textbook citations, formulas, and code snippets extracted from your uploaded documents will be grounded here alongside active lessons.
             </p>
           </div>
 
@@ -1946,9 +2027,7 @@
               <button class="btn-action-primary" onclick="showToast('Recording voice answer in Telugu via Gnani Prisma...')">
                 🎙️ Hold to Answer by Voice
               </button>
-              <button class="btn-chime-test" onclick="showToast('Sample answer submitted: Photons are required to excite chlorophyll electrons in PS II.')">
-                Test Sample Answer
-              </button>
+              
             </div>
           </div>
 
@@ -1967,42 +2046,133 @@
     <!-- ==============================================================
          8. CONCEPT DNA ("Interactive Knowledge Visualizer")
          ============================================================== -->
+    <!-- ==============================================================
+         8. CONCEPT DNA ("Interactive Personal Knowledge Tree")
+         ============================================================== -->
     <section class="screen-frame" id="view-concept-dna">
-      <div class="editorial-label">Knowledge Topology</div>
-      <h1 class="editorial-h1">Concept DNA</h1>
-      <p class="editorial-lead">An interactive map of concept relationships extracted from your chapter. See prerequisites, dependencies, and mastery status.</p>
-
-      <div id="conceptDnaCanvas" class="concept-dna-canvas">
-        <div class="dna-cluster-row">
-          <div class="dna-node mastered" onclick="showToast('Selected: Chloroplast Structure (100% Mastery)')">
-            <span class="dna-node-label">Chloroplast Organelle</span>
-            <span class="dna-node-status" style="color:var(--accent-celadon);">100% • Mastered</span>
-          </div>
-          <div style="font-size:20px; color:var(--ink-secondary);">&rarr;</div>
-          <div class="dna-node mastered" onclick="showToast('Selected: Thylakoid Membranes (100% Mastery)')">
-            <span class="dna-node-label">Thylakoid Grana Stacks</span>
-            <span class="dna-node-status" style="color:var(--accent-celadon);">100% • Mastered</span>
-          </div>
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px; flex-wrap:wrap; gap:12px;">
+        <div>
+          <div class="editorial-label">Interactive Knowledge Topology</div>
+          <h1 class="editorial-h1" style="margin-bottom:4px;">Concept DNA Knowledge Tree</h1>
+          <p class="editorial-lead" style="margin-bottom:0;">
+            Your personal, growing knowledge tree. Explore concepts, directed prerequisites, mastery evidence, and diagnosed revision points.
+          </p>
         </div>
-
-        <div style="font-size:20px; color:var(--ink-secondary); margin:4px 0;">&darr;</div>
-
-        <div class="dna-cluster-row">
-          <div class="dna-node selected" onclick="showToast('Selected: Water Photolysis (13% Mastery - Revision Needed)')">
-            <span class="dna-node-label">Water Photolysis ($2\text{H}_2\text{O} \to 4\text{H}^+ + 4e^-$)</span>
-            <span class="dna-node-status" style="color:var(--accent-terracotta);">13% • Revision Needed</span>
-          </div>
-          <div style="font-size:20px; color:var(--ink-secondary);">&rarr;</div>
-          <div class="dna-node" onclick="showToast('Selected: RuBisCO Carbon Fixation (25% Mastery)')">
-            <span class="dna-node-label">RuBisCO Calvin Cycle</span>
-            <span class="dna-node-status" style="color:var(--accent-terracotta);">25% • Revision Needed</span>
-          </div>
-        </div>
-
-        <div style="margin-top:28px; text-align:center;">
-          <button class="btn-action-primary" onclick="switchScreen('teachback')">
-            Explain Selected Node in Teach-Back Mode &rarr;
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+          <button class="btn-action-outline" onclick="openCompareModal()">
+            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
+            <span>Compare Concepts</span>
           </button>
+          <button class="btn-action-primary" onclick="openAnimatedModal()">
+            <span>+ New Learning Journey</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Controls & Filter Toolbar -->
+      <div class="concept-tree-toolbar">
+        <div style="display:flex; gap:10px; align-items:center; flex:1; flex-wrap:wrap;">
+          <select id="conceptTreeProjectSelect" class="form-input" style="max-width:280px; padding:6px 12px; font-size:13px;" onchange="handleConceptTreeProjectChange(this.value)">
+            <option value="all">🌳 Entire Knowledge Forest (All Lessons)</option>
+          </select>
+          <div style="position:relative; flex:1; min-width:180px; max-width:320px;">
+            <input type="text" id="conceptTreeSearch" class="form-input" placeholder="Search concepts in tree..." style="padding:6px 12px 6px 32px; font-size:13px;" oninput="handleConceptTreeSearch(this.value)">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="position:absolute; left:10px; top:50%; transform:translateY(-50%); color:var(--ink-secondary);"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:6px; align-items:center;">
+          <span style="font-size:11px; font-weight:700; color:var(--ink-secondary); text-transform:uppercase; letter-spacing:0.5px;">Filter:</span>
+          <button class="status-filter-pill active" data-filter="all" onclick="filterTreeStatus('all', this)">All (<span id="cntAll">0</span>)</button>
+          <button class="status-filter-pill pill-understood" data-filter="understood" onclick="filterTreeStatus('understood', this)">Understood (<span id="cntUnderstood">0</span>)</button>
+          <button class="status-filter-pill pill-learning" data-filter="learning" onclick="filterTreeStatus('learning', this)">Learning (<span id="cntLearning">0</span>)</button>
+          <button class="status-filter-pill pill-revision" data-filter="needs_revision" onclick="filterTreeStatus('needs_revision', this)">Needs Revision (<span id="cntRevision">0</span>)</button>
+        </div>
+
+        <div style="display:flex; gap:4px; align-items:center; margin-left:auto;">
+          <button class="tree-ctrl-btn" onclick="zoomConceptTree(1.2)" title="Zoom In">+</button>
+          <button class="tree-ctrl-btn" onclick="zoomConceptTree(0.8)" title="Zoom Out">-</button>
+          <button class="tree-ctrl-btn" onclick="resetConceptTreeView()" title="Fit to Screen" style="font-size:11px; padding:0 8px; width:auto;">Fit Screen</button>
+        </div>
+      </div>
+
+      <!-- Tree Viewport Container -->
+      <div id="conceptTreeContainer" class="concept-tree-container">
+        <svg id="conceptTreeSvg" class="concept-tree-svg">
+          <defs>
+            <marker id="arrowPrereq" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 1 L 8 5 L 0 9 z" fill="var(--accent-terracotta)" />
+            </marker>
+            <marker id="arrowRelated" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+              <path d="M 0 1 L 8 5 L 0 9 z" fill="var(--accent-surya)" />
+            </marker>
+          </defs>
+          <g id="conceptTreeViewport"></g>
+        </svg>
+
+        <div id="conceptTreeEmptyState" class="empty-state-atelier" style="display:none; position:absolute; inset:40px; margin:auto; max-width:500px; height:max-content; border:none; box-shadow:var(--shadow-elevated);">
+          <div class="empty-glyph">🌱</div>
+          <h3 class="editorial-h2" style="font-size:24px; margin-bottom:8px;">Your Knowledge Tree Will Grow Here</h3>
+          <p style="font-size:14px; color:var(--ink-secondary); max-width:440px; line-height:1.5; margin:0 auto 20px auto;">
+            As you explore topics or upload study materials, Pod-Siksha extracts core concepts, structures prerequisites, and maps your understanding into a living knowledge garden.
+          </p>
+          <button class="btn-action-primary" onclick="openAnimatedModal()">+ Start First Learning Journey</button>
+        </div>
+
+        <div class="tree-legend-strip">
+          <div class="legend-item"><span class="legend-dot dot-root"></span> Root Topic</div>
+          <div class="legend-item"><span class="legend-dot dot-understood"></span> Understood (Quiz / Teach-Back)</div>
+          <div class="legend-item"><span class="legend-dot dot-learning"></span> Currently Learning</div>
+          <div class="legend-item"><span class="legend-dot dot-revision"></span> Needs Revision (Flagged / Misconception)</div>
+        </div>
+      </div>
+
+      <!-- Concept Detail Drawer (Opens on node selection) -->
+      <div id="conceptDrawerBackdrop" class="drawer-backdrop" onclick="closeConceptDetailDrawer()"></div>
+      <div id="conceptDetailDrawer" class="concept-detail-drawer">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:14px;">
+          <div>
+            <div id="drawerStatusBadge" style="display:inline-block; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.8px; padding:3px 8px; border-radius:var(--radius-full); margin-bottom:6px;">UNDERSTOOD</div>
+            <h2 id="drawerConceptName" style="font-family:var(--font-editorial); font-size:26px; color:var(--ink-primary); line-height:1.2;">Concept Name</h2>
+          </div>
+          <button onclick="closeConceptDetailDrawer()" style="background:none; border:none; font-size:24px; cursor:pointer; color:var(--ink-secondary);">&times;</button>
+        </div>
+
+        <div id="drawerEvidenceBox" style="background:var(--surface-tinted); border:1px solid var(--border-parchment); border-radius:var(--radius-sm); padding:10px 14px; font-size:12px; color:var(--ink-primary); margin-bottom:16px;">
+          <strong>Evidence:</strong> <span id="drawerEvidenceText">Mastered in Checkpoint Quiz</span>
+        </div>
+
+        <div style="margin-bottom:16px;">
+          <div class="editorial-label">Explanation & Why It Matters</div>
+          <p id="drawerDefinition" style="font-size:14px; color:var(--ink-primary); line-height:1.55; margin-top:4px;"></p>
+        </div>
+
+        <div id="drawerPrereqsSection" style="margin-bottom:16px;">
+          <div class="editorial-label">Prerequisites</div>
+          <div id="drawerPrereqsList" style="display:flex; gap:6px; flex-wrap:wrap; margin-top:6px;"></div>
+        </div>
+
+        <div id="drawerRelatedSection" style="margin-bottom:20px;">
+          <div class="editorial-label">Related Concepts</div>
+          <div id="drawerRelatedList" style="display:flex; gap:6px; flex-wrap:wrap; margin-top:6px;"></div>
+        </div>
+
+        <!-- 6 Core Concept Actions -->
+        <div style="margin-top:auto; display:flex; flex-direction:column; gap:8px;">
+          <button class="btn-action-primary" id="btnDrawerExplain" onclick="triggerConceptExplainModal()" style="width:100%; justify-content:center;">
+            Explain This Concept &rarr;
+          </button>
+          <button class="btn-action-outline" id="btnDrawerWatchAgain" onclick="watchConceptSceneAgain()" style="width:100%; justify-content:center;">
+            Watch Original Animated Scene Again
+          </button>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+            <button class="btn-action-outline" onclick="triggerConceptPractice()" style="justify-content:center; font-size:12px;">
+              Practice (Quiz)
+            </button>
+            <button class="btn-action-outline" id="btnDrawerMarkRevision" onclick="markConceptRevisionAction()" style="justify-content:center; font-size:12px; border-color:var(--accent-terracotta); color:var(--accent-terracotta);">
+              Mark for Revision
+            </button>
+          </div>
         </div>
       </div>
     </section>
@@ -2010,56 +2180,76 @@
     <!-- ==============================================================
          9. TEACH-BACK MODE ("The Signature Innovation")
          ============================================================== -->
+    <!-- ==============================================================
+         9. TEACH-BACK MODE ("Signature Cognitive Feature")
+         ============================================================== -->
     <section class="screen-frame" id="view-teachback">
-      <div class="editorial-label">Signature Cognitive Feature</div>
-      <h1 class="editorial-h1">Teach-Back Mode</h1>
-      <p class="editorial-lead">Don't just listen to an explanation. Explain the concept back to the AI hosts in your own words. The system evaluates semantic meaning, not just keywords.</p>
+      <div class="editorial-label">Cognitive Assessment</div>
+      <h1 class="editorial-h1">Teach-Back &middot; Explain What You Learned</h1>
+      <p class="editorial-lead">Don't just watch animations. Explain the concept back to the AI educator in your own words. Gemini evaluates deep semantic understanding and identifies misconceptions.</p>
 
       <div class="teachback-console">
+        <!-- Concept Selection Strip -->
+        <div style="display:flex; gap:12px; align-items:center; margin-bottom:16px; flex-wrap:wrap;">
+          <div style="font-weight:700; font-size:13px; color:var(--ink-secondary);">Select Concept to Explain:</div>
+          <select id="teachbackConceptSelect" class="form-input" style="max-width:320px; font-size:13px; padding:6px 12px;" onchange="handleTeachbackConceptChange(this.value)">
+            <option value="">Loading your concepts...</option>
+          </select>
+        </div>
+
         <div class="teachback-prompt-banner">
-          <div class="editorial-label" style="margin-bottom:4px;">Host Prompt to Learner</div>
-          <div id="teachbackPromptText" style="font-family:var(--font-editorial); font-size:22px; color:var(--ink-primary);">"Priya asks: Can you explain water photolysis in your own words?"</div>
+          <div class="editorial-label" style="margin-bottom:4px;">AI Educator Prompt</div>
+          <div id="teachbackPromptText" style="font-family:var(--font-editorial); font-size:20px; color:var(--ink-primary);">"Can you explain this concept in your own words?"</div>
         </div>
 
         <div style="margin:16px 0;">
           <div class="form-field" style="margin-bottom:10px;">
-            <label>Your Spoken or Written Explanation</label>
-            <textarea id="teachbackTextInput" class="form-input" rows="3" placeholder="Explain the concept in your own words (Telugu or English)..."></textarea>
+            <label style="font-weight:700; font-size:12px; text-transform:uppercase; letter-spacing:0.5px;">Your Explanation (Text or Voice)</label>
+            <textarea id="teachbackTextInput" class="form-input" rows="4" placeholder="Explain how this concept works in your own words..."></textarea>
           </div>
-          <div style="display:flex; gap:12px; align-items:center;">
-            <button type="button" class="btn-action-primary" style="padding:10px 20px; font-size:13px;" onclick="submitTeachBackExplanation()">
-              Evaluate Explanation &rarr;
-            </button>
-            <button type="button" class="btn-chime-test" style="padding:10px 16px; font-size:13px;" onclick="document.getElementById('teachbackTextInput').value = 'Water splits in the thylakoid when light hits it to release oxygen and provide electrons to Photosystem II.'; submitTeachBackExplanation();">
-              Load Sample Explanation
-            </button>
+          <div style="display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap;">
+            <div style="display:flex; gap:10px; align-items:center;">
+              <button type="button" class="btn-action-primary" style="padding:10px 22px; font-size:13px;" onclick="submitTeachBackExplanation()">
+                Evaluate Explanation &rarr;
+              </button>
+              <button type="button" id="btnTeachbackMic" class="btn-action-outline" style="border-color:var(--accent-celadon); color:var(--accent-celadon); padding:10px 16px; font-size:13px;" onclick="toggleTeachbackVoiceInput()">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg>
+                <span id="teachbackMicLabel">Speak Explanation</span>
+              </button>
+            </div>
+            <span id="teachbackEvaluatingStatus" style="display:none; font-size:12px; font-weight:700; color:var(--accent-terracotta);">
+              AI Educator is analyzing semantic understanding...
+            </span>
           </div>
         </div>
 
-        <!-- Semantic Diagnostic Breakdown -->
-        <div id="teachbackEvalGrid" class="teachback-eval-grid">
+        <!-- Semantic Diagnostic Breakdown (Hidden until submitted) -->
+        <div id="teachbackEvalGrid" class="teachback-eval-grid" style="display:none;">
           <div class="eval-box understood">
             <div style="font-weight:700; color:var(--accent-celadon); font-size:14px; margin-bottom:6px;">
               ✓ What You Understood Correctly
             </div>
-            <p style="font-size:13px; color:var(--ink-primary); line-height:1.45;">
-              You correctly articulated that water splitting produces oxygen gas as a byproduct, and that sunlight is required to power the reaction.
-            </p>
+            <div id="tbUnderstoodList" style="font-size:13px; color:var(--ink-primary); line-height:1.5;"></div>
           </div>
 
-          <div class="eval-box misconception">
+          <div class="eval-box misconception" id="tbMiscBox" style="display:none;">
             <div style="font-weight:700; color:var(--accent-terracotta); font-size:14px; margin-bottom:6px;">
-              ! Misconception Detected
+              ⚠ Diagnosed Misconception
             </div>
-            <p style="font-size:13px; color:var(--ink-primary); line-height:1.45;">
-              You stated that water splitting directly builds glucose sugar. In reality, photolysis only replenishes chlorophyll electrons in Photosystem II.
-            </p>
+            <div id="tbMiscList" style="font-size:13px; color:var(--ink-primary); line-height:1.5;"></div>
+          </div>
+
+          <div class="eval-box" id="tbMissingBox" style="background:var(--surface-tinted); border:1px solid var(--border-parchment); border-radius:var(--radius-sm); padding:14px; grid-column:1/-1;">
+            <div style="font-weight:700; color:var(--ink-primary); font-size:13px; margin-bottom:4px;">
+              Key Knowledge Points to Clarify:
+            </div>
+            <div id="tbMissingList" style="font-size:13px; color:var(--ink-secondary); line-height:1.5;"></div>
           </div>
         </div>
 
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:24px; padding-top:16px; border-top:1px solid var(--border-parchment);">
-          <span id="teachbackNextStep" style="font-size:13px; font-weight:700;">Recommended Next Step: Listen to Host A Turn 6</span>
-          <button class="btn-action-primary" onclick="switchScreen('studio')">Jump to Turn 6 in Studio &rarr;</button>
+        <div id="teachbackFooterStrip" style="display:none; justify-content:space-between; align-items:center; margin-top:20px; padding-top:16px; border-top:1px solid var(--border-parchment); flex-wrap:wrap; gap:10px;">
+          <span id="teachbackNextStep" style="font-size:13px; font-weight:700;">Recommended Next Step</span>
+          <button class="btn-action-primary" id="btnTbRevisitScene" onclick="switchScreen('animated-studio')">Revisit Scene in Studio &rarr;</button>
         </div>
       </div>
     </section>
@@ -2315,7 +2505,7 @@
                 <input type="radio" name="learningDestination" value="podcast" onchange="updateDestinationSelection()">
                 <span style="font-weight:700; font-size:12px; color:var(--ink-primary);">Socratic Broadcast Studio</span>
               </div>
-              <span style="font-size:11px; color:var(--ink-secondary); margin-left:20px;">14-turn 2-host audio dialogue, spoken TTS &amp; doubt clearance</span>
+              <span style="font-size:11px; color:var(--ink-secondary); margin-left:20px;">Interactive spoken dialogue, audio synthesis, and voice doubt clearance</span>
             </label>
           </div>
         </div>
@@ -2471,16 +2661,25 @@
           </div>
 
           <!-- Video Playback Controls Bar -->
-          <div class="animated-controls-bar">
-            <div style="display:flex; align-items:center; gap:8px;">
+                    <div class="animated-controls-bar">
+            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
               <button class="btn-action-primary" id="btnAnimPlayPause" style="padding:8px 16px;" onclick="toggleAnimatedPlay()">
                 <span id="btnAnimPlayIcon">▶ Play</span>
               </button>
               <button class="btn-action-outline" style="padding:8px 12px;" onclick="stepAnimatedScene(-1)" title="Previous Scene">
-                <span>⏮</span>
+                <span>◀</span>
               </button>
               <button class="btn-action-outline" style="padding:8px 12px;" onclick="stepAnimatedScene(1)" title="Next Scene">
-                <span>⏭</span>
+                <span>▶</span>
+              </button>
+              <button class="btn-action-outline" style="padding:8px 12px; border-color:var(--accent-surya); color:var(--ink-primary);" onclick="openAnimatedDoubtModal()" title="Ask question about active scene">
+                <span>💬 Ask This Scene</span>
+              </button>
+              <button class="btn-action-outline" style="padding:8px 12px; border-color:var(--accent-celadon); color:var(--ink-primary);" onclick="openExplainAgainModal()" title="Adaptive re-explanation">
+                <span>💡 Explain It Again</span>
+              </button>
+              <button class="btn-action-outline" style="padding:8px 12px;" onclick="switchScreen('teachback')" title="Practice in Teach-Back">
+                <span>🎓 Teach-Back</span>
               </button>
             </div>
 
@@ -2527,14 +2726,15 @@
         </button>
       </div>
 
-      <!-- Filter by Profile -->
-      <div style="display:flex; gap:8px; margin-bottom:16px; overflow-x:auto; padding-bottom:6px;">
-        <button class="scene-pill-btn active" onclick="filterLibraryByProfile('all', this)">All Generations</button>
-        <button class="scene-pill-btn" onclick="filterLibraryByProfile('child', this)">🧒 Children (5–12)</button>
-        <button class="scene-pill-btn" onclick="filterLibraryByProfile('teen', this)">🎒 Teenagers (13–17)</button>
-        <button class="scene-pill-btn" onclick="filterLibraryByProfile('university', this)">🎓 University (18–25)</button>
-        <button class="scene-pill-btn" onclick="filterLibraryByProfile('professional', this)">💼 Professionals (26–59)</button>
-        <button class="scene-pill-btn" onclick="filterLibraryByProfile('older_adult', this)">🌿 Older Adults (60+)</button>
+      <!-- Search & Filters -->
+      <div style="display:flex; gap:10px; margin-bottom:16px; align-items:center; flex-wrap:wrap;">
+        <input type="text" id="librarySearchInput" class="form-input" placeholder="Search lessons by topic or subject..." style="max-width:320px; font-size:13px;" oninput="filterLibraryBySearch(this.value)">
+        <select id="libraryLangFilter" class="form-input" style="max-width:180px; font-size:13px;" onchange="filterLibraryByLanguage(this.value)">
+          <option value="all">All Languages</option>
+          <option value="te">Telugu (తెలుగు)</option>
+          <option value="en">English</option>
+          <option value="hi">Hindi (हिन्दी)</option>
+        </select>
       </div>
 
       <div id="animatedLibraryGrid" class="animated-library-grid">
@@ -2555,39 +2755,29 @@
       </p>
 
       <form id="createAnimatedLessonForm" onsubmit="event.preventDefault(); submitNewAnimatedProject();">
-        <!-- Step 1: Learner Generation Profile -->
+        <!-- Step 1: Explanation Complexity & Pedagogical Depth -->
         <div class="form-field" style="margin-bottom:18px;">
           <label style="font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; color:var(--ink-primary); margin-bottom:8px; display:block;">
-            1. Target Generation &amp; Learner Profile
+            1. Explanation Complexity &amp; Depth
           </label>
-          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(110px, 1fr)); gap:10px;" id="profileSelectGrid">
-            <div class="profile-card-option" data-profile="child" onclick="selectAudienceProfile('child')">
-              <span style="font-size:22px;">🧒</span>
-              <span style="font-size:12px; font-weight:700;">Child</span>
-              <span style="font-size:10px; color:var(--ink-secondary);">Ages 5–12</span>
+          <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:10px;" id="profileSelectGrid">
+            <div class="profile-card-option" data-profile="beginner" onclick="selectExplanationComplexity('beginner')">
+              <span style="font-size:20px;">🌱</span>
+              <span style="font-size:13px; font-weight:700;">Beginner</span>
+              <span style="font-size:11px; color:var(--ink-secondary);">Visual analogies &amp; fundamentals</span>
             </div>
-            <div class="profile-card-option selected" data-profile="teen" onclick="selectAudienceProfile('teen')">
-              <span style="font-size:22px;">🎒</span>
-              <span style="font-size:12px; font-weight:700;">Teen</span>
-              <span style="font-size:10px; color:var(--ink-secondary);">Ages 13–17</span>
+            <div class="profile-card-option selected" data-profile="intermediate" onclick="selectExplanationComplexity('intermediate')">
+              <span style="font-size:20px;">🌿</span>
+              <span style="font-size:13px; font-weight:700;">Intermediate</span>
+              <span style="font-size:11px; color:var(--ink-secondary);">Balanced depth &amp; step-by-step</span>
             </div>
-            <div class="profile-card-option" data-profile="university" onclick="selectAudienceProfile('university')">
-              <span style="font-size:22px;">🎓</span>
-              <span style="font-size:12px; font-weight:700;">University</span>
-              <span style="font-size:10px; color:var(--ink-secondary);">Ages 18–25</span>
-            </div>
-            <div class="profile-card-option" data-profile="professional" onclick="selectAudienceProfile('professional')">
-              <span style="font-size:22px;">💼</span>
-              <span style="font-size:12px; font-weight:700;">Professional</span>
-              <span style="font-size:10px; color:var(--ink-secondary);">Ages 26–59</span>
-            </div>
-            <div class="profile-card-option" data-profile="older_adult" onclick="selectAudienceProfile('older_adult')">
-              <span style="font-size:22px;">🌿</span>
-              <span style="font-size:12px; font-weight:700;">Older Adult</span>
-              <span style="font-size:10px; color:var(--ink-secondary);">Ages 60+</span>
+            <div class="profile-card-option" data-profile="advanced" onclick="selectExplanationComplexity('advanced')">
+              <span style="font-size:20px;">🌳</span>
+              <span style="font-size:13px; font-weight:700;">Advanced</span>
+              <span style="font-size:11px; color:var(--ink-secondary);">Rigorous technical derivations</span>
             </div>
           </div>
-          <input type="hidden" id="animModalProfileInput" value="teen">
+          <input type="hidden" id="animModalProfileInput" value="intermediate">
         </div>
 
         <!-- Step 2: Language & Animation Style -->
@@ -3256,7 +3446,7 @@
     // ==============================================================
 
     const PUBLIC_SCREENS = ['landing', 'login', 'register', 'forgot-password', 'reset-password', 'verify-email', 'privacy', 'terms'];
-    const PROTECTED_SCREENS = ['home', 'animated-studio', 'animated-library', 'insights', 'studio', 'workspace', 'concept-dna', 'teachback'];
+    const PROTECTED_SCREENS = ['home', 'animated-studio', 'animated-library', 'insights', 'studio', 'workspace', 'concept-dna', 'teachback', 'profile'];
     const ALL_SCREENS = [...PUBLIC_SCREENS, ...PROTECTED_SCREENS];
 
     let currentSessionId = null;
@@ -3587,10 +3777,26 @@
 
       // 3. Activate target screen frame
       const targetFrame = document.getElementById('view-' + screenId);
-      const targetTab = document.getElementById('tab-' + screenId);
+      
+      // Determine corresponding navbar tab
+      let activeTabId = 'tab-' + screenId;
+      if (screenId === 'animated-studio') activeTabId = 'tab-learn';
+      if (screenId === 'animated-library') activeTabId = 'tab-library';
+      
+      // Clear all active tabs
+      document.querySelectorAll('.screen-tab-btn').forEach(btn => btn.classList.remove('active'));
+      const activeTab = document.getElementById(activeTabId) || document.getElementById('tab-' + screenId);
+      if (activeTab) activeTab.classList.add('active');
 
       if (targetFrame) targetFrame.classList.add('active');
-      if (targetTab) targetTab.classList.add('active');
+
+      // Trigger screen-specific data loaders
+      if (screenId === 'concept-dna') loadConceptTree();
+      if (screenId === 'teachback') loadTeachBackConcepts();
+      if (screenId === 'insights') loadInsights();
+      if (screenId === 'home') loadJourneys();
+      if (screenId === 'animated-library') loadAnimatedProjectsList();
+      if (screenId === 'profile') loadUserProfile();
 
       // Manage navigation panel: strictly hide on login/register/auth screens, display after login
       const switcher = document.getElementById("mainScreenSwitcher") || document.querySelector(".screen-switcher-bar");
@@ -3829,12 +4035,12 @@
       if (statusTitle) {
         statusTitle.textContent = destination === 'animated' 
           ? 'Generating Adaptive Animated Lesson...' 
-          : 'Generating 14-Turn Socratic Podcast...';
+          : 'Generating Interactive Learning Journey...';
       }
       if (statusDesc) {
         statusDesc.textContent = destination === 'animated'
           ? 'Gemini is structuring visual scenes, checkpoints, and audio narration.'
-          : 'Gemini is crafting Host A & Host B dialogue and extracting Concept DNA.';
+          : 'Gemini is extracting concepts, planning the visual simulation, and building your knowledge tree.';
       }
       if (submitBtn) submitBtn.disabled = true;
 
@@ -3940,28 +4146,38 @@
         }
 
         const first = journeys[0];
-        currentSessionId = first.id;
+        const heroCard = document.querySelector('.atelier-home-grid .hero-resume-card');
         const heroTitle = document.getElementById("heroResumeTitle");
         const heroSub = document.getElementById("heroResumeSub");
         const heroBtn = document.getElementById("heroResumeBtn");
-        if (heroTitle) heroTitle.innerText = first.title;
-        if (heroSub) heroSub.innerText = `${first.language.toUpperCase()} Narration • ${first.total_turns || 14} Turns • ${first.doubt_count || 0} Doubts Recorded`;
-        if (heroBtn) heroBtn.onclick = () => { loadStudioSession(first.id); switchScreen("studio"); };
+
+        if (first) {
+          if (heroCard) heroCard.style.display = 'block';
+          if (heroTitle) heroTitle.innerText = first.title;
+          if (heroSub) heroSub.innerText = `${(first.language || 'en').toUpperCase()} Narration • ${first.total_turns || 5} Scenes • AI Animated Educator`;
+          if (heroBtn) {
+            heroBtn.innerText = "Resume Animated Lesson →";
+            heroBtn.onclick = () => {
+              loadActiveAnimatedProject(first.id);
+              switchScreen("animated-studio");
+            };
+          }
+        } else {
+          if (heroCard) heroCard.style.display = 'none';
+        }
 
         let html = "";
         journeys.slice(0, 5).forEach(j => {
           html += `
             <div class="journey-tile" style="margin-top:10px;">
-              <div style="flex:1; cursor:pointer;" onclick="loadStudioSession('${j.id}'); switchScreen('studio');">
+              <div style="flex:1; cursor:pointer;" onclick="loadActiveAnimatedProject('${j.id}'); switchScreen('animated-studio');">
                 <div style="font-weight:700; font-size:15px; color:var(--ink-primary);">${j.title}</div>
                 <div style="font-size:12px; color:var(--ink-secondary); margin-top:2px;">
-                  ${j.total_turns || 14} Turns • ${j.language.toUpperCase()} • ${j.doubt_count || 0} Doubts • Created ${new Date(j.created_at).toLocaleDateString()}
+                  ${j.total_turns || 5} Scenes • ${(j.language || 'en').toUpperCase()} • Visual Simulation • Created ${new Date(j.created_at).toLocaleDateString()}
                 </div>
               </div>
-              <div style="display:flex; gap:8px; align-items:center;">
-                <button class="btn-chime-test" style="padding:4px 8px; font-size:11px;" onclick="loadConceptDNA('${j.id}'); switchScreen('concept-dna');">DNA</button>
-                <button class="btn-action-primary" style="padding:4px 10px; font-size:11px;" onclick="loadStudioSession('${j.id}'); switchScreen('studio');">Play &rarr;</button>
-                <button onclick="deleteJourney('${j.id}')" title="Delete" style="background:none; border:none; color:var(--accent-terracotta); font-size:14px; cursor:pointer; padding:4px;">&times;</button>
+              <div style="display:flex; gap:8px;">
+                <button class="btn-action-primary" style="padding:6px 12px; font-size:12px;" onclick="loadActiveAnimatedProject('${j.id}'); switchScreen('animated-studio');">Open Lesson &rarr;</button>
               </div>
             </div>
           `;
@@ -4982,6 +5198,105 @@
     }
 
   </script>
+
+
+  <!-- Compare Concepts Modal -->
+  <div id="compareConceptsModal" class="modal-backdrop" style="display:none; position:fixed; inset:0; background:rgba(19,34,30,0.55); backdrop-filter:blur(6px); z-index:1002; justify-content:center; align-items:center;">
+    <div class="atelier-card" style="max-width:680px; width:92%; padding:28px; background:white; position:relative; max-height:90vh; overflow-y:auto;">
+      <button onclick="closeCompareModal()" style="position:absolute; top:16px; right:16px; background:none; border:none; font-size:22px; cursor:pointer; color:var(--ink-secondary);">&times;</button>
+      <div class="editorial-label">Cognitive Contrast Analysis</div>
+      <h3 class="editorial-h2" style="font-size:22px; margin-bottom:4px;">Compare Two Concepts</h3>
+      <p style="font-size:13px; color:var(--ink-secondary); margin-bottom:16px;">
+        Select any two concepts from your learning tree. Gemini will generate side-by-side distinctions, similarities, and a knowledge-check question.
+      </p>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px;">
+        <div class="form-field">
+          <label style="font-weight:700; font-size:11px; text-transform:uppercase;">Concept A</label>
+          <select id="cmpConceptA" class="form-input"></select>
+        </div>
+        <div class="form-field">
+          <label style="font-weight:700; font-size:11px; text-transform:uppercase;">Concept B</label>
+          <select id="cmpConceptB" class="form-input"></select>
+        </div>
+      </div>
+
+      <button class="btn-action-primary" style="width:100%; justify-content:center;" onclick="submitCompareConcepts()">
+        Generate Comparative Analysis &rarr;
+      </button>
+
+      <!-- Results Container -->
+      <div id="compareResultsArea" style="display:none; margin-top:20px; border-top:1px solid var(--border-parchment); padding-top:16px;">
+        <div id="cmpOverviewText" style="font-size:14px; line-height:1.5; color:var(--ink-primary); margin-bottom:14px;"></div>
+        
+        <div class="compare-grid">
+          <div class="compare-col">
+            <strong style="color:var(--accent-celadon); font-size:13px;">Key Similarities:</strong>
+            <ul id="cmpSimilaritiesList" style="margin-top:6px; font-size:12px; color:var(--ink-primary); padding-left:18px;"></ul>
+          </div>
+          <div class="compare-col">
+            <strong style="color:var(--accent-terracotta); font-size:13px;">Important Differences:</strong>
+            <ul id="cmpDifferencesList" style="margin-top:6px; font-size:12px; color:var(--ink-primary); padding-left:18px;"></ul>
+          </div>
+        </div>
+
+        <div id="cmpTableWrap" style="margin:16px 0; overflow-x:auto;">
+          <!-- Table dynamically injected -->
+        </div>
+
+        <div id="cmpCheckQuestionBox" style="background:var(--surface-tinted); border:1px solid var(--border-parchment); border-radius:var(--radius-sm); padding:16px; margin-top:14px;">
+          <div style="font-size:11px; font-weight:800; color:var(--accent-terracotta); text-transform:uppercase;">Concept Distinction Check</div>
+          <div id="cmpQText" style="font-family:var(--font-editorial); font-size:16px; margin:6px 0 10px 0;"></div>
+          <div id="cmpQOptions" style="display:flex; flex-direction:column; gap:6px;"></div>
+          <div id="cmpQFeedback" style="display:none; margin-top:8px; font-size:12px; font-weight:700;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Explain It Again Modal (During Animated Lessons) -->
+  <div id="explainAgainModal" class="modal-backdrop" style="display:none; position:fixed; inset:0; background:rgba(19,34,30,0.55); backdrop-filter:blur(6px); z-index:1002; justify-content:center; align-items:center;">
+    <div class="atelier-card" style="max-width:540px; width:92%; padding:24px; background:white; position:relative; max-height:90vh; overflow-y:auto;">
+      <button onclick="closeExplainAgainModal()" style="position:absolute; top:14px; right:14px; background:none; border:none; font-size:22px; cursor:pointer; color:var(--ink-secondary);">&times;</button>
+      <div class="editorial-label">Adaptive AI Explanation</div>
+      <h3 class="editorial-h2" style="font-size:20px; margin-bottom:4px;">Explain It Again</h3>
+      <p style="font-size:13px; color:var(--ink-secondary); margin-bottom:14px;">
+        Choose how you would like the AI educator to re-explain this active scene:
+      </p>
+
+      <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:16px;">
+        <label class="complexity-pill-btn" onclick="selectExplainMode('simpler', this)">
+          <strong>Explain More Simply</strong>
+          <div style="font-size:11px; color:var(--ink-secondary);">Crystal-clear, everyday vocabulary with zero confusing jargon</div>
+        </label>
+        <label class="complexity-pill-btn" onclick="selectExplainMode('step_by_step', this)">
+          <strong>Explain Step by Step</strong>
+          <div style="font-size:11px; color:var(--ink-secondary);">Sequential 1-2-3 logical steps showing cause and effect</div>
+        </label>
+        <label class="complexity-pill-btn" onclick="selectExplainMode('analogy', this)">
+          <strong>Use a Real-World Analogy</strong>
+          <div style="font-size:11px; color:var(--ink-secondary);">A memorable everyday metaphor that anchors the concept</div>
+        </label>
+        <label class="complexity-pill-btn" onclick="selectExplainMode('real_world', this)">
+          <strong>Practical Application</strong>
+          <div style="font-size:11px; color:var(--ink-secondary);">How this concept is used in real technology, nature, or engineering</div>
+        </label>
+        <label class="complexity-pill-btn" onclick="selectExplainMode('visual_focus', this)">
+          <strong>Show Concept Visually Again</strong>
+          <div style="font-size:11px; color:var(--ink-secondary);">Replays this scene animation with focused visual callouts</div>
+        </label>
+      </div>
+
+      <div style="display:flex; justify-content:flex-end; gap:10px;">
+        <button class="btn-action-outline" onclick="closeExplainAgainModal()">Cancel</button>
+        <button class="btn-action-primary" onclick="submitExplainAgainAction()">Generate Explanation &rarr;</button>
+      </div>
+
+      <div id="explainAgainResultBox" style="display:none; margin-top:16px; padding:14px; background:var(--surface-tinted); border:1px solid var(--border-parchment); border-radius:var(--radius-sm);">
+        <div id="explainAgainText" style="font-size:13px; line-height:1.55; color:var(--ink-primary);"></div>
+      </div>
+    </div>
+  </div>
 
 </body>
 </html>

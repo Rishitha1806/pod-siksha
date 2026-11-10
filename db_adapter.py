@@ -53,8 +53,13 @@ def to_pg_sql(sql: str) -> str:
         else:
             s = f"INSERT INTO {tbl} ({m_replace.group(2)}) VALUES {vals} ON CONFLICT ({pk}) DO NOTHING"
 
-    # Convert datetime('now', '+X days')
-    s = re.sub(r"datetime\('now',\s*'\+?(\d+)\s*days'\)", r"CURRENT_TIMESTAMP + INTERVAL '\1 days'", s, flags=re.IGNORECASE)
+    # Convert datetime('now', '+X days/hours/minutes/seconds')
+    s = re.sub(
+        r"datetime\('now',\s*'\+?(\d+)\s*(days?|hours?|minutes?|seconds?)'\)",
+        r"CURRENT_TIMESTAMP + INTERVAL '\1 \2'",
+        s,
+        flags=re.IGNORECASE
+    )
     # Convert datetime('now')
     s = re.sub(r"datetime\('now'\)", "CURRENT_TIMESTAMP", s, flags=re.IGNORECASE)
 
