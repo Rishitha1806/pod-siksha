@@ -313,17 +313,6 @@ init_db()
 
 app = FastAPI(title="Pod-Siksha API", version="1.0.0")
 
-@app.exception_handler(404)
-async def custom_404_handler(request: Request, exc):
-    return JSONResponse(
-        status_code=404,
-        content={
-            "detail": "Not Found",
-            "request_path": request.url.path,
-            "scope_path": request.scope.get("path"),
-            "headers": dict(request.headers)
-        }
-    )
 
 app.add_middleware(
     CORSMiddleware,
