@@ -537,6 +537,11 @@ def submit_checkpoint_answer(
         score = 1.0 if is_correct else 0.3
         concept_tag = row["concept_tag"]
 
+        # Check if project_id exists in sessions table to satisfy foreign key
+        sess_check = conn.execute("SELECT id FROM sessions WHERE id = ?", (project_id,)).fetchone()
+        valid_sess_id = project_id if sess_check else None
+
+        concept_event_id = str(uuid.uuid4())
         # Record concept event
         conn.execute("""
             INSERT INTO concept_events (
@@ -544,13 +549,15 @@ def submit_checkpoint_answer(
                 hint_level, quiz_status, score, user_id
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
-            str(uuid.uuid4()), project_id, concept_tag, concept_tag.lower().strip(),
+            concept_event_id, valid_sess_id, concept_tag, concept_tag.lower().strip(),
             "checkpoint", 1, "correct" if is_correct else "incorrect", score, user["id"]
         ))
         conn.commit()
 
     return {
         "status": "success",
+        "ok": True,
+        "concept_id": concept_event_id,
         "is_correct": is_correct,
         "correct_index": correct_idx,
         "explanation": chk.get("explanation", "Good job engaging with the lesson visual concept!"),
@@ -601,5 +608,6 @@ def get_video_export_manifest(project_id: str, user: dict = Depends(get_auth_use
         "language": proj["language"],
         "learner_profile": proj["learner_profile"],
         "animation_style": proj["animation_style"],
-        "timeline": timeline
+        "timeline": timeline,
+        "scenes": timeline
     }
