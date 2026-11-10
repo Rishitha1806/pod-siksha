@@ -938,11 +938,16 @@ async def create_session(
         text_content = extract_text_from_pdf(pdf_bytes)
         if not title:
             title = file.filename.replace(".pdf", "")
-    elif chapter_text:
+    elif chapter_text and chapter_text.strip():
         text_content = chapter_text.strip()
+    elif title and title.strip():
+        text_content = f"Comprehensive curriculum on {title.strip()}. Core definitions, fundamental principles, real-world examples, and key mechanisms."
     
-    if not text_content or len(text_content) < 50:
-        raise HTTPException(status_code=400, detail="Chapter content is too short or missing. Please provide at least 50 characters.")
+    if not text_content:
+        raise HTTPException(status_code=400, detail="Please provide a chapter title, paste text, or upload a PDF.")
+
+    if len(text_content) < 50:
+        text_content = f"Comprehensive curriculum on {text_content}. Core definitions, fundamental principles, real-world examples, and key mechanisms." 
 
     title = title or "Classroom Podcast"
     language = language or "te"

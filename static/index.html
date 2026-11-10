@@ -2211,8 +2211,8 @@
         </div>
 
         <div class="form-field">
-          <label>Or Paste Chapter Text</label>
-          <textarea id="modalSessionText" class="form-input" rows="4" placeholder="Paste textbook paragraphs here (minimum 50 characters)..."></textarea>
+          <label>Paste Chapter Text (Optional)</label>
+          <textarea id="modalSessionText" class="form-input" rows="4" placeholder="Optional: Paste textbook paragraphs or notes. If left blank, Gemini will generate the curriculum from the title."></textarea>
         </div>
 
         <div id="generatingStatus" style="display:none; background:var(--surface-tinted); border:1px solid var(--border-parchment); padding:12px; border-radius:var(--radius-sm); font-size:12px; color:var(--ink-primary); margin-bottom:12px; text-align:center;">
@@ -3541,8 +3541,8 @@
       const statusBox = document.getElementById("generatingStatus");
       const submitBtn = document.getElementById("btnCreateSubmit");
 
-      if (!fileInput.files.length && text.length < 50) {
-        showToast("Please provide at least 50 characters of chapter text or upload a PDF.");
+      if (!title && !fileInput.files.length && !text) {
+        showToast("Please provide a journey title, upload a PDF, or paste text.");
         return;
       }
 
