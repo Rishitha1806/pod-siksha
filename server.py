@@ -2818,6 +2818,9 @@ def serve_redesign():
 from animated_router import router as animated_router
 app.include_router(animated_router)
 
+from document_router import router as document_router
+app.include_router(document_router)
+
 app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
 

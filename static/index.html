@@ -1604,6 +1604,54 @@
             </div>
           </div>
 
+          <!-- Universal AI Document Ingestion Engine (Phase 1) -->
+          <div class="atelier-card" style="margin-top:20px; padding:24px; border:2px solid var(--accent-terracotta); background:#FAF8F5;">
+            <div class="editorial-label" style="color:var(--accent-terracotta);">Universal AI Document Engine</div>
+            <h4 class="editorial-h2" style="font-size:20px; margin-bottom:4px;">Upload Any Learning Document</h4>
+            <p style="font-size:13px; color:var(--ink-secondary); margin:4px 0 14px 0;">
+              Ingest material across any discipline: Python, Java, C++, SQL, Mathematics, Biology, Physics, or Humanities. Preserves page numbers, code blocks, and formulas.
+            </p>
+
+            <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px;">
+              <span class="badge" style="background:rgba(217,79,51,0.1); color:var(--accent-terracotta); font-size:11px; padding:3px 8px; border-radius:4px; font-weight:700;">PDF Textbooks</span>
+              <span class="badge" style="background:rgba(82,130,113,0.15); color:#2E604F; font-size:11px; padding:3px 8px; border-radius:4px; font-weight:700;">Code (PY, JAVA, CPP, SQL)</span>
+              <span class="badge" style="background:rgba(255,159,28,0.15); color:#B26200; font-size:11px; padding:3px 8px; border-radius:4px; font-weight:700;">Math & Science</span>
+              <span class="badge" style="background:#EAE4D9; color:var(--ink-primary); font-size:11px; padding:3px 8px; border-radius:4px; font-weight:700;">PPTX & DOCX</span>
+            </div>
+
+            <!-- Upload Drop Zone -->
+            <div id="universalDocDropZone" style="border:2px dashed var(--accent-terracotta); border-radius:var(--radius-md); padding:20px; text-align:center; background:white; cursor:pointer; transition:all 0.2s ease;" onclick="document.getElementById('universalDocFileInput').click()">
+              <input type="file" id="universalDocFileInput" style="display:none;" accept=".pdf,.docx,.pptx,.ppt,.txt,.md" onchange="handleUniversalDocSelected(this)">
+              <svg width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" style="color:var(--accent-terracotta); margin-bottom:6px;">
+                <path d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+              </svg>
+              <div style="font-weight:700; font-size:14px; color:var(--ink-primary);">Drop Document or Click to Browse</div>
+              <div style="font-size:11px; color:var(--ink-secondary); margin-top:2px;">Supports PDF, DOCX, PPTX, TXT up to 25MB • Neon Persistent Storage</div>
+            </div>
+
+            <!-- Upload & Progress Bar Widget -->
+            <div id="universalDocProgressWidget" style="display:none; margin-top:14px; background:white; padding:14px; border-radius:var(--radius-sm); border:1px solid #E0D7C8;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                <span id="universalDocStageText" style="font-size:12px; font-weight:700; color:var(--accent-terracotta);">Uploading to persistent storage...</span>
+                <span id="universalDocProgressPercent" style="font-size:12px; font-weight:800; color:var(--ink-primary);">10%</span>
+              </div>
+              <div style="width:100%; height:7px; background:#ECE7DF; border-radius:4px; overflow:hidden;">
+                <div id="universalDocProgressBar" style="width:10%; height:100%; background:var(--accent-terracotta); transition:width 0.3s ease;"></div>
+              </div>
+            </div>
+
+            <!-- Ingested Documents Library -->
+            <div style="margin-top:20px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <span style="font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; color:var(--ink-primary);">Your Universal Documents</span>
+                <button class="btn-action-outline" style="font-size:11px; padding:3px 8px;" onclick="loadUserDocuments()">Refresh</button>
+              </div>
+              <div id="userDocumentsContainer" style="display:flex; flex-direction:column; gap:8px;">
+                <div style="font-size:12px; color:var(--ink-secondary); padding:8px 0;">Loading documents...</div>
+              </div>
+            </div>
+          </div>
+
           <!-- Quick Chapter Start Box -->
           <div class="atelier-card" style="margin-top:20px; padding:24px;">
             <div class="editorial-label">Start a New Exploration</div>
@@ -2567,11 +2615,16 @@
         if (projectId) {
           projData = await resp.json();
         } else {
-          const list = await resp.json();
-          if (list && list.length > 0) {
-            const pId = list[0].id;
+          const respData = await resp.json();
+          const projects = Array.isArray(respData) ? respData : (respData.projects || []);
+          if (projects && projects.length > 0) {
+            const pId = projects[0].id;
             const fullResp = await fetch(`/api/animated/project/${pId}`, { headers });
             if (fullResp.ok) projData = await fullResp.json();
+          } else {
+            showToast("No animated lessons found yet. Create your first lesson!");
+            openAnimatedModal();
+            return;
           }
         }
 
@@ -4177,6 +4230,243 @@
     window.addEventListener("DOMContentLoaded", () => {
       AuthManager.initialize();
     });
+  
+    // ==============================================================
+    // Universal Document Infrastructure (Phase 1)
+    // ==============================================================
+    let activeJobPollInterval = null;
+
+    async function handleUniversalDocSelected(input) {
+      const file = input?.files?.[0];
+      if (!file) return;
+
+      const token = AuthManager.authToken;
+      if (!token) {
+        showToast("Please sign in to upload and manage documents.");
+        switchScreen('login');
+        return;
+      }
+
+      const widget = document.getElementById('universalDocProgressWidget');
+      const stageText = document.getElementById('universalDocStageText');
+      const progBar = document.getElementById('universalDocProgressBar');
+      const progVal = document.getElementById('universalDocProgressPercent');
+
+      if (widget) widget.style.display = 'block';
+      if (stageText) stageText.textContent = `Uploading ${file.name}...`;
+      if (progBar) progBar.style.width = '15%';
+      if (progVal) progVal.textContent = '15%';
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        const resp = await fetch('/api/documents/upload', {
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + token },
+          body: formData
+        });
+
+        if (!resp.ok) {
+          const err = await resp.json().catch(() => ({ detail: 'Upload failed' }));
+          showToast(err.detail || 'Upload failed');
+          if (widget) widget.style.display = 'none';
+          return;
+        }
+
+        const data = await resp.json();
+        showToast(`Document uploaded! Beginning extraction for ${data.filename}`);
+        pollDocumentJob(data.job_id, data.document_id);
+      } catch (e) {
+        console.error('Doc upload error:', e);
+        showToast('Error uploading document: ' + e.message);
+        if (widget) widget.style.display = 'none';
+      } finally {
+        input.value = '';
+      }
+    }
+
+    function pollDocumentJob(jobId, docId) {
+      if (activeJobPollInterval) clearInterval(activeJobPollInterval);
+
+      const widget = document.getElementById('universalDocProgressWidget');
+      const stageText = document.getElementById('universalDocStageText');
+      const progBar = document.getElementById('universalDocProgressBar');
+      const progVal = document.getElementById('universalDocProgressPercent');
+
+      activeJobPollInterval = setInterval(async () => {
+        try {
+          const token = AuthManager.authToken;
+          const resp = await fetch(`/api/documents/jobs/${jobId}`, {
+            headers: token ? { 'Authorization': 'Bearer ' + token } : {}
+          });
+
+          if (!resp.ok) {
+            clearInterval(activeJobPollInterval);
+            return;
+          }
+
+          const res = await resp.json();
+          const job = res.job;
+          if (!job) return;
+
+          const pct = Math.max(job.progress_percent || 10, 10);
+          if (progBar) progBar.style.width = pct + '%';
+          if (progVal) progVal.textContent = pct + '%';
+
+          const stageNames = {
+            'queued': 'Job Queued in Neon...',
+            'downloading_storage': 'Verifying persistent storage...',
+            'extracting_structure': 'Extracting structure, code & equations...',
+            'saving_sections': 'Saving sections to database...',
+            'completed': 'Extraction complete! Ready for learning.',
+            'failed': 'Extraction failed: ' + (job.error_message || 'Unknown error')
+          };
+          if (stageText) stageText.textContent = stageNames[job.current_stage] || job.current_stage;
+
+          if (job.status === 'completed') {
+            clearInterval(activeJobPollInterval);
+            showToast(`Document "${job.filename || ''}" processed successfully!`);
+            setTimeout(() => { if (widget) widget.style.display = 'none'; }, 2500);
+            loadUserDocuments();
+          } else if (job.status === 'failed') {
+            clearInterval(activeJobPollInterval);
+            showToast(`Processing failed: ${job.error_message || 'Error'}`);
+            loadUserDocuments();
+          }
+        } catch (e) {
+          console.error('Poll job error:', e);
+        }
+      }, 1000);
+    }
+
+    async function loadUserDocuments() {
+      const container = document.getElementById('userDocumentsContainer');
+      if (!container) return;
+
+      const token = AuthManager.authToken;
+      if (!token) {
+        container.innerHTML = '<div style="font-size:12px; color:var(--ink-secondary);">Sign in to view your documents.</div>';
+        return;
+      }
+
+      try {
+        const resp = await fetch('/api/documents', {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        if (!resp.ok) {
+          container.innerHTML = '<div style="font-size:12px; color:var(--ink-secondary);">Could not load documents.</div>';
+          return;
+        }
+
+        const data = await resp.json();
+        const docs = data.documents || [];
+
+        if (docs.length === 0) {
+          container.innerHTML = '<div style="font-size:12px; color:var(--ink-secondary); padding:8px 0;">No learning documents uploaded yet. Drop a PDF, PPTX or code doc above!</div>';
+          return;
+        }
+
+        container.innerHTML = docs.map(doc => {
+          const sizeKb = Math.round(doc.file_size_bytes / 1024);
+          const isComp = doc.status === 'completed';
+          const isFail = doc.status === 'failed';
+          const statusBadge = isComp 
+            ? '<span style="background:rgba(82,130,113,0.15); color:#2E604F; font-size:10px; font-weight:700; padding:2px 6px; border-radius:4px;">Ready</span>'
+            : isFail 
+            ? '<span style="background:rgba(217,79,51,0.15); color:var(--accent-terracotta); font-size:10px; font-weight:700; padding:2px 6px; border-radius:4px;">Failed</span>'
+            : '<span style="background:#FFF3E0; color:#B26200; font-size:10px; font-weight:700; padding:2px 6px; border-radius:4px;">Processing</span>';
+
+          return `
+            <div style="display:flex; justify-content:space-between; align-items:center; background:white; padding:10px 14px; border-radius:var(--radius-sm); border:1px solid #ECE7DF; gap:8px;">
+              <div style="overflow:hidden; max-width:65%;">
+                <div style="display:flex; align-items:center; gap:6px;">
+                  <span style="font-size:14px;">📄</span>
+                  <strong style="font-size:13px; color:var(--ink-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:block;">${doc.filename}</strong>
+                  ${statusBadge}
+                </div>
+                <div style="font-size:11px; color:var(--ink-secondary); margin-top:2px;">
+                  ${doc.subject_detected || 'General'} • ${doc.page_count} pgs • ${sizeKb} KB
+                </div>
+              </div>
+              <div style="display:flex; gap:6px; align-items:center;">
+                ${isComp ? `<button class="btn-action-primary" style="font-size:11px; padding:4px 10px; background:var(--accent-terracotta);" onclick="createLessonFromUniversalDoc('${doc.id}', '${encodeURIComponent(doc.filename)}')">+ Lesson</button>` : ''}
+                ${isFail && doc.latest_job_id ? `<button class="btn-action-outline" style="font-size:11px; padding:4px 8px; color:var(--accent-terracotta);" onclick="retryUniversalDocJob('${doc.latest_job_id}')">Retry</button>` : ''}
+                <button class="btn-action-outline" style="font-size:11px; padding:4px 8px; border-color:#DDD; color:#888;" title="Delete Document" onclick="deleteUniversalDoc('${doc.id}')">&times;</button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      } catch (e) {
+        console.error('loadUserDocuments error:', e);
+        container.innerHTML = '<div style="font-size:12px; color:var(--ink-secondary);">Error loading documents.</div>';
+      }
+    }
+
+    async function retryUniversalDocJob(jobId) {
+      const token = AuthManager.authToken;
+      try {
+        const resp = await fetch(`/api/documents/jobs/${jobId}/retry`, {
+          method: 'POST',
+          headers: token ? { 'Authorization': 'Bearer ' + token } : {}
+        });
+        if (resp.ok) {
+          showToast('Job retried! Re-extracting document.');
+          pollDocumentJob(jobId);
+        } else {
+          showToast('Could not retry job.');
+        }
+      } catch (e) {
+        showToast('Error retrying job: ' + e.message);
+      }
+    }
+
+    async function deleteUniversalDoc(docId) {
+      if (!confirm('Are you sure you want to delete this document from your atelier?')) return;
+      const token = AuthManager.authToken;
+      try {
+        const resp = await fetch(`/api/documents/${docId}`, {
+          method: 'DELETE',
+          headers: token ? { 'Authorization': 'Bearer ' + token } : {}
+        });
+        if (resp.ok) {
+          showToast('Document deleted.');
+          loadUserDocuments();
+        } else {
+          showToast('Could not delete document.');
+        }
+      } catch (e) {
+        showToast('Error deleting document: ' + e.message);
+      }
+    }
+
+    async function createLessonFromUniversalDoc(docId, encFilename) {
+      const filename = decodeURIComponent(encFilename);
+      const cleanTitle = filename.replace(/\.[^/.]+$/, "");
+      openAnimatedModal();
+      const titleInput = document.getElementById('animModalTitleInput');
+      if (titleInput) titleInput.value = cleanTitle;
+
+      // Fetch first few sections to pre-populate notes
+      const token = AuthManager.authToken;
+      try {
+        const resp = await fetch(`/api/documents/${docId}`, {
+          headers: token ? { 'Authorization': 'Bearer ' + token } : {}
+        });
+        if (resp.ok) {
+          const data = await resp.json();
+          const doc = data.document;
+          const notesInput = document.getElementById('animModalContentText');
+          if (notesInput && doc.sections && doc.sections.length > 0) {
+            const preview = doc.sections.slice(0, 3).map(s => s.content).join('\n\n');
+            notesInput.value = preview.slice(0, 600);
+          }
+        }
+      } catch (e) {
+        console.warn('Could not fetch doc sections for modal:', e);
+      }
+    }
+
   </script>
 
 </body>
