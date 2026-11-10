@@ -912,8 +912,12 @@ engine_code = """
 """
 
 if "CONCEPT DNA KNOWLEDGE TREE ENGINE" not in html:
-    html = html.replace('</script>\n</body>', engine_code + '\n</script>\n</body>', 1)
-    print("Injected Concept DNA Knowledge Tree Engine into index.html.")
+    last_script_idx = html.rfind('</script>')
+    if last_script_idx != -1:
+        html = html[:last_script_idx] + "\n" + engine_code + "\n" + html[last_script_idx:]
+        print("Injected Concept DNA Knowledge Tree Engine into index.html before last </script>.")
+    else:
+        print("ERROR: </script> not found in index.html")
 
 with open(html_path, "w", encoding="utf-8") as f:
     f.write(html)

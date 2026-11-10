@@ -2040,13 +2040,14 @@ Return ONLY valid JSON matching:
     tb_id = str(uuid.uuid4())
     score = float(eval_data.get("mastery_score", 70.0))
     eff_session_id = session_id or project_id or str(uuid.uuid4())
+    eff_prompt = ai_prompt or f"Explain {concept_tag} in your own words."
 
     with get_db() as conn:
         conn.execute("""
             INSERT INTO teachback_sessions (id, user_id, session_id, concept_tag, ai_prompt, user_transcript, understood_points_json, misconceptions_json, missing_points_json, next_step, mastery_delta)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
-            tb_id, uid, eff_session_id, concept_tag, ai_prompt, transcript,
+            tb_id, uid, eff_session_id, concept_tag, eff_prompt, transcript,
             json.dumps(eval_data.get("understood_points", [])),
             json.dumps(eval_data.get("misconceptions", [])),
             json.dumps(eval_data.get("missing_points", [])),

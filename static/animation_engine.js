@@ -299,6 +299,30 @@ class UniversalAnimationEngine {
     this.renderSubtitlesHUD(ctx, w, h, scene, t);
   }
 
+  setPlaybackSpeed(speed) {
+    this.playbackRate = parseFloat(speed) || 1.0;
+    if (this.audioPlayer) {
+      this.audioPlayer.playbackRate = this.playbackRate;
+    }
+  }
+
+  setVolume(vol) {
+    this.volume = Math.max(0, Math.min(1, parseFloat(vol)));
+    if (this.audioPlayer) {
+      this.audioPlayer.volume = this.volume;
+    }
+  }
+
+  replayCurrentScene() {
+    this.seek(0);
+    this.play();
+  }
+
+  toggleSubtitles() {
+    this.showSubtitles = !(this.showSubtitles !== false);
+    return this.showSubtitles;
+  }
+
   drawBackground(ctx, w, h, theme, t) {
     if (theme === 'simulation' || theme === 'infographic') {
       // Cosmic Emerald-Black deep theater gradient
