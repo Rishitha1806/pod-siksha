@@ -79,6 +79,9 @@ LANG_CONFIGS = {
 from db_adapter import get_db, DB_PATH, DATABASE_URL
 
 def init_db():
+    if os.getenv("DATABASE_URL"):
+        log.info("Neon PostgreSQL connection active. Production schema already initialized.")
+        return
     with get_db() as conn:
         conn.execute("""
             CREATE TABLE IF NOT EXISTS sessions (
